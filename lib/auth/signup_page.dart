@@ -451,23 +451,28 @@ class _SignUpState extends State<SignUp> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // button login with google
-        Container(
-          width: 65.w,
-          height: 65.h,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100.r),
-            border: Border.all(
-              width: 1.w,
-              color: AppColors.seperatorColor,
+        GestureDetector(
+          onTap: () {
+            UserRepository.instance().signInWithGoogle(context);
+          },
+          child: Container(
+            width: 65.w,
+            height: 65.h,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100.r),
+              border: Border.all(
+                width: 1.w,
+                color: AppColors.seperatorColor,
+              ),
             ),
-          ),
-          child: SizedBox(
-            height: 26.h,
-            width: 26.w,
-            child: SvgPicture.asset(
-              AppIcons.google,
-              fit: BoxFit.contain,
+            child: SizedBox(
+              height: 26.h,
+              width: 26.w,
+              child: SvgPicture.asset(
+                AppIcons.google,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ),

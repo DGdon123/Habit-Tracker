@@ -11,6 +11,7 @@ import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/styles.dart';
 import 'package:habit_tracker/utils/textfields.dart';
+import 'package:provider/provider.dart';
 
 import '../utils/images.dart';
 
@@ -345,7 +346,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // button login with google
         GestureDetector(
           onTap: () {
-            UserRepository.instance().signInWithGoogle(context);
+            context.read<UserRepository>().signInWithGoogle(context);
           },
           child: Container(
             width: 65.w,

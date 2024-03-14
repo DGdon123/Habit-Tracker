@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:habit_tracker/auth/signup_page.dart';
+import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/home.dart';
 import 'package:provider/provider.dart';
 
@@ -52,7 +53,7 @@ class UserRepository with ChangeNotifier {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const Home(),
+          builder: (context) => const HomePage(),
         ),
       );
       return true;
@@ -162,7 +163,7 @@ class UserRepository with ChangeNotifier {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const Home(),
+          builder: (context) => const HomePage(),
         ),
       );
       return true;
@@ -262,7 +263,7 @@ class UserRepository with ChangeNotifier {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const Home(),
+          builder: (context) => const HomePage(),
         ),
       );
       return true;

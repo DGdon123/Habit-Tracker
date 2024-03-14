@@ -1,10 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_core/firebase_core.dart' as pre;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/onboarding/onboardingScreen.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'auth/repositories/user_repository.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+  await pre.Firebase.initializeApp();
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (_) => UserRepository.instance(),
+      ),
+    ],
+    child: EasyLocalization(
+      supportedLocales: const [
+        Locale('en', 'US'),
+        Locale('de', 'DE'),
+        Locale('es', 'ES')
+      ],
+      path: 'assets/translations', // Path to your translation files
+      fallbackLocale: const Locale('en', 'US'), // Default language
+      child: const MyApp(),
+    ),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -25,8 +49,11 @@ class MyApp extends StatelessWidget {
         // Use builder only if you need to use library outside ScreenUtilInit context
         builder: (_, child) {
           return MaterialApp(
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
             debugShowCheckedModeBanner: false,
-            home: OnBoardingScreen(),
+            home: const OnBoardingScreen(),
           );
         });
   }

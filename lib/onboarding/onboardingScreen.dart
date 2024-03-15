@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/auth/login_page.dart';
 import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/services/local_storage_services.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
 
@@ -94,8 +95,12 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       ),
                       Spacer(),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           if (pageIndex == onboardings.length - 1) {
+                            // Not displaying the content as the user has already seen the onboarding screens
+                            await LocalStorageServices()
+                                .setIsAppLaunchedFirstTime();
+
                             // This is the last onboarding screen, navigate to the next screen
                             // You can replace this with your own logic for navigating to the next screen
                             Navigator.of(context).pushReplacement(

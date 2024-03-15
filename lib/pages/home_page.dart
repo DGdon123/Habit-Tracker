@@ -7,8 +7,9 @@ import 'package:habit_tracker/pages/screens/focus.dart';
 import 'package:habit_tracker/pages/screens/friends.dart';
 import 'package:habit_tracker/pages/screens/home.dart';
 import 'package:habit_tracker/pages/screens/profile.dart';
-import 'package:habit_tracker/pages/screens/sleep.dart';
+
 import 'package:habit_tracker/pages/screens/stats.dart';
+import 'package:habit_tracker/pages/sleep_page/sleep_page.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';

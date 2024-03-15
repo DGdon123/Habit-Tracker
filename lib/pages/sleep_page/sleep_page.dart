@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_date_range_picker/custom_date_range_picker.dart';
+import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -10,6 +12,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/sleep%20wakeup/sleepTime.dart';
+import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.dart';
+import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:intl/intl.dart';
@@ -44,23 +48,6 @@ class SleepPageState extends State<SleepPage> {
     fontWeight: FontWeight.w500,
   );
 
-// sleep time small
-  TextStyle sleepTimeSmallStyle = TextStyle(
-    color: AppColors.white,
-    fontSize: 14.sp,
-    fontFamily: 'SFProText',
-    fontWeight: FontWeight.w500,
-  );
-
-  // sleep time big
-
-  TextStyle sleepTimeBigStyle = TextStyle(
-    color: AppColors.white,
-    fontSize: 28.sp,
-    fontFamily: 'SFProText',
-    fontWeight: FontWeight.w800,
-  );
-
   // secondary
 
   TextStyle secondaryTextStyle(double fontSize, FontWeight fontWeight) {
@@ -85,7 +72,12 @@ class SleepPageState extends State<SleepPage> {
       top: false,
       child: Scaffold(
         body: Container(
-          margin: EdgeInsets.only(top:kIsWeb ? 35.h : Platform.isIOS ? 50.h : 35.h),
+          margin: EdgeInsets.only(
+              top: kIsWeb
+                  ? 35.h
+                  : Platform.isIOS
+                      ? 50.h
+                      : 35.h),
           child: Column(
             children: [
               Padding(
@@ -96,8 +88,10 @@ class SleepPageState extends State<SleepPage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => HomePage()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomePage()));
                       },
                       child: SizedBox(
                         height: 28.h,
@@ -167,69 +161,46 @@ class SleepPageState extends State<SleepPage> {
               SizedBox(
                 height: 20.h,
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 50.w, vertical: 20.h),
-                      decoration: ShapeDecoration(
-                        color: Color(0xFF000C7C),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.r),
+              StreamBuilder<QuerySnapshot>(
+                  stream: SleepFireStoreServices().listenToTodayAddedSleepTime,
+                  builder: (context, snapshot) {
+                    debugPrint("Snapshot: ${snapshot.data?.docs.length}");
+
+                    var snapshotLength = snapshot.data?.docs.length;
+
+                    // we got data
+                    if (snapshot.hasData &&
+                        snapshot.connectionState == ConnectionState.active &&
+                        snapshotLength != 0) {
+                      var doc = snapshot.data!.docs[0];
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SleepWakeDisplayCard(
+                                title: 'Sleep Time',
+                                bgColor: const Color(0xFF000C7C),
+                                time: doc.get("sleepTime")),
+                            SleepWakeDisplayCard(
+                                title: 'Wake Time',
+                                bgColor: const Color(0xFF7C0068),
+                                time: doc.get("wakeTime")),
+                          ],
                         ),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Sleep Time',
-                            style: sleepTimeSmallStyle,
-                          ),
-                          SizedBox(
-                            height: 5.h,
-                          ),
-                          Text(
-                            '23:00',
-                            style: sleepTimeBigStyle,
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 50.w, vertical: 20.h),
-                      decoration: ShapeDecoration(
-                        color: Color(0xFF7C0068),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Waketime',
-                            style: sleepTimeSmallStyle,
-                          ),
-                          SizedBox(
-                            height: 5.h,
-                          ),
-                          Text(
-                            '06:00',
-                            style: sleepTimeBigStyle,
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                      );
+                    } else if (snapshotLength == 0) {
+                      return const Text("Add your sleep time");
+                    } else if (snapshot.hasError) {
+                      return const Text('Something went wrong');
+                    }
+                    return const CircularProgressIndicator();
+                  }),
               SizedBox(
                 height: 30.h,
               ),
 
-          // date range picker
+              // date range picker
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Row(
@@ -332,8 +303,8 @@ class SleepPageState extends State<SleepPage> {
                             showTitles: true,
                             getTitlesWidget: (value, meta) {
                               return Text(value.toInt().toString(),
-                                  style:
-                                      secondaryTextStyle(16.sp, FontWeight.w600));
+                                  style: secondaryTextStyle(
+                                      16.sp, FontWeight.w600));
                             },
                           ),
                         ),

@@ -2,10 +2,13 @@ import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/styles.dart';
 
 class WakeTime extends StatefulWidget {
+  final Time sleepTime;
+  const WakeTime({required this.sleepTime});
   @override
   State<WakeTime> createState() => _WakeTimeState();
 }
@@ -15,18 +18,20 @@ class _WakeTimeState extends State<WakeTime> {
   bool iosStyle = true;
 
   void sleepTimeSet(Time newTime) {
-    setState(() {
-      _timeWake = newTime;
-    });
-    Navigator.pop(context);
+    _timeWake = newTime;
+
+    SleepFireStoreServices().addNewSleepTime(
+        sleepTime: widget.sleepTime.format(context),
+        wakeTime: _timeWake.format(context));
   }
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("Wake time: ${widget.sleepTime}");
     return AlertDialog(
       alignment: Alignment.center,
       elevation: 0,
-      backgroundColor: Color.fromRGBO(255, 0, 0, 0),
+      backgroundColor: const Color.fromRGBO(255, 0, 0, 0),
 
       // Render inline widget
       content: Container(
@@ -71,7 +76,7 @@ class _WakeTimeState extends State<WakeTime> {
                 // width: 350.w,
                 // height: 470.h,
                 // wheelHeight: 300.h,
-                hideButtons: true,
+
                 cancelStyle: TextStyle(
                   color: Color.fromARGB(255, 255, 0, 0).withOpacity(0.75),
                   fontSize: 16.sp,
@@ -96,38 +101,6 @@ class _WakeTimeState extends State<WakeTime> {
                 is24HrFormat: false,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      decoration: ShapeDecoration(
-                        color: Color(0xFF00FFDE),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(1000),
-                        ),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.w),
-                      child: Text(
-                        "Save",
-                        style: TextStyle(
-                          color: AppColors.textBlack,
-                          fontSize: 18.sp,
-                          fontFamily: 'SFProText',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
           ],
         ),
       ),

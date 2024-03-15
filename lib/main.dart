@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/auth/login_page.dart';
 import 'package:habit_tracker/onboarding/onboardingScreen.dart';
+import 'package:habit_tracker/pages/auth_onboarding_deciding_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'auth/repositories/user_repository.dart';
@@ -55,19 +56,7 @@ class MyApp extends StatelessWidget {
             supportedLocales: context.supportedLocales,
             locale: context.locale,
             debugShowCheckedModeBanner: false,
-            home: FutureBuilder(
-                future: LocalStorageServices().isAppLaunchedFirstTime(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    // first time launched
-                    if (snapshot!.data == true) {
-                      return const OnBoardingScreen();
-                    } else {
-                      return const LoginScreen();
-                    }
-                  }
-                  return const OnBoardingScreen();
-                }),
+            home: const AuthOnBoardingDecidingScreen(),
           );
         });
   }

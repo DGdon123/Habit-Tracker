@@ -20,8 +20,9 @@ class _WakeTimeState extends State<WakeTime> {
   void sleepTimeSet(Time newTime) {
     _timeWake = newTime;
 
-    SleepFireStoreServices()
-        .addNewSleepTime(sleepTime: widget.sleepTime, wakeTime: _timeWake);
+    SleepFireStoreServices().addNewSleepTime(
+        sleepTime: widget.sleepTime.format(context),
+        wakeTime: _timeWake.format(context));
   }
 
   @override

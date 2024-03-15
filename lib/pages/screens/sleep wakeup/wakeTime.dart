@@ -18,7 +18,8 @@ class _WakeTimeState extends State<WakeTime> {
     setState(() {
       _timeWake = newTime;
     });
-    Navigator.pop(context);
+
+    debugPrint("Wake time: $newTime");
   }
 
   @override
@@ -71,7 +72,7 @@ class _WakeTimeState extends State<WakeTime> {
                 // width: 350.w,
                 // height: 470.h,
                 // wheelHeight: 300.h,
-                hideButtons: true,
+
                 cancelStyle: TextStyle(
                   color: Color.fromARGB(255, 255, 0, 0).withOpacity(0.75),
                   fontSize: 16.sp,
@@ -96,38 +97,6 @@ class _WakeTimeState extends State<WakeTime> {
                 is24HrFormat: false,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      decoration: ShapeDecoration(
-                        color: Color(0xFF00FFDE),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(1000),
-                        ),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.w),
-                      child: Text(
-                        "Save",
-                        style: TextStyle(
-                          color: AppColors.textBlack,
-                          fontSize: 18.sp,
-                          fontFamily: 'SFProText',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
           ],
         ),
       ),

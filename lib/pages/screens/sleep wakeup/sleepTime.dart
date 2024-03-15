@@ -12,13 +12,15 @@ class SleepTime extends StatefulWidget {
 }
 
 class _SleepTimeState extends State<SleepTime> {
-  Time _time = Time(hour: 20, minute: 30, second: 20);
+  Time _time = Time(hour: 20, minute: 30);
   bool iosStyle = true;
 
   void onTimeChanged(Time newTime) {
     setState(() {
       _time = newTime;
     });
+    Navigator.pop(context);
+    debugPrint("Sleep time: $newTime");
   }
 
   @override
@@ -53,9 +55,6 @@ class _SleepTimeState extends State<SleepTime> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  // Text(
-                  //   '${_time.hour}:${_time.minute}',
-                  // ),
                 ],
               ),
             ),
@@ -64,8 +63,8 @@ class _SleepTimeState extends State<SleepTime> {
             ),
             SizedBox(
               child: showPicker(
+                showCancelButton: false,
                 onCancel: () {
-
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -82,7 +81,7 @@ class _SleepTimeState extends State<SleepTime> {
                 hourLabel: 'Hour',
                 minuteLabel: 'Minutes',
                 // wheelHeight: 300.h,
-                hideButtons: true,
+                hideButtons: false,
                 cancelStyle: TextStyle(
                   color: Color.fromARGB(255, 255, 0, 0).withOpacity(0.75),
                   fontSize: 16.sp,
@@ -95,57 +94,14 @@ class _SleepTimeState extends State<SleepTime> {
                 elevation: 0,
                 value: _time,
                 onChange: onTimeChanged,
-                onChangeDateTime: (DateTime dateTime) {
-                  int hour = dateTime.hour;
-                  int minute = dateTime.minute;
-                  print(hour);
-                  print(minute);
-                },
+                isOnChangeValueMode: false,
+
                 minuteInterval: TimePickerInterval.FIVE,
                 iosStylePicker: iosStyle,
-                minHour: 0,
-                maxHour: 21,
+
                 is24HrFormat: false,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return WakeTime(); // Use the custom dialog
-                        },
-                      );
-                    },
-                    child: Container(
-                      decoration: ShapeDecoration(
-                        color: Color(0xFF00FFDE),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(1000),
-                        ),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.w),
-                      child: Text(
-                        "Next",
-                        style: TextStyle(
-                          color: AppColors.textBlack,
-                          fontSize: 18.sp,
-                          fontFamily: 'SFProText',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
           ],
         ),
       ),

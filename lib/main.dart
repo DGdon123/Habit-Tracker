@@ -5,7 +5,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/auth/login_page.dart';
 import 'package:habit_tracker/onboarding/onboardingScreen.dart';
+
+import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/provider/dob_provider.dart';
+
 import 'package:habit_tracker/pages/auth_onboarding_deciding_screen.dart';
+
 import 'package:provider/provider.dart';
 
 import 'auth/repositories/user_repository.dart';
@@ -19,6 +24,9 @@ Future<void> main() async {
     providers: [
       ChangeNotifierProvider(
         create: (_) => UserRepository.instance(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => SelectedDateProvider(),
       ),
     ],
     child: EasyLocalization(
@@ -56,8 +64,34 @@ class MyApp extends StatelessWidget {
             supportedLocales: context.supportedLocales,
             locale: context.locale,
             debugShowCheckedModeBanner: false,
-            home: const AuthOnBoardingDecidingScreen(),
+
+            home: const HomePage1(),
+
           );
         });
+  }
+}
+
+class HomePage1 extends StatelessWidget {
+  const HomePage1({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<UserRepository>(
+      builder: (context, user, _) {
+        switch (user.status) {
+          case Status.Uninitialized:
+            return const OnBoardingScreen();
+          case Status.Unauthenticated:
+            return const LoginScreen();
+          case Status.Authenticating:
+            return const LoginScreen();
+          case Status.Authenticating1:
+            return const LoginScreen();
+          case Status.Authenticated:
+            return const HomePage();
+        }
+      },
+    );
   }
 }

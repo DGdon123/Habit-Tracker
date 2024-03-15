@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +21,15 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? getUsername() {
+    User? user = _auth.currentUser;
+    return user?.displayName;
+  }
+
   final List<Widget> _pages = [
-    ActivityPage(),
-    FriendsPageTab(),
+    const ActivityPage(),
+    const FriendsPageTab(),
   ];
 
   @override
@@ -33,7 +40,12 @@ class ProfilePageState extends State<ProfilePage>
         body: DefaultTabController(
           length: 2,
           child: Container(
-            margin: EdgeInsets.only(top: kIsWeb ? 35.h : Platform.isIOS ? 50.h : 35.h),
+            margin: EdgeInsets.only(
+                top: kIsWeb
+                    ? 35.h
+                    : Platform.isIOS
+                        ? 50.h
+                        : 35.h),
             child: Column(
               children: [
                 Padding(
@@ -47,7 +59,7 @@ class ProfilePageState extends State<ProfilePage>
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HomePage()));
+                                  builder: (context) => const HomePage()));
                         },
                         child: SizedBox(
                           height: 28.h,
@@ -86,7 +98,7 @@ class ProfilePageState extends State<ProfilePage>
                   height: 20.h,
                 ),
                 Container(
-                  decoration: ShapeDecoration(
+                  decoration: const ShapeDecoration(
                     shape: RoundedRectangleBorder(
                       side: BorderSide(
                         width: 1,
@@ -117,7 +129,7 @@ class ProfilePageState extends State<ProfilePage>
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100.r),
-          color: Color.fromARGB(255, 236, 251, 249),
+          color: const Color.fromARGB(255, 236, 251, 249),
         ),
         child: TabBar(
           splashBorderRadius: BorderRadius.circular(100.r),
@@ -129,14 +141,14 @@ class ProfilePageState extends State<ProfilePage>
           indicator: BoxDecoration(
               color: AppColors.primaryColor,
               borderRadius: BorderRadius.circular(100.r)),
-          unselectedLabelColor: Color(0xFF686873),
+          unselectedLabelColor: const Color(0xFF686873),
           labelStyle: TextStyle(
             color: Colors.black,
             fontSize: 14.sp,
             fontFamily: 'SFProText',
             fontWeight: FontWeight.w600,
           ),
-          tabs: [
+          tabs: const [
             Tab(text: 'Activity'),
             Tab(text: 'Friends'),
           ],
@@ -168,7 +180,7 @@ class ProfilePageState extends State<ProfilePage>
               ),
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(
-                  'User Name',
+                  getUsername() ?? 'User Name',
                   style: TextStyle(
                     color: AppColors.textBlack,
                     fontSize: 20.sp,
@@ -208,8 +220,10 @@ class ProfilePageState extends State<ProfilePage>
           ),
           GestureDetector(
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => SettingsPage()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsPage()));
             },
             child: Container(
                 width: 48.h,
@@ -218,7 +232,7 @@ class ProfilePageState extends State<ProfilePage>
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFFEAECF0)),
+                    side: const BorderSide(width: 1, color: Color(0xFFEAECF0)),
                     borderRadius: BorderRadius.circular(16.r),
                   ),
                 ),
@@ -234,6 +248,8 @@ class ProfilePageState extends State<ProfilePage>
 }
 
 class FriendsPageTab extends StatelessWidget {
+  const FriendsPageTab({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -250,7 +266,7 @@ class FriendsPageTab extends StatelessWidget {
                 Text(
                   '171 Friends',
                   style: TextStyle(
-                    color: Color(0xFF040415),
+                    color: const Color(0xFF040415),
                     fontSize: 16.sp,
                     fontFamily: 'SFProText',
                     fontWeight: FontWeight.w600,
@@ -278,6 +294,8 @@ class FriendsPageTab extends StatelessWidget {
 }
 
 class ActivityPage extends StatelessWidget {
+  const ActivityPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -295,7 +313,7 @@ class ActivityPage extends StatelessWidget {
                 Text(
                   'Activity of this week',
                   style: TextStyle(
-                    color: Color(0xFF040415),
+                    color: const Color(0xFF040415),
                     fontSize: 16.sp,
                     fontFamily: 'SFProText',
                     fontWeight: FontWeight.w600,
@@ -332,10 +350,10 @@ Widget FriendsContainer() {
     decoration: ShapeDecoration(
       color: Colors.white,
       shape: RoundedRectangleBorder(
-        side: BorderSide(width: 1, color: Color(0xFFEAECF0)),
+        side: const BorderSide(width: 1, color: Color(0xFFEAECF0)),
         borderRadius: BorderRadius.circular(16.r),
       ),
-      shadows: [
+      shadows: const [
         BoxShadow(
           color: Color(0x0F222C5C),
           blurRadius: 68,
@@ -368,7 +386,7 @@ Widget FriendsContainer() {
                 Text(
                   'User Name',
                   style: TextStyle(
-                    color: Color(0xFF040415),
+                    color: const Color(0xFF040415),
                     fontSize: 16.sp,
                     fontFamily: 'SFProText',
                     fontWeight: FontWeight.w600,
@@ -377,7 +395,7 @@ Widget FriendsContainer() {
                 Text(
                   '912 XP',
                   style: TextStyle(
-                    color: Color(0xFF9B9BA1),
+                    color: const Color(0xFF9B9BA1),
                     fontSize: 14.sp,
                     fontFamily: 'SF Pro Text',
                     fontWeight: FontWeight.w400,
@@ -406,10 +424,10 @@ Widget AchievmentsContainer() {
     decoration: ShapeDecoration(
       color: Colors.white,
       shape: RoundedRectangleBorder(
-        side: BorderSide(width: 1, color: Color(0xFFEAECF0)),
+        side: const BorderSide(width: 1, color: Color(0xFFEAECF0)),
         borderRadius: BorderRadius.circular(16.r),
       ),
-      shadows: [
+      shadows: const [
         BoxShadow(
           color: Color(0x0F222C5C),
           blurRadius: 68,
@@ -430,7 +448,7 @@ Widget AchievmentsContainer() {
                 Text(
                   '129 XP Earned',
                   style: TextStyle(
-                    color: Color(0xFF040415),
+                    color: const Color(0xFF040415),
                     fontSize: 16.sp,
                     fontFamily: 'SFProText',
                     fontWeight: FontWeight.w600,
@@ -439,7 +457,7 @@ Widget AchievmentsContainer() {
                 Text(
                   'Today, 12:30',
                   style: TextStyle(
-                    color: Color(0xFF9B9BA1),
+                    color: const Color(0xFF9B9BA1),
                     fontSize: 14.sp,
                     fontFamily: 'SF Pro Text',
                     fontWeight: FontWeight.w400,

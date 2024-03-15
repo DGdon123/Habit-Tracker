@@ -1,13 +1,17 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:habit_tracker/auth/repositories/user_repository.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -17,6 +21,12 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? getUsername() {
+    User? user = _auth.currentUser;
+    return user?.displayName;
+  }
+
   TextStyle settingsTextStyle = TextStyle(
     color: AppColors.textBlack,
     fontSize: 16.sp,
@@ -32,7 +42,12 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Scaffold(
         backgroundColor: AppColors.white,
         body: Container(
-          margin: EdgeInsets.only(top:kIsWeb ? 35.h : Platform.isIOS ? 50.h : 35.h),
+          margin: EdgeInsets.only(
+              top: kIsWeb
+                  ? 35.h
+                  : Platform.isIOS
+                      ? 50.h
+                      : 35.h),
           child: Column(
             children: [
               Padding(
@@ -76,11 +91,13 @@ class _SettingsPageState extends State<SettingsPage> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 15.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 0.w, vertical: 15.h),
                   decoration: ShapeDecoration(
                     color: Colors.white,
                     shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1, color: Color(0xFFD0D0D0)),
+                      side:
+                          const BorderSide(width: 1, color: Color(0xFFD0D0D0)),
                       borderRadius: BorderRadius.circular(16.r),
                     ),
                   ),
@@ -100,7 +117,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   width: 70.w,
                                 ),
                                 Text(
-                                  'User Name',
+                                  getUsername() ?? 'User Name',
                                   style: TextStyle(
                                     color: AppColors.textBlack,
                                     fontSize: 20.sp,
@@ -119,7 +136,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   decoration: ShapeDecoration(
                                     color: Colors.white,
                                     shape: RoundedRectangleBorder(
-                                      side: BorderSide(
+                                      side: const BorderSide(
                                           width: 1, color: Color(0xFFEAECF0)),
                                       borderRadius: BorderRadius.circular(16.r),
                                     ),
@@ -139,7 +156,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   decoration: ShapeDecoration(
                                     color: Colors.white,
                                     shape: RoundedRectangleBorder(
-                                      side: BorderSide(
+                                      side: const BorderSide(
                                           width: 1, color: Color(0xFFEAECF0)),
                                       borderRadius: BorderRadius.circular(16.r),
                                     ),
@@ -184,7 +201,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             Icon(
                               Icons.chevron_right,
                               size: 24.h,
-                              color: Color.fromARGB(255, 104, 104, 115),
+                              color: const Color.fromARGB(255, 104, 104, 115),
                             )
                           ],
                         ),
@@ -216,7 +233,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             Icon(
                               Icons.chevron_right,
                               size: 24.h,
-                              color: Color.fromARGB(255, 104, 104, 115),
+                              color: const Color.fromARGB(255, 104, 104, 115),
                             )
                           ],
                         ),
@@ -248,7 +265,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             Icon(
                               Icons.chevron_right,
                               size: 24.h,
-                              color: Color.fromARGB(255, 104, 104, 115),
+                              color: const Color.fromARGB(255, 104, 104, 115),
                             )
                           ],
                         ),
@@ -294,7 +311,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                       child: Container(
                                         width: 21,
                                         height: 21,
-                                        decoration: ShapeDecoration(
+                                        decoration: const ShapeDecoration(
                                           color: Colors.white,
                                           shape: OvalBorder(),
                                           shadows: [
@@ -329,7 +346,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   decoration: ShapeDecoration(
                     color: Colors.white,
                     shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1, color: Color(0xFFD0D0D0)),
+                      side:
+                          const BorderSide(width: 1, color: Color(0xFFD0D0D0)),
                       borderRadius: BorderRadius.circular(16.r),
                     ),
                   ),
@@ -361,7 +379,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             Icon(
                               Icons.chevron_right,
                               size: 24.h,
-                              color: Color.fromARGB(255, 104, 104, 115),
+                              color: const Color.fromARGB(255, 104, 104, 115),
                             )
                           ],
                         ),
@@ -393,7 +411,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             Icon(
                               Icons.chevron_right,
                               size: 24.h,
-                              color: Color.fromARGB(255, 104, 104, 115),
+                              color: const Color.fromARGB(255, 104, 104, 115),
                             )
                           ],
                         ),
@@ -425,7 +443,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             Icon(
                               Icons.chevron_right,
                               size: 24.h,
-                              color: Color.fromARGB(255, 104, 104, 115),
+                              color: const Color.fromARGB(255, 104, 104, 115),
                             )
                           ],
                         ),
@@ -457,9 +475,87 @@ class _SettingsPageState extends State<SettingsPage> {
                             Icon(
                               Icons.chevron_right,
                               size: 24.h,
-                              color: Color.fromARGB(255, 104, 104, 115),
+                              color: const Color.fromARGB(255, 104, 104, 115),
                             )
                           ],
+                        ),
+                      ),
+                      seperator(),
+                      InkWell(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Are You Sure You Want to Sign Out?'.tr(),
+                                  style: const TextStyle(
+                                      height: 1.3,
+                                      fontFamily: 'SFProText',
+                                      fontSize: 15),
+                                ),
+                                titleTextStyle: const TextStyle(
+                                    fontSize: 18, color: Color(0xff222222)),
+                                actions: <Widget>[
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(
+                                          false); // Close the dialog and return false
+                                    },
+                                    child: Text(
+                                      'No'.tr(),
+                                      style:
+                                          const TextStyle(color: Colors.grey),
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      // Perform sign out action
+                                      await Provider.of<UserRepository>(context,
+                                              listen: false)
+                                          .signOut(context);
+                                    },
+                                    child: Text(
+                                      'Yes'.tr(),
+                                      style: const TextStyle(
+                                          color: AppColors.mainBlue),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20.h, horizontal: 10.w),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    AppIcons.logout,
+                                    height: 26.h,
+                                  ),
+                                  SizedBox(
+                                    width: 8.w,
+                                  ),
+                                  Text(
+                                    'Sign Out',
+                                    style: settingsTextStyle,
+                                  )
+                                ],
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                size: 24.h,
+                                color: const Color.fromARGB(255, 104, 104, 115),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -475,7 +571,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Container seperator() {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(
           bottom: BorderSide(width: 1, color: Color(0xFFD0D0D0)),
         ),

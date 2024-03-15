@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:day_night_time_picker/day_night_time_picker.dart';
@@ -9,15 +10,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:habit_tracker/auth/repositories/user_repository.dart';
 import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:habit_tracker/utils/styles.dart';
+import 'package:provider/provider.dart';
 
 class AccountSetup extends StatefulWidget {
-  const AccountSetup({super.key});
-
+  final String? username;
+  final String? email;
+  final String? password;
+  const AccountSetup({super.key, this.username, this.email, this.password});
   @override
   State<AccountSetup> createState() => _AccountSetupState();
 }
@@ -43,40 +49,47 @@ class _AccountSetupState extends State<AccountSetup> {
     super.dispose();
   }
 
+  bool hello = false;
+
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserRepository>(context);
+    final dob = Provider.of<SelectedDateProvider>(context, listen: false);
+    final dobis = dob.selectedDate;
+    log(dobis.toString());
     return Scaffold(
       backgroundColor: AppColors.primaryColor,
+      appBar: AppBar(
+        backgroundColor: AppColors.primaryColor,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(
+                Icons.arrow_back_rounded,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            );
+          },
+        ),
+        title: Text(
+          "Create Account",
+          style: TextStyle(
+              fontFamily: 'SFProText',
+              fontSize: 22.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textBlack),
+        ),
+      ),
       body: Column(
         children: [
-          SizedBox(height: kIsWeb ? 35 : Platform.isIOS ? 50 : 35,),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  height: 28.h,
-                  width: 28.w,
-                  child: SvgPicture.asset(
-                    AppIcons.back,
-                  ),
-                ),
-                Spacer(),
-                Center(
-                  child: Text(
-                    "Create Account",
-                    style: TextStyle(
-                        fontFamily: 'SFProText',
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.w900,
-                        color: AppColors.textBlack),
-                  ),
-                ),
-                Spacer(),
-              ],
-            ),
+          SizedBox(
+            height: kIsWeb
+                ? 35
+                : Platform.isIOS
+                    ? 50
+                    : 35,
           ),
           Expanded(
             child: PageView(
@@ -86,9 +99,8 @@ class _AccountSetupState extends State<AccountSetup> {
                   currentPage = page;
                 });
               },
-              children: [
+              children: const [
                 AccountSetupBirthdate(),
-                AccountSetupSetName(),
               ],
             ),
           ),
@@ -102,7 +114,7 @@ class _AccountSetupState extends State<AccountSetup> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        2, // Replace with the total number of pages
+                        1, // Replace with the total number of pages
                         (index) => Container(
                           margin: EdgeInsets.symmetric(horizontal: 4.0.w),
                           width: currentPage == index
@@ -115,8 +127,7 @@ class _AccountSetupState extends State<AccountSetup> {
                           decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: currentPage == index
-                                  ? AppColors
-                                      .buttonYellow // Active page color
+                                  ? AppColors.buttonYellow // Active page color
                                   : AppColors
                                       .secondaryColor // Inactive page color
                               ),
@@ -126,42 +137,26 @@ class _AccountSetupState extends State<AccountSetup> {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () {
-                    // _pageController.nextPage(
-                    //   duration: Duration(milliseconds: 300),
-                    //   curve: Curves.easeInOut,
-                    // );
+                  onTap: () async {
+                    if (currentPage == 0 &&
+                        user.status != Status.Authenticating) {
+                      // Set the user status to Authenticating to show the loading indicator
+                      Status.Authenticating;
 
-                    if (currentPage < _pageController.page!.round()) {
-                      // You are going back to a previous page
-                      _pageController.previousPage(
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
+                      // Perform the sign-up operation
+                      await user.signUp(
+                        context,
+                        widget.username.toString(),
+                        dobis.toString(),
+                        widget.email.toString(),
+                        widget.password.toString(),
                       );
-                    } else {
-                      // You are going forward to the next page
-                      if (currentPage < 1) {
-                        _pageController.nextPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
-                      } else {
-                        if (currentPage == 1) {
-                          Navigator.of(context).pushReplacement(
-                            CupertinoPageRoute(
-                              builder: (context) {
-                                return HomePage();
-                              },
-                            ),
-                          );
-                        }
-                      }
                     }
                   },
                   child: Row(
                     children: [
                       Text(
-                        currentPage == 1 ? 'Finish' : 'Next',
+                        'Finish',
                         style: TextStyle(
                           color: AppColors.buttonYellow,
                           fontFamily: 'SFProText',
@@ -200,7 +195,7 @@ class AccountSetupSetName extends StatefulWidget {
 }
 
 class _AccountSetupSetNameState extends State<AccountSetupSetName> {
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +226,7 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
               fontFamily: 'SFProText',
               fontSize: 24.sp,
               fontWeight: FontWeight.w500,
-              color: Color.fromARGB(255, 51, 51, 51),
+              color: const Color.fromARGB(255, 51, 51, 51),
             ),
             decoration: InputDecoration(
               hintText: "Your Name",
@@ -239,24 +234,24 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
                 fontFamily: 'SFProText',
                 fontSize: 24.sp,
                 fontWeight: FontWeight.w500,
-                color: Color.fromARGB(255, 51, 51, 51),
+                color: const Color.fromARGB(255, 51, 51, 51),
               ),
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
-                  color: Color.fromARGB(255, 51, 51, 51),
+                  color: const Color.fromARGB(255, 51, 51, 51),
                   width: 2.w, // Change the width as needed
                 ),
               ),
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
-                  color: Color.fromARGB(255, 51, 51, 51),
+                  color: const Color.fromARGB(255, 51, 51, 51),
                   width: 2.w, // Change the width as needed
                 ),
               ),
               border: UnderlineInputBorder(
                 borderSide: BorderSide(
                   width: 2.w,
-                  color: Color.fromARGB(255, 51, 51, 51),
+                  color: const Color.fromARGB(255, 51, 51, 51),
                 ),
               ),
               suffixIcon: _controller.text.isNotEmpty
@@ -271,7 +266,7 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
                           padding: EdgeInsets.all(5.h),
                           child: Icon(
                             Icons.clear,
-                            color: Color.fromARGB(255, 51, 51, 51),
+                            color: const Color.fromARGB(255, 51, 51, 51),
                             size: 15.h,
                           ),
                         ),
@@ -292,6 +287,8 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
 }
 
 class AccountSetupBirthdate extends StatefulWidget {
+  const AccountSetupBirthdate({super.key});
+
   @override
   State<AccountSetupBirthdate> createState() => _AccountSetupBirthdateState();
 }
@@ -301,55 +298,61 @@ class _AccountSetupBirthdateState extends State<AccountSetupBirthdate> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 50.h,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Text(
-            'What’s your date of birth?',
-            style: AppTextStyles.accountSetup,
-            maxLines: 2,
-          ),
-        ),
-        SizedBox(
-          height: 50.h,
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 40.w),
-          child: DatePickerWidget(// default is not looping
-             lastDate: DateTime(2020, 4, 4),
-             initialDate: DateTime(1995, 4, 4), // DateTime(1994),
-            dateFormat:
-                // "MM-dd(E)",
-                "MMMM/dd/yyyy",
-            locale: DatePicker.localeFromString('en'),
-            onChange: (DateTime newDate, _) {
-              setState(() {
-                _selectedDate = newDate;
-              });
-              print(_selectedDate);
-            },
-            pickerTheme: DateTimePickerTheme(
-              backgroundColor: Colors.transparent,
-              showTitle: true,
-              itemTextStyle: TextStyle(
-                  fontFamily: 'SFProText',
-                  fontWeight: FontWeight.w600,
-                  color: Color.fromARGB(255, 0, 0, 0),
-                  fontSize: 25.sp),
-              dividerColor: const Color.fromARGB(255, 0, 0, 0),
+    final dobProvider =
+        Provider.of<SelectedDateProvider>(context, listen: false);
+    final dob = dobProvider.selectedDate;
+    return Scaffold(
+      backgroundColor: AppColors.primaryColor,
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Text(
+              'What’s your date of birth?',
+              style: AppTextStyles.accountSetup,
+              maxLines: 2,
             ),
           ),
-        ),
-      ],
+          SizedBox(
+            height: 50.h,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 40.w),
+            child: DatePickerWidget(
+              // default is not looping
+              lastDate: DateTime(2020, 4, 4),
+              initialDate: DateTime(1995, 4, 4), // DateTime(1994),
+              dateFormat:
+                  // "MM-dd(E)",
+                  "MMMM/dd/yyyy",
+              locale: DatePicker.localeFromString('en'),
+              onChange: (DateTime newDate, _) {
+                setState(() {
+                  _selectedDate = newDate;
+                });
+                dobProvider.setSelectedDate(_selectedDate!);
+              },
+              pickerTheme: DateTimePickerTheme(
+                backgroundColor: Colors.transparent,
+                showTitle: true,
+                itemTextStyle: TextStyle(
+                    fontFamily: 'SFProText',
+                    fontWeight: FontWeight.w600,
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                    fontSize: 25.sp),
+                dividerColor: const Color.fromARGB(255, 0, 0, 0),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 class AccountSetupSleeptime extends StatefulWidget {
+  const AccountSetupSleeptime({super.key});
+
   @override
   State<AccountSetupSleeptime> createState() => _AccountSetupSleeptimeState();
 }
@@ -388,12 +391,12 @@ class _AccountSetupSleeptimeState extends State<AccountSetupSleeptime> {
 
         // Render inline widget
         showPicker(
-          unselectedColor: Color.fromRGBO(0, 0, 0, 0.75),
+          unselectedColor: const Color.fromRGBO(0, 0, 0, 0.75),
           hourLabel: 'Hour',
           minuteLabel: 'Minutes',
           wheelHeight: 200.h,
           hideButtons: true,
-          dialogInsetPadding: EdgeInsets.all(0),
+          dialogInsetPadding: const EdgeInsets.all(0),
           isInlinePicker: true,
           elevation: 0,
           value: _time,
@@ -410,6 +413,8 @@ class _AccountSetupSleeptimeState extends State<AccountSetupSleeptime> {
 }
 
 class AccountSetupWaketime extends StatefulWidget {
+  const AccountSetupWaketime({super.key});
+
   @override
   State<AccountSetupWaketime> createState() => _AccountSetupWaketimeState();
 }
@@ -448,12 +453,12 @@ class _AccountSetupWaketimeState extends State<AccountSetupWaketime> {
 
         // Render inline widget
         showPicker(
-          unselectedColor: Color.fromRGBO(0, 0, 0, 0.75),
+          unselectedColor: const Color.fromRGBO(0, 0, 0, 0.75),
           hourLabel: 'Hour',
           minuteLabel: 'Minutes',
           wheelHeight: 200.h,
           hideButtons: true,
-          dialogInsetPadding: EdgeInsets.all(0),
+          dialogInsetPadding: const EdgeInsets.all(0),
           isInlinePicker: true,
           elevation: 0,
           value: _time,

@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:habit_tracker/auth/signup_page.dart';
+import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/home.dart';
 import 'package:provider/provider.dart';
 
@@ -52,7 +53,7 @@ class UserRepository with ChangeNotifier {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const Home(),
+          builder: (context) => const HomePage(),
         ),
       );
       return true;
@@ -135,6 +136,7 @@ class UserRepository with ChangeNotifier {
   Future<bool> signUp(
     BuildContext context,
     String username,
+    String dob,
     String email,
     String password,
   ) async {
@@ -153,7 +155,7 @@ class UserRepository with ChangeNotifier {
 
       // Update user profile with username
       await user?.updateDisplayName(username);
-
+      await user?.updatePhotoURL(dob);
       // If createUserWithEmailAndPassword succeeds, update status and return true
       _status = Status.Authenticated;
       notifyListeners();
@@ -162,7 +164,7 @@ class UserRepository with ChangeNotifier {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const Home(),
+          builder: (context) => const HomePage(),
         ),
       );
       return true;

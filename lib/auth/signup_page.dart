@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -25,6 +26,7 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   bool _obscureText = true;
+  bool _obscureText1 = true;
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmpasswordController = TextEditingController();
@@ -34,26 +36,26 @@ class _SignUpState extends State<SignUp> {
   @override
   void initState() {
     super.initState();
-    if (emailController.text.isEmpty) {
-      setState(() {
-        emailController.text = widget.email.toString() ?? "";
-      });
-    } else {
+
+    // Handle email controller
+    if (widget.email == null || widget.email!.isEmpty) {
       emailController.text = "";
-    }
-    if (passwordController.text.isEmpty) {
-      setState(() {
-        passwordController.text = widget.password.toString() ?? "";
-      });
     } else {
+      emailController.text = widget.email.toString();
+    }
+
+    // Handle password controller
+    if (widget.password == null || widget.password!.isEmpty) {
       passwordController.text = "";
-    }
-    if (confirmpasswordController.text.isEmpty) {
-      setState(() {
-        confirmpasswordController.text = widget.password.toString() ?? "";
-      });
     } else {
+      passwordController.text = widget.password.toString();
+    }
+
+    // Handle confirm password controller
+    if (widget.password == null || widget.password!.isEmpty) {
       confirmpasswordController.text = "";
+    } else {
+      confirmpasswordController.text = widget.password.toString();
     }
   }
 
@@ -68,7 +70,6 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserRepository>(context);
     return Scaffold(
       backgroundColor: AppColors.loginBgColor,
       body: Column(
@@ -179,6 +180,9 @@ class _SignUpState extends State<SignUp> {
                         padding: EdgeInsets.symmetric(horizontal: 20.w),
                         child: TextFormField(
                           controller: usernameController,
+                          validator: (value) => (value!.isEmpty)
+                              ? "Please Enter UserName".tr()
+                              : null,
                           decoration:
                               AppTextFieldStyles.standardInputDecoration(
                             hintText: 'Enter your name',
@@ -194,6 +198,9 @@ class _SignUpState extends State<SignUp> {
                         padding: EdgeInsets.symmetric(horizontal: 20.w),
                         child: TextFormField(
                           controller: emailController,
+                          validator: (value) => (value!.isEmpty)
+                              ? "Please Enter Email".tr()
+                              : null,
                           decoration:
                               AppTextFieldStyles.standardInputDecoration(
                             hintText: 'Enter your email',
@@ -209,6 +216,9 @@ class _SignUpState extends State<SignUp> {
                         padding: EdgeInsets.symmetric(horizontal: 20.w),
                         child: TextFormField(
                           controller: passwordController,
+                          validator: (value) => (value!.isEmpty)
+                              ? "Please Enter Password".tr()
+                              : null,
                           obscureText: _obscureText,
                           decoration: InputDecoration(
                               focusedBorder: UnderlineInputBorder(
@@ -266,7 +276,10 @@ class _SignUpState extends State<SignUp> {
                         padding: EdgeInsets.symmetric(horizontal: 20.w),
                         child: TextFormField(
                           controller: confirmpasswordController,
-                          obscureText: _obscureText,
+                          validator: (value) => (value!.isEmpty)
+                              ? "Please Enter Password".tr()
+                              : null,
+                          obscureText: _obscureText1,
                           decoration: InputDecoration(
                               focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
@@ -299,7 +312,7 @@ class _SignUpState extends State<SignUp> {
                                   fontWeight: FontWeight.w500),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _obscureText
+                                  _obscureText1
                                       ? Icons.visibility
                                       : Icons.visibility_off,
                                   color: AppColors.seperatorColor,
@@ -307,7 +320,7 @@ class _SignUpState extends State<SignUp> {
                                 onPressed: () {
                                   setState(
                                     () {
-                                      _obscureText = !_obscureText;
+                                      _obscureText1 = !_obscureText1;
                                     },
                                   );
                                 },
@@ -320,40 +333,39 @@ class _SignUpState extends State<SignUp> {
                         height: 20.h,
                       ),
                       // continue button
-                      user.status == Status.Authenticating
-                          ? const Center(
-                              child: CircularProgressIndicator(),
-                            )
-                          : InkWell(
-                              onTap: () async {
-                                if (passwordController.text !=
-                                    confirmpasswordController.text) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Password do not match"),
-                                    ),
-                                  );
-                                } else {
-                                  if (_formKey.currentState!.validate()) {
-                                    if (!await user.signUp(
-                                      context,
-                                      usernameController.text,
-                                      emailController.text,
-                                      passwordController.text,
-                                    )) {}
-                                  }
-                                }
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                                child: CustomButton(
-                                  text: 'CONTINUE',
-                                  onPressed: () {
-                                    // Add your button click logic here
-                                  },
+                      InkWell(
+                        onTap: () {
+                          if (_formKey.currentState!.validate()) {
+                            if (passwordController.text !=
+                                confirmpasswordController.text) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Passwords do not match"),
                                 ),
-                              ),
-                            ),
+                              );
+                            } else {
+                              // Navigate only if validation passes and passwords match
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AccountSetup(
+                                    email: emailController.text,
+                                    password: passwordController.text,
+                                    username: usernameController.text,
+                                  ),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          child: CustomButton(
+                            text: 'CONTINUE',
+                            onPressed: () {},
+                          ),
+                        ),
+                      ),
 
                       // or sign in with ....
                       //                         SizedBox(
@@ -434,7 +446,10 @@ class _SignUpState extends State<SignUp> {
                             ),
                           ],
                         ),
-                      )
+                      ),
+                      SizedBox(
+                        height: 30.h,
+                      ),
                     ],
                   ),
                 ),

@@ -2,10 +2,13 @@ import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/styles.dart';
 
 class WakeTime extends StatefulWidget {
+  final Time sleepTime;
+  const WakeTime({required this.sleepTime});
   @override
   State<WakeTime> createState() => _WakeTimeState();
 }
@@ -15,19 +18,19 @@ class _WakeTimeState extends State<WakeTime> {
   bool iosStyle = true;
 
   void sleepTimeSet(Time newTime) {
-    setState(() {
-      _timeWake = newTime;
-    });
+    _timeWake = newTime;
 
-    debugPrint("Wake time: $newTime");
+    SleepFireStoreServices()
+        .addNewSleepTime(sleepTime: widget.sleepTime, wakeTime: _timeWake);
   }
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("Wake time: ${widget.sleepTime}");
     return AlertDialog(
       alignment: Alignment.center,
       elevation: 0,
-      backgroundColor: Color.fromRGBO(255, 0, 0, 0),
+      backgroundColor: const Color.fromRGBO(255, 0, 0, 0),
 
       // Render inline widget
       content: Container(

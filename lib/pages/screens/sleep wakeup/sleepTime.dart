@@ -13,14 +13,11 @@ class SleepTime extends StatefulWidget {
 
 class _SleepTimeState extends State<SleepTime> {
   Time _time = Time(hour: 20, minute: 30);
-  bool iosStyle = true;
 
   void onTimeChanged(Time newTime) {
-    setState(() {
-      _time = newTime;
-    });
-    Navigator.pop(context);
-    debugPrint("Sleep time: $newTime");
+    _time = newTime;
+
+    Navigator.pop(context); // popping the current dialog
   }
 
   @override
@@ -68,7 +65,8 @@ class _SleepTimeState extends State<SleepTime> {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return WakeTime(); // Use the custom dialog
+                      return WakeTime(
+                          sleepTime: _time); // Use the custom dialog
                     },
                   );
                 },
@@ -77,7 +75,7 @@ class _SleepTimeState extends State<SleepTime> {
                 ),
                 dialogInsetPadding:
                     EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.h),
-                unselectedColor: Color.fromRGBO(0, 0, 0, 0.75),
+                unselectedColor: const Color.fromRGBO(0, 0, 0, 0.75),
                 hourLabel: 'Hour',
                 minuteLabel: 'Minutes',
                 // wheelHeight: 300.h,
@@ -97,7 +95,7 @@ class _SleepTimeState extends State<SleepTime> {
                 isOnChangeValueMode: false,
 
                 minuteInterval: TimePickerInterval.FIVE,
-                iosStylePicker: iosStyle,
+                iosStylePicker: true,
 
                 is24HrFormat: false,
               ),

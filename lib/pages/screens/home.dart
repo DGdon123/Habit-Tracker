@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:habit_tracker/location/current_location.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
@@ -28,7 +29,7 @@ class _HomeState extends State<Home> {
       child: Scaffold(
           body: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           appbar(),
@@ -91,7 +92,7 @@ class _HomeState extends State<Home> {
           width: 180.w,
           height: 90.h,
           decoration: ShapeDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               begin: Alignment.bottomLeft,
               end: Alignment.topRight,
               colors: [
@@ -179,7 +180,7 @@ class _HomeState extends State<Home> {
           width: 180.w,
           height: 90.h,
           decoration: ShapeDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               begin: Alignment.bottomRight,
               end: Alignment.topLeft,
               colors: [
@@ -259,7 +260,7 @@ class _HomeState extends State<Home> {
           width: 180.w,
           height: 100.h,
           decoration: ShapeDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               begin: Alignment.bottomLeft,
               end: Alignment.topRight,
               colors: [
@@ -283,7 +284,7 @@ class _HomeState extends State<Home> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Joined at',
                           style: TextStyle(
                             color: Colors.white,
@@ -312,7 +313,7 @@ class _HomeState extends State<Home> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           'Left at',
                           style: TextStyle(
                             color: Colors.white,
@@ -391,7 +392,7 @@ class _HomeState extends State<Home> {
               width: 180.w,
               height: 100.h,
               decoration: ShapeDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   begin: Alignment(-0.97, -0.22),
                   end: Alignment(0.97, 0.22),
                   colors: [
@@ -494,24 +495,25 @@ class _HomeState extends State<Home> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PickCharacterPage(),
+                  builder: (context) => const CurrentLocation(),
                 ),
               );
             },
             child: Container(
-                height: 50.h,
-                width: 50.w,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryColor,
-                  borderRadius: BorderRadius.all(Radius.circular(16.r)),
-                ),
-                child: SvgPicture.asset(
-                  AppIcons.customize,
-                  color: AppColors.black,
-                  height: 35.h,
-                  width: 35.w,
-                ),
-                alignment: Alignment.center),
+              height: 50.h,
+              width: 50.w,
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.all(Radius.circular(16.r)),
+              ),
+              alignment: Alignment.center,
+              child: SvgPicture.asset(
+                AppIcons.customize,
+                color: AppColors.black,
+                height: 35.h,
+                width: 35.w,
+              ),
+            ),
           ),
           TextButton(
               onPressed: () async {

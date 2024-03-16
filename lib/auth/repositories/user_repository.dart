@@ -136,6 +136,7 @@ class UserRepository with ChangeNotifier {
   Future<bool> signUp(
     BuildContext context,
     String username,
+    String dob,
     String email,
     String password,
   ) async {
@@ -154,7 +155,7 @@ class UserRepository with ChangeNotifier {
 
       // Update user profile with username
       await user?.updateDisplayName(username);
-
+      await user?.updatePhotoURL(dob);
       // If createUserWithEmailAndPassword succeeds, update status and return true
       _status = Status.Authenticated;
       notifyListeners();

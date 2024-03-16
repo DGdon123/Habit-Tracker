@@ -16,6 +16,7 @@ class AppIcons {
   static const String focus = 'assets/icons/focus.svg';
   static const String friends = 'assets/icons/friends.svg';
   static const String stats = 'assets/icons/stats.svg';
+  static const String logout = 'assets/icons/logout.png';
   static const String sleep = 'assets/icons/sleep.svg';
   static const String profile = 'assets/icons/profile.svg';
   static const String unfriend = 'assets/icons/unfriend.svg';

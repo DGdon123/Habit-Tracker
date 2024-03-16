@@ -50,7 +50,8 @@ dependencies:
   easy_localization: ^3.0.5
   shared_preferences: ^2.2.2
   app_usage: ^3.0.1
-  usage_stats: ^1.2.0
+  geocoding: ^3.0.0
+  geolocator: ^11.0.0
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +78,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
+    - .env
     - assets/translations/
 
   # An image asset can refer to one or more resolution-specific "variants", see

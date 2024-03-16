@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
+import 'package:habit_tracker/services/device_screen_time_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -27,7 +28,9 @@ class _HomeState extends State<Home> {
       child: Scaffold(
           body: Column(
         children: [
-          SizedBox(height: 5,),
+          SizedBox(
+            height: 5,
+          ),
           appbar(),
           // character
           Expanded(
@@ -510,6 +513,15 @@ class _HomeState extends State<Home> {
                 ),
                 alignment: Alignment.center),
           ),
+          TextButton(
+              onPressed: () async {
+                final duration =
+                    await DeviceScreenTimeServices().getUsageStats();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text("Total duration: $duration"),
+                ));
+              },
+              child: Text("Usage")),
           Container(
             height: 40.h,
             decoration: BoxDecoration(
@@ -524,7 +536,6 @@ class _HomeState extends State<Home> {
                     AppIcons.xp,
                     height: 20.h,
                     width: 20.w,
-
                   ),
                   SizedBox(
                     width: 5.w,

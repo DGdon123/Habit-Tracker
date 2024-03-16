@@ -43,14 +43,14 @@ class HomePageState extends State<HomePage> {
           ),
           child: FloatingActionButton(
             elevation: 10,
-            shape: CircleBorder(),
+            shape: const CircleBorder(),
             backgroundColor: AppColors.mainBlue,
             child: SvgPicture.asset(AppIcons.focus, height: 50.h),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FocusPage(),
+                  builder: (context) => const FocusPage(),
                 ),
               );
             },
@@ -61,10 +61,10 @@ class HomePageState extends State<HomePage> {
           elevation: 0,
           notchMargin: 8,
           clipBehavior: Clip.none,
-          color: Color.fromARGB(255, 242, 247, 255),
+          color: const Color.fromARGB(255, 242, 247, 255),
           padding: EdgeInsets.zero,
           height: 80.h,
-          shape: CircularNotchedRectangle(),
+          shape: const CircularNotchedRectangle(),
           child: BottomNavigationBar(
             iconSize: 28.h,
             elevation: 0,
@@ -87,7 +87,7 @@ class HomePageState extends State<HomePage> {
               fontWeight: FontWeight.w400,
               height: 0,
             ),
-            backgroundColor: Color.fromARGB(0, 255, 0, 0),
+            backgroundColor: const Color.fromARGB(0, 255, 0, 0),
             currentIndex: _currentIndex,
             onTap: (index) {
               setState(() {
@@ -115,7 +115,7 @@ class HomePageState extends State<HomePage> {
                 ),
                 label: 'Stats',
               ),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Icon(
                   Icons.person,
                   color: Colors.transparent,
@@ -152,17 +152,17 @@ class HomePageState extends State<HomePage> {
   Widget _getPage(int index) {
     switch (index) {
       case 0:
-        return FriendsPage();
+        return const FriendsPage();
       case 1:
-        return StatsPage();
+        return const StatsPage();
       case 2:
-        return Home();
+        return const Home();
       case 3:
-        return SleepPage();
+        return const SleepPage();
       case 4:
-        return ProfilePage();
+        return const ProfilePage();
       default:
-        return Center(child: Text('Unknown Page'));
+        return const Center(child: Text('Unknown Page'));
     }
   }
 }

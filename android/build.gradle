@@ -4,6 +4,19 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url 'https://api.mapbox.com/downloads/v2/releases/maven'
+            authentication {
+                basic(BasicAuthentication)
+            }
+            credentials {
+                // Do not change the username below.
+                // This should always be `mapbox` (not your username).
+                username = "mapbox"
+                // Use the secret token you stored in gradle.properties as the password
+                password = "sk.eyJ1IjoiZGdkb24tMTIzIiwiYSI6ImNsdHR0NndlaTBsMjcyanBqbGp0Zm5sdHYifQ.VF7V6T25mpUZVSLo40nTDg"
+            }
+        }
     }
 
     dependencies {
@@ -17,6 +30,15 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url 'https://google.bintray.com/exoplayer/'
+        }
+        //** add this line
+        configurations.all {
+            resolutionStrategy {
+                force "com.google.android.gms:play-services-location:21.0.1"
+            }
+        }
     }
 }
 

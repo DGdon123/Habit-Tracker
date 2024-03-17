@@ -7,6 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/textfields.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
+    as bg;
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CurrentLocation extends StatefulWidget {
   const CurrentLocation({super.key});
@@ -16,15 +19,88 @@ class CurrentLocation extends StatefulWidget {
 }
 
 class _OnBoardingScreenState extends State<CurrentLocation> {
-  List<String> _places = [];
-  Position? _currentPosition;
+  bool isChecked = false;
+  bool isChecked1 = false;
+  bool isChecked2 = false;
+  TextEditingController emailController = TextEditingController();
   final TextEditingController _textEditingController = TextEditingController();
   final TextEditingController _textEditingController1 = TextEditingController();
+  List<String> _places = [];
+  Position? _currentPosition;
   String? _errorMessage;
+  String _location = "None";
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
+    _selectedTime = TimeOfDay.now();
+    bg.BackgroundGeolocation.onLocation((bg.Location location) {
+      print('[location] - $location');
+      setState(() {
+        _location =
+            "${location.coords.latitude} | ${location.coords.longitude}";
+      });
+      Fluttertoast.showToast(
+          msg: "[location] -$location",
+          toastLength: Toast.LENGTH_SHORT,
+          // gravity: ToastGravity.CENTER,
+          // timeInSecForIosWeb: 1,
+          // backgroundColor: Colors.red,
+          // textColor: Colors.white,
+          fontSize: 16.0);
+    });
+
+    // Fired whenever the plugin changes motion-state (stationary->moving and vice-versa)
+    bg.BackgroundGeolocation.onMotionChange((bg.Location location) {
+      print('[motionchange] - $location');
+      setState(() {
+        _location =
+            "${location.coords.latitude} | ${location.coords.longitude}";
+      });
+      Fluttertoast.showToast(
+          msg: "[motionchange] -$location",
+          toastLength: Toast.LENGTH_SHORT,
+          // gravity: ToastGravity.CENTER,
+          // timeInSecForIosWeb: 1,
+          // backgroundColor: Colors.red,
+          // textColor: Colors.white,
+          fontSize: 16.0);
+    });
+
+    // Fired whenever the state of location-services changes.  Always fired at boot
+    bg.BackgroundGeolocation.onProviderChange((bg.ProviderChangeEvent event) {
+      print('[providerchange] - $event');
+
+      Fluttertoast.showToast(
+          msg: "[providerchange] -$event",
+          toastLength: Toast.LENGTH_SHORT,
+          // gravity: ToastGravity.CENTER,
+          // timeInSecForIosWeb: 1,
+          // backgroundColor: Colors.red,
+          // textColor: Colors.white,
+          fontSize: 16.0);
+    });
+
+    ////
+    // 2.  Configure the plugin
+    //
+    bg.BackgroundGeolocation.ready(bg.Config(
+            notification:
+                bg.Notification(title: "Name Location", text: "Kathmandu"),
+            desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
+            distanceFilter: 10.0,
+            stopOnTerminate: true,
+            startOnBoot: true,
+            debug: true,
+            logLevel: bg.Config.LOG_LEVEL_VERBOSE))
+        .then((bg.State state) {
+      if (!state.enabled) {
+        ////
+        // 3.  Start the plugin.
+        //
+        bg.BackgroundGeolocation.start();
+      }
+    });
   }
 
   Future<void> _getCurrentLocation() async {
@@ -86,10 +162,39 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
     }
   }
 
-  Future<void> searchPlacesInNepal() async {
+  TimeOfDay? _selectedTime;
+  Future<void> _selectTime(BuildContext context) async {
+    final ThemeData theme = Theme.of(context);
+    final initialTime = _selectedTime ?? TimeOfDay.now();
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            // Change the colors here
+            primaryColor: AppColors.mainBlue, // Header background color
+
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.mainBlue, // Selected day background color
+              onPrimary: Colors.white, // Selected day text color
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (pickedTime != null && pickedTime != _selectedTime) {
+      setState(() {
+        _selectedTime = pickedTime;
+      });
+    }
+  }
+
+  Future<void> searchPlacesWorldwide() async {
     final query = _textEditingController.text;
     final url =
-        'https://api.mapbox.com/geocoding/v5/mapbox.places/$query.json?country=np&access_token=pk.eyJ1IjoiZGdkb24tMTIzIiwiYSI6ImNsbGFlandwcjFxNGMzcm8xbGJjNTY4bmgifQ.dGSMw7Ai7BpXWW4qQRcLgA';
+        'https://api.mapbox.com/geocoding/v5/mapbox.places/$query.json?access_token=pk.eyJ1IjoiZGdkb24tMTIzIiwiYSI6ImNsbGFlandwcjFxNGMzcm8xbGJjNTY4bmgifQ.dGSMw7Ai7BpXWW4qQRcLgA';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -99,13 +204,8 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
       final places = <String>[];
 
       for (final feature in features) {
-        final placeTypes = feature['place_type'] as List<dynamic>;
-        if (placeTypes.contains('district') ||
-            placeTypes.contains('place') ||
-            placeTypes.contains('locality')) {
-          final placeName = feature['place_name'] as String;
-          places.add(placeName);
-        }
+        final placeName = feature['place_name'] as String;
+        places.add(placeName);
       }
 
       if (places.isEmpty) {
@@ -121,7 +221,7 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
   @override
   void dispose() {
     _textEditingController.dispose();
-
+    emailController.clear();
     super.dispose();
   }
 
@@ -154,37 +254,76 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: EdgeInsets.symmetric(
+              horizontal: 20.w,
+            ),
             child: TextFormField(
-              onChanged: (value) => searchPlacesInNepal(),
+              controller: _textEditingController,
+              onChanged: (value) => searchPlacesWorldwide(),
               validator: (value) => (value!.isEmpty)
                   ? "Please Enter Your Gym Location".tr()
                   : null,
               decoration: AppTextFieldStyles.standardInputDecoration(
                 hintText: 'Enter your gym location',
                 labelText: 'Gym Location',
-                keyboardType: TextInputType.emailAddress,
+                keyboardType: TextInputType.name,
               ),
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _places.length,
-              itemBuilder: (BuildContext context, int index) {
-                final place = _places[index];
-                return ListTile(
-                  title:
-                      place == 'No results found' ? Text(place) : Text(place),
-                  onTap: () {
-                    if (place != 'No results found') {
-                      _textEditingController.text = place;
-                      setState(() => _places.clear());
-                    }
-                  },
-                );
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 20.w,
+            ),
+            child: TextFormField(
+              readOnly: true,
+              controller: _textEditingController1,
+              onTap: () {
+                _selectTime(context);
               },
+              validator: (value) =>
+                  (value!.isEmpty) ? "Please Enter Your Gym Time".tr() : null,
+              decoration: AppTextFieldStyles.standardInputDecoration(
+                hintText: DateFormat.jm().format(
+                  DateTime(
+                    2022,
+                    1,
+                    1,
+                    _selectedTime!.hour,
+                    _selectedTime!.minute,
+                  ),
+                ),
+                labelText: 'Gym Time',
+                keyboardType: TextInputType.name,
+              ),
             ),
           ),
+          Center(
+            child: Text(
+              _location,
+              style: const TextStyle(),
+            ),
+          ),
+          _textEditingController.text.isNotEmpty
+              ? Expanded(
+                  child: ListView.builder(
+                    itemCount: _places.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final place = _places[index];
+                      return ListTile(
+                        title: place == 'No results found'
+                            ? Text(place)
+                            : Text(place),
+                        onTap: () {
+                          if (place != 'No results found') {
+                            _textEditingController.text = place;
+                            setState(() => _places.clear());
+                          }
+                        },
+                      );
+                    },
+                  ),
+                )
+              : Container(),
         ],
       ),
     );

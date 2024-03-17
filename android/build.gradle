@@ -1,6 +1,15 @@
 buildscript {
     ext.kotlin_version = '1.8.22'
-
+    ext {
+        compileSdkVersion   = 33                // or higher / as desired
+        targetSdkVersion    = 33                // or higher / as desired
+        minSdkVersion       = 21                // Required minimum
+        appCompatVersion    = "1.4.2"           // or higher / as desired
+        playServicesLocationVersion = "21.0.1"
+          // or higher / as desired
+        hmsLocationVersion  = "6.12.0.300" //<-- this version invokes StrictMode crash "Explicit termination method 'end' not called" from its own okhttp requests!!
+        removeBackgroundGeolocationDebugSoundsInRelease = false
+    }
     repositories {
         google()
         mavenCentral()
@@ -14,7 +23,7 @@ buildscript {
                 // This should always be `mapbox` (not your username).
                 username = "mapbox"
                 // Use the secret token you stored in gradle.properties as the password
-                password = "sk.eyJ1IjoiZGdkb24tMTIzIiwiYSI6ImNsdHR0NndlaTBsMjcyanBqbGp0Zm5sdHYifQ.VF7V6T25mpUZVSLo40nTDg"
+                password = "sk.eyJ1IjoiZGdkb24tMTIzIiwiYSI6ImNsZjJ3Z2h4ZTBtbDUzenBub2RhbWJtcWUifQ.ViLq8lPsIDymAa4HIjs7mQ"
             }
         }
     }
@@ -39,6 +48,13 @@ allprojects {
                 force "com.google.android.gms:play-services-location:21.0.1"
             }
         }
+        maven {
+            url "${project(':background_fetch').projectDir}/libs"
+        }
+        maven {
+            url "${project(':flutter_background_geolocation').projectDir}/libs"
+        }
+        maven { url 'https://developer.huawei.com/repo/' }
     }
 }
 

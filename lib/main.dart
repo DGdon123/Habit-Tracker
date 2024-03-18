@@ -14,7 +14,6 @@ import 'package:habit_tracker/pages/auth_onboarding_deciding_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'auth/repositories/user_repository.dart';
-import 'services/local_storage_services.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

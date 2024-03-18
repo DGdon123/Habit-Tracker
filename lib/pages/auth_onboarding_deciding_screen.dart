@@ -20,7 +20,6 @@ class AuthOnBoardingDecidingScreen extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done &&
             snapshot.hasData) {
           // If app is launched first time, show onboarding page
-          log("APP launched: ${snapshot.data}");
           if (snapshot.data!) {
             return const OnBoardingScreen();
           } else {

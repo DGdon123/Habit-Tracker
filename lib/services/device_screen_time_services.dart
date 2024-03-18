@@ -2,27 +2,30 @@ import 'package:app_usage/app_usage.dart';
 import 'package:flutter/cupertino.dart';
 
 class DeviceScreenTimeServices {
-  Future<void> getUsageStats() async {
+  Future<Duration> getUsageStats() async {
     try {
+      DateTime now = DateTime.now();
       DateTime endDate = DateTime.now();
       DateTime startDate =
-          DateTime(endDate.year, endDate.month, endDate.day - 1);
+          DateTime(endDate.year, endDate.month, now.day, 0, 0, 0, 0, 0);
+
+      debugPrint("Start Date: $startDate, End Date: $endDate");
+
       List<AppUsageInfo> infoList =
           await AppUsage().getAppUsage(startDate, endDate);
 
-      debugPrint("Info list: ${infoList.length}");
-
-      var currentDuration = Duration.zero;
+      Duration usageDuration = const Duration();
 
       for (var info in infoList) {
-        currentDuration += info.usage;
-
-        debugPrint("App Name: ${info.appName}, ${info.usage}");
+        usageDuration += info.usage;
+        debugPrint("App: ${info.packageName}, Usage: ${info.usage}");
       }
 
-      debugPrint("Total Duration: ${currentDuration.inHours}");
-    } on AppUsageException catch (exception) {
+      debugPrint("Total Usage: $usageDuration");
+      return usageDuration;
+    } catch (exception) {
       debugPrint(exception.toString());
+      return const Duration();
     }
   }
 }

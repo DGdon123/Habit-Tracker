@@ -52,10 +52,14 @@ dependencies:
   app_usage: ^3.0.1
   geocoding: ^3.0.0
   geolocator: ^11.0.0
+  flutter_dotenv: ^5.1.0
+  flutter_background_geolocation: ^4.14.2
+  fluttertoast: ^8.2.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -76,9 +80,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - .env
     - assets/icons/
     - assets/images/
-    - .env
     - assets/translations/
 
   # An image asset can refer to one or more resolution-specific "variants", see

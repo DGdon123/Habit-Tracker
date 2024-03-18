@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:day_night_time_picker/day_night_time_picker.dart';
@@ -22,7 +23,7 @@ class FocusPage extends StatefulWidget {
 class FocusPageState extends State<FocusPage> {
   Time _time = Time(hour: 00, minute: 25, second: 59);
   bool iosStyle = true;
-  PageController _pageController = PageController(
+  final PageController _pageController = PageController(
     viewportFraction: 0.8,
     initialPage: 0,
   );
@@ -34,6 +35,10 @@ class FocusPageState extends State<FocusPage> {
       _time = newTime;
     });
   }
+
+  int hour = 0;
+  int minute = 0;
+  int second = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +57,7 @@ class FocusPageState extends State<FocusPage> {
     );
 
     TextStyle labelStyle = TextStyle(
-      color: Color(0xFF040415),
+      color: const Color(0xFF040415),
       fontSize: 18.sp,
       fontFamily: 'SFProText',
       fontWeight: FontWeight.w600,
@@ -69,7 +74,12 @@ class FocusPageState extends State<FocusPage> {
       child: Scaffold(
         backgroundColor: AppColors.white,
         body: Container(
-          margin: EdgeInsets.only(top: kIsWeb ? 35.h : Platform.isIOS ? 50.h : 35.h),
+          margin: EdgeInsets.only(
+              top: kIsWeb
+                  ? 35.h
+                  : Platform.isIOS
+                      ? 50.h
+                      : 35.h),
           child: Column(
             children: <Widget>[
               Padding(
@@ -107,12 +117,11 @@ class FocusPageState extends State<FocusPage> {
                   ],
                 ),
               ),
-
               Stack(
                 children: [
                   Padding(
                     padding:
-                        EdgeInsets.only(right: 10.w, top: 10.w, bottom: 0.w),
+                        EdgeInsets.only(right: 10.w, top: 10.w, bottom: 30.h),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -126,7 +135,8 @@ class FocusPageState extends State<FocusPage> {
                               ),
                               dialogInsetPadding: EdgeInsets.symmetric(
                                   horizontal: 0.w, vertical: 0.h),
-                              unselectedColor: Color.fromRGBO(0, 0, 0, 0.75),
+                              unselectedColor:
+                                  const Color.fromRGBO(0, 0, 0, 0.75),
                               hourLabel: 'Hour',
                               minuteLabel: 'Minute',
                               secondLabel: 'Second',
@@ -139,12 +149,12 @@ class FocusPageState extends State<FocusPage> {
                               value: _time,
                               onChange: onTimeChanged,
                               onChangeDateTime: (DateTime dateTime) {
-                                int hour = dateTime.hour;
-                                int minute = dateTime.minute;
-                                int second = dateTime.second;
+                                hour = dateTime.hour;
+                                minute = dateTime.minute;
+                                second = dateTime.second;
                                 print(hour);
                                 print(minute);
-                                print(second);
+                                log(second.toString());
                                 setState(() {
                                   _time = Time(
                                       hour: hour,
@@ -153,8 +163,11 @@ class FocusPageState extends State<FocusPage> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              FocusMainScreen()));
+                                          builder: (context) => FocusMainScreen(
+                                                hour: hour,
+                                                minute: minute,
+                                                second: second,
+                                              )));
                                 });
                                 print(_time.toString());
                               },
@@ -180,15 +193,13 @@ class FocusPageState extends State<FocusPage> {
                       ],
                     ),
                   ),
-
-
                   Positioned(
                     bottom: 0,
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: Row(
                         children: [
-                          Container(
+                          SizedBox(
                             height: 100.h,
                             width: 200.w,
                             child: PageView(
@@ -196,16 +207,17 @@ class FocusPageState extends State<FocusPage> {
                               scrollDirection: Axis.horizontal,
                               children: [
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 3),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
                                   child: Column(
                                     children: [
                                       Container(
                                         decoration: BoxDecoration(
-                                            color: Color(0xFFFCDCD3),
+                                            color: const Color(0xFFFCDCD3),
                                             borderRadius:
                                                 BorderRadius.circular(10.r)),
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: 20.w, vertical: 20.w),
+                                            horizontal: 27.w, vertical: 20.w),
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
@@ -246,12 +258,13 @@ class FocusPageState extends State<FocusPage> {
                                   ),
                                 ),
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 3),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 3),
                                   child: Column(
                                     children: [
                                       Container(
                                         decoration: BoxDecoration(
-                                            color: Color(0xFFCFFFE5),
+                                            color: const Color(0xFFCFFFE5),
                                             borderRadius:
                                                 BorderRadius.circular(10.r)),
                                         padding: EdgeInsets.symmetric(
@@ -297,12 +310,13 @@ class FocusPageState extends State<FocusPage> {
                                 ),
                                 // meditate
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 3),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 3),
                                   child: Column(
                                     children: [
                                       Container(
                                         decoration: BoxDecoration(
-                                            color: Color(0xFFD5ECE0),
+                                            color: const Color(0xFFD5ECE0),
                                             borderRadius:
                                                 BorderRadius.circular(10.r)),
                                         padding: EdgeInsets.symmetric(
@@ -347,7 +361,8 @@ class FocusPageState extends State<FocusPage> {
                                   ),
                                 ),
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 3),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 3),
                                   child: Column(
                                     children: [
                                       Container(
@@ -446,7 +461,7 @@ class FocusPageState extends State<FocusPage> {
                           width: 70.h,
                           height: 70.w,
                           decoration: ShapeDecoration(
-                            color: Color(0xFF00FFDE),
+                            color: const Color(0xFF00FFDE),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(1000.r),
                             ),
@@ -475,7 +490,7 @@ class FocusPageState extends State<FocusPage> {
 
   Container seperator() {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(
           bottom: BorderSide(width: 1, color: Color(0xFFD0D0D0)),
         ),
@@ -491,7 +506,7 @@ class FocusPageState extends State<FocusPage> {
         decoration: ShapeDecoration(
           color: Colors.white,
           shape: RoundedRectangleBorder(
-            side: BorderSide(width: 1, color: Color(0xFFD0D0D0)),
+            side: const BorderSide(width: 1, color: Color(0xFFD0D0D0)),
             borderRadius: BorderRadius.circular(16),
           ),
         ),
@@ -563,7 +578,7 @@ class FocusPageState extends State<FocusPage> {
   }
 
   Future<String?> _showTextInputDialog(BuildContext context) async {
-    TextEditingController _textController = TextEditingController();
+    TextEditingController textController = TextEditingController();
 
     return showDialog<String>(
       context: context,
@@ -573,14 +588,14 @@ class FocusPageState extends State<FocusPage> {
           title: Text(
             'Enter Label',
             style: TextStyle(
-              color: Color(0xFF040415),
+              color: const Color(0xFF040415),
               fontSize: 18.sp,
               fontFamily: 'SFProText',
               fontWeight: FontWeight.w600,
             ),
           ),
           content: TextField(
-            controller: _textController,
+            controller: textController,
             onChanged: (value) {
               // You can add any additional logic here
             },
@@ -599,13 +614,13 @@ class FocusPageState extends State<FocusPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(_textController.text);
+                Navigator.of(context).pop(textController.text);
               },
-              child: Text(
+              child: const Text(
                 'OK',
                 style: TextStyle(
                   color: AppColors.mainBlue,

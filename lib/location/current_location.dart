@@ -90,6 +90,7 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
             desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
             distanceFilter: 10.0,
             stopOnTerminate: true,
+            
             startOnBoot: true,
             debug: true,
             logLevel: bg.Config.LOG_LEVEL_VERBOSE))

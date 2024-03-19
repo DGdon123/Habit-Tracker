@@ -5,7 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/auth/login_page.dart';
 import 'package:habit_tracker/onboarding/onboardingScreen.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 
@@ -17,6 +17,7 @@ import 'auth/repositories/user_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await EasyLocalization.ensureInitialized();
   await pre.Firebase.initializeApp();
 

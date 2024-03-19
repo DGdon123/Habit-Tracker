@@ -12,10 +12,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/sleep%20wakeup/sleepTime.dart';
+import 'package:habit_tracker/pages/sleep_page/widgets/custom_bar_chart.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
+import 'package:habit_tracker/utils/text_styles.dart';
 import 'package:intl/intl.dart';
 
 import 'widgets/start_end_date_picker.dart';
@@ -49,17 +51,6 @@ class SleepPageState extends State<SleepPage> {
     fontFamily: 'SFProText',
     fontWeight: FontWeight.w500,
   );
-
-  // secondary
-
-  TextStyle secondaryTextStyle(double fontSize, FontWeight fontWeight) {
-    return TextStyle(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: Colors.black.withOpacity(0.75),
-      fontFamily: 'SFProText',
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +226,8 @@ class SleepPageState extends State<SleepPage> {
                         ),
                         Text(
                           '${currentYear}',
-                          style: secondaryTextStyle(14.sp, FontWeight.w400),
+                          style: TextStyles()
+                              .secondaryTextStyle(14.sp, FontWeight.w400),
                         )
                       ],
                     ),
@@ -248,171 +240,23 @@ class SleepPageState extends State<SleepPage> {
                         ),
                         Text(
                           'Avg sleep time',
-                          style: secondaryTextStyle(14.sp, FontWeight.w400),
+                          style: TextStyles()
+                              .secondaryTextStyle(14.sp, FontWeight.w400),
                         )
                       ],
                     ),
                   ],
                 ),
               ),
+
               SizedBox(
                 height: 40.h,
               ),
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Container(
-                  height: 300,
-                  child: BarChart(
-                    BarChartData(
-                      borderData: FlBorderData(
-                          border: Border(
-                        top: BorderSide.none,
-                        left: BorderSide.none,
-                        right: BorderSide.none,
-                        bottom: BorderSide(
-                          color: Color(0xFFD0D0D0),
-                          width: 1.w,
-                        ),
-                      )),
-                      gridData: FlGridData(
-                        drawHorizontalLine: true,
-                        drawVerticalLine: false,
-                      ),
-                      maxY: 10,
-                      barGroups: barChartGroups,
-                      titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: (value, meta) {
-                              return Text(value.toInt().toString(),
-                                  style: secondaryTextStyle(
-                                      16.sp, FontWeight.w600));
-                            },
-                          ),
-                        ),
-                        rightTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        topTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: getTitles,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              const CustomBarChart(),
             ],
           ),
         ),
       ),
     );
   }
-}
-
-List<BarChartGroupData> barChartGroups = [
-  BarChartGroupData(x: 0, barRods: [
-    BarChartRodData(
-      width: 10.w,
-      toY: 0,
-      fromY: 5, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
-    ),
-  ]),
-  BarChartGroupData(x: 1, barRods: [
-    BarChartRodData(
-      width: 10.w,
-      toY: 0,
-      fromY: 7, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
-    ),
-  ]),
-  BarChartGroupData(x: 2, barRods: [
-    BarChartRodData(
-      width: 10.w,
-      toY: 0,
-      fromY: 9, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
-    ),
-  ]),
-  BarChartGroupData(x: 3, barRods: [
-    BarChartRodData(
-      width: 10.w,
-      toY: 0,
-      fromY: 5, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
-    ),
-  ]),
-  BarChartGroupData(x: 4, barRods: [
-    BarChartRodData(
-      width: 10.w,
-      toY: 0,
-      fromY: 8, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
-    ),
-  ]),
-  BarChartGroupData(x: 5, barRods: [
-    BarChartRodData(
-      width: 10.w,
-      toY: 0,
-      fromY: 7, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
-    ),
-  ]),
-  BarChartGroupData(x: 6, barRods: [
-    BarChartRodData(
-      width: 10.w,
-      toY: 0,
-      fromY: 3, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
-    ),
-  ]),
-];
-
-Widget getTitles(double value, TitleMeta meta) {
-  final style = TextStyle(
-    color: Colors.black.withOpacity(0.75),
-    fontSize: 14.sp,
-    fontFamily: 'SFProText',
-    fontWeight: FontWeight.w400,
-  );
-  String text;
-  switch (value.toInt()) {
-    case 0:
-      text = 'Sun';
-      break;
-    case 1:
-      text = 'Mon';
-      break;
-    case 2:
-      text = 'Tue';
-      break;
-    case 3:
-      text = 'Wed';
-      break;
-    case 4:
-      text = 'Thu';
-      break;
-    case 5:
-      text = 'Fri';
-      break;
-    case 6:
-      text = 'Sat';
-      break;
-    default:
-      text = '';
-      break;
-  }
-  return SideTitleWidget(
-    axisSide: meta.axisSide,
-    space: 4,
-    child: Text(text, style: style),
-  );
 }

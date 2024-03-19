@@ -18,6 +18,8 @@ import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:intl/intl.dart';
 
+import 'widgets/start_end_date_picker.dart';
+
 class SleepPage extends StatefulWidget {
   const SleepPage({super.key});
 
@@ -219,32 +221,14 @@ class SleepPageState extends State<SleepPage> {
                               width: 10.w,
                             ),
                             GestureDetector(
-                                onTap: () {
-                                  showCustomDateRangePicker(
-                                    fontFamily: "SFProText",
-                                    context,
-                                    dismissible: true,
-                                    minimumDate: DateTime.now()
-                                        .subtract(const Duration(days: 30)),
-                                    maximumDate: DateTime.now()
-                                        .add(const Duration(days: 30)),
-                                    endDate: endDate,
-                                    startDate: startDate,
-                                    backgroundColor: Colors.white,
-                                    primaryColor: AppColors.primaryColor,
-                                    onApplyClick: (start, end) {
-                                      setState(() {
-                                        endDate = end;
-                                        startDate = start;
+                                onTap: () async {
+                                  var res = await showDialog<dynamic>(
+                                      context: context,
+                                      builder: (_) {
+                                        return StartEndDatePicker(
+                                          firstDate: DateTime(2024, 3, 1),
+                                        );
                                       });
-                                    },
-                                    onCancelClick: () {
-                                      setState(() {
-                                        endDate = null;
-                                        startDate = null;
-                                      });
-                                    },
-                                  );
                                 },
                                 child: SvgPicture.asset(AppIcons.dropdown)),
                           ],

@@ -2,6 +2,8 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -73,6 +75,10 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
     // _stopWatchTimer.setPresetTime(mSec: 1234);
   }
 
+  int hours = 0;
+  int minutes = 0;
+  int seconds = 0;
+
   void time() {
     int hoursInMillis = (widget.hour ?? 0) * 60 * 60 * 1000;
     int minutesInMillis = (widget.minute ?? 0) * 60 * 1000;
@@ -85,6 +91,35 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
   void dispose() async {
     super.dispose();
     await _stopWatchTimer.dispose();
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? getUserID() {
+    User? user = _auth.currentUser;
+    return user?.uid;
+  }
+
+  String? getUserName() {
+    User? user = _auth.currentUser;
+    return user?.displayName;
+  }
+
+  Future<void> addUser(int hours, int minutes, int seconds) {
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('focus_timer');
+
+    return users
+        .add({
+          'Label': 'Meditate',
+          'Hours': hours,
+          'Minutes': minutes,
+          'Seconds': seconds,
+          'ID': getUserID(),
+          'Name': getUserName(),
+          'Timestamp': FieldValue.serverTimestamp(),
+        })
+        .then((value) => print("User added successfully!"))
+        .catchError((error) => print("Failed to add user: $error"));
   }
 
   @override
@@ -173,6 +208,11 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                 initialData: _stopWatchTimer.rawTime.value,
                 builder: (context, snap) {
                   final value = snap.data!;
+                  hours = int.parse(StopWatchTimer.getDisplayTimeHours(value));
+                  minutes =
+                      int.parse(StopWatchTimer.getDisplayTimeMinute(value));
+                  seconds =
+                      int.parse(StopWatchTimer.getDisplayTimeSecond(value));
                   final displayTime = StopWatchTimer.getDisplayTime(value,
                       hours: _isHours, milliSecond: false);
                   return Column(
@@ -260,6 +300,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                           _stopWatchTimer.onStopTimer();
                           setState(() {
                             started = false;
+                            addUser(hours, minutes, seconds);
                           });
                         } else {
                           _stopWatchTimer.onStartTimer();

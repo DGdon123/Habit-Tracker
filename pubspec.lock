@@ -41,14 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
-  background_fetch:
-    dependency: transitive
+  background_locator_2:
+    dependency: "direct main"
     description:
-      name: background_fetch
-      sha256: eb3af263d390d7e68ecb90f2ae984d2bfd96dceb4c7b4f72418dd5383b49de0a
+      name: background_locator_2
+      sha256: "145ef41767306052cbb2159478c0369b83c9800740f7acc656530c263d371695"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.4"
+    version: "2.0.6"
   boolean_selector:
     dependency: transitive
     description:
@@ -254,14 +254,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_background_geolocation:
-    dependency: "direct main"
-    description:
-      name: flutter_background_geolocation
-      sha256: "98683c77fe6e9223e3e352baa3bfa31811165d319bd6a334b882706a1356a5d3"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.14.2"
   flutter_dotenv:
     dependency: "direct main"
     description:
@@ -525,6 +517,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  location_permissions:
+    dependency: "direct main"
+    description:
+      name: location_permissions
+      sha256: a8429c1bc8b87bf079c49869602833853245247c453a5f74ab03d0bf177b0e1a
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.1"
   matcher:
     dependency: transitive
     description:
@@ -573,6 +573,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
+  path_provider:
+    dependency: "direct main"
+    description:
+      name: path_provider
+      sha256: b27217933eeeba8ff24845c34003b003b2b22151de3c908d0e679e8fe1aa078b
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.2"
+  path_provider_android:
+    dependency: transitive
+    description:
+      name: path_provider_android
+      sha256: "477184d672607c0a3bf68fbbf601805f92ef79c82b64b4d6eb318cbca4c48668"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.2"
+  path_provider_foundation:
+    dependency: transitive
+    description:
+      name: path_provider_foundation
+      sha256: "5a7999be66e000916500be4f15a3633ebceb8302719b47b9cc49ce924125350f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.2"
   path_provider_linux:
     dependency: transitive
     description:

@@ -52,6 +52,7 @@ dependencies:
   app_usage: ^3.0.1
   geocoding: ^3.0.0
   geolocator: ^11.0.0
+  calendar_date_picker2: ^0.5.5
   flutter_dotenv: ^5.1.0
   fluttertoast: ^8.2.4
   
@@ -62,7 +63,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

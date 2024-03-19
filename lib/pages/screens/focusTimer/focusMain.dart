@@ -1,16 +1,29 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
+
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
-import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class FocusMainScreen extends StatefulWidget {
-  const FocusMainScreen({super.key});
+  final int? hour;
+  final int? minute;
+  final int? second;
+  const FocusMainScreen({
+    super.key,
+    this.hour,
+    this.minute,
+    this.second,
+  });
 
   @override
   State<FocusMainScreen> createState() => _FocusMainScreenState();
@@ -19,29 +32,38 @@ class FocusMainScreen extends StatefulWidget {
 class _FocusMainScreenState extends State<FocusMainScreen> {
   final _isHours = true;
   bool started = false;
-  double _progressValue = 0.5;
+  double _progressValue = 1.0;
 
-  final StopWatchTimer _stopWatchTimer = StopWatchTimer(
-    mode: StopWatchMode.countDown,
-    presetMillisecond: 60000,
-    onChange: (value) => print('onChange $value'),
-    onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
-    onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
-    onStopped: () {
-      print('onStopped');
-    },
-    onEnded: () {
-      print('onEnded');
-    },
-  );
-
-  final _scrollController = ScrollController();
+  int milli = 0;
+  late StopWatchTimer _stopWatchTimer;
 
   @override
   void initState() {
     super.initState();
+    time(); // Call time() function to calculate milli
+
+    _stopWatchTimer = StopWatchTimer(
+      mode: StopWatchMode.countDown,
+      presetMillisecond: milli,
+      onChange: (value) {
+        int remainingMilliseconds = value;
+        // Calculate remaining progress value
+        _progressValue = remainingMilliseconds / milli;
+        setState(() {});
+      },
+      onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
+      onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
+      onStopped: () {
+        print('onStopped');
+      },
+      onEnded: () {
+        print('onEnded');
+      },
+    );
+
     _stopWatchTimer.rawTime.listen((value) =>
         print('rawTime $value ${StopWatchTimer.getDisplayTime(value)}'));
+
     _stopWatchTimer.minuteTime.listen((value) => print('minuteTime $value'));
     _stopWatchTimer.secondTime.listen((value) => print('secondTime $value'));
     _stopWatchTimer.records.listen((value) => print('records $value'));
@@ -53,10 +75,51 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
     // _stopWatchTimer.setPresetTime(mSec: 1234);
   }
 
+  int hours = 0;
+  int minutes = 0;
+  int seconds = 0;
+
+  void time() {
+    int hoursInMillis = (widget.hour ?? 0) * 60 * 60 * 1000;
+    int minutesInMillis = (widget.minute ?? 0) * 60 * 1000;
+    int secondsInMillis = (widget.second ?? 0) * 1000;
+    log(widget.second.toString());
+    milli = hoursInMillis + minutesInMillis + secondsInMillis;
+  }
+
   @override
   void dispose() async {
     super.dispose();
     await _stopWatchTimer.dispose();
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? getUserID() {
+    User? user = _auth.currentUser;
+    return user?.uid;
+  }
+
+  String? getUserName() {
+    User? user = _auth.currentUser;
+    return user?.displayName;
+  }
+
+  Future<void> addUser(int hours, int minutes, int seconds) {
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('focus_timer');
+
+    return users
+        .add({
+          'Label': 'Meditate',
+          'Hours': hours,
+          'Minutes': minutes,
+          'Seconds': seconds,
+          'ID': getUserID(),
+          'Name': getUserName(),
+          'Timestamp': FieldValue.serverTimestamp(),
+        })
+        .then((value) => print("User added successfully!"))
+        .catchError((error) => print("Failed to add user: $error"));
   }
 
   @override
@@ -102,7 +165,9 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 10,),
+              const SizedBox(
+                height: 10,
+              ),
               Image.asset(
                 AppImages.characterFull,
                 height: 450.h,
@@ -111,14 +176,14 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
+                  SizedBox(
                     width: 300.w,
                     height: 50.h,
                     child: LinearProgressIndicator(
                       value: _progressValue,
-                      backgroundColor: Color(0x7FD9D9D9),
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+                      backgroundColor: const Color(0x7FD9D9D9),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                          AppColors.primaryColor),
                     ),
                   ),
                   SizedBox(
@@ -143,6 +208,11 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                 initialData: _stopWatchTimer.rawTime.value,
                 builder: (context, snap) {
                   final value = snap.data!;
+                  hours = int.parse(StopWatchTimer.getDisplayTimeHours(value));
+                  minutes =
+                      int.parse(StopWatchTimer.getDisplayTimeMinute(value));
+                  seconds =
+                      int.parse(StopWatchTimer.getDisplayTimeSecond(value));
                   final displayTime = StopWatchTimer.getDisplayTime(value,
                       hours: _isHours, milliSecond: false);
                   return Column(
@@ -168,7 +238,8 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 50.w),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   Text(
                                     'HOURS',
@@ -229,6 +300,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                           _stopWatchTimer.onStopTimer();
                           setState(() {
                             started = false;
+                            addUser(hours, minutes, seconds);
                           });
                         } else {
                           _stopWatchTimer.onStartTimer();
@@ -241,7 +313,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                         width: 70.h,
                         height: 70.w,
                         decoration: ShapeDecoration(
-                          color: Color(0xFF00FFDE),
+                          color: const Color(0xFF00FFDE),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(1000.r),
                           ),

@@ -10,6 +10,7 @@ import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 
 import 'package:habit_tracker/pages/auth_onboarding_deciding_screen.dart';
+import 'package:habit_tracker/provider/start_end_date_provider.dart';
 
 import 'package:provider/provider.dart';
 
@@ -23,12 +24,9 @@ Future<void> main() async {
 
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(
-        create: (_) => UserRepository.instance(),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => SelectedDateProvider(),
-      ),
+      ChangeNotifierProvider(create: (_) => UserRepository.instance()),
+      ChangeNotifierProvider(create: (_) => SelectedDateProvider()),
+      ChangeNotifierProvider(create: (_) => StartEndDateProvider()),
     ],
     child: EasyLocalization(
       supportedLocales: const [

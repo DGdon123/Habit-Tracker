@@ -15,11 +15,13 @@ import 'package:habit_tracker/pages/screens/sleep%20wakeup/sleepTime.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/bar_graph.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/custom_bar_chart.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.dart';
+import 'package:habit_tracker/provider/start_end_date_provider.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/text_styles.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import 'widgets/start_end_date_picker.dart';
 
@@ -31,21 +33,8 @@ class SleepPage extends StatefulWidget {
 }
 
 class SleepPageState extends State<SleepPage> {
-  DateTime today = DateTime.now();
-  DateTime? startDate;
-  DateTime? endDate;
-
-  int currentYear = DateTime.now().year;
-
   @override
   Widget build(BuildContext context) {
-    DateTime sevenDaysAgo = today.subtract(Duration(days: 7));
-
-    String formattedToday = DateFormat('MMM d').format(today);
-    String formattedSevenDaysAgo = DateFormat('MMM d').format(sevenDaysAgo);
-
-    String dateRange = '$formattedSevenDaysAgo - $formattedToday';
-
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -187,30 +176,45 @@ class SleepPageState extends State<SleepPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Text(
-                              '${startDate != null ? DateFormat("MMM dd").format(startDate!) : dateRange} - ${endDate != null ? DateFormat("MMM dd").format(endDate!) : ''}',
-                              style: TextStyles().subtitleStyle,
-                            ),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            GestureDetector(
-                                onTap: () async {
-                                  var res = await showDialog<dynamic>(
-                                      context: context,
-                                      builder: (_) {
-                                        return StartEndDatePicker(
-                                          firstDate: DateTime(2024, 3, 1),
-                                        );
-                                      });
+                        GestureDetector(
+                          onTap: () async {
+                            await showDialog<Map<String, dynamic>>(
+                                context: context,
+                                builder: (_) {
+                                  return StartEndDatePicker(
+                                    firstDate: DateTime(2024, 3, 1),
+                                  );
+                                }).then((value) {
+                              debugPrint("Value: $value, ${value.runtimeType}");
+                              if (value!.isEmpty) return;
+                              context.read<StartEndDateProvider>().setStartDate(
+                                  startDate: value["startDate"],
+                                  endDate: value["endDate"]);
+                            });
+                          },
+                          child: Row(
+                            children: [
+                              Consumer<StartEndDateProvider>(
+                                builder:
+                                    (context, startEndDateProvider, child) {
+                                  var startDate =
+                                      startEndDateProvider.startDate;
+                                  var endDate = startEndDateProvider.endDate;
+                                  return Text(
+                                    '${DateFormat("MMM dd").format(startDate)} - ${DateFormat("MMM dd").format(endDate)}',
+                                    style: TextStyles().subtitleStyle,
+                                  );
                                 },
-                                child: SvgPicture.asset(AppIcons.dropdown)),
-                          ],
+                              ),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              SvgPicture.asset(AppIcons.dropdown),
+                            ],
+                          ),
                         ),
                         Text(
-                          '${currentYear}',
+                          '${DateTime.now().year}',
                           style: TextStyles()
                               .secondaryTextStyle(14.sp, FontWeight.w400),
                         )

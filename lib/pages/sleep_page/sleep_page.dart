@@ -13,6 +13,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/sleep%20wakeup/sleepTime.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/bar_graph.dart';
+import 'package:habit_tracker/pages/sleep_page/widgets/custom_bar_chart.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
@@ -232,6 +233,7 @@ class SleepPageState extends State<SleepPage> {
                   ],
                 ),
               ),
+
               SizedBox(
                 height: 40.h,
               ),

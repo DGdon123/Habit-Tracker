@@ -23,7 +23,7 @@ buildscript {
                 // This should always be `mapbox` (not your username).
                 username = "mapbox"
                 // Use the secret token you stored in gradle.properties as the password
-                password = "sk.eyJ1IjoiZGdkb24tMTIzIiwiYSI6ImNsZjJ3Z2h4ZTBtbDUzenBub2RhbWJtcWUifQ.ViLq8lPsIDymAa4HIjs7mQ"
+                password = "sk.eyJ1IjoiZGdkb24tMTIzIiwiYSI6ImNsdHduMmEyZjAxY2Uya3N5aXhkM2theHgifQ.985kCr3kP7KdKPHRP4uLNA"
             }
         }
     }
@@ -48,13 +48,6 @@ allprojects {
                 force "com.google.android.gms:play-services-location:21.0.1"
             }
         }
-        maven {
-            url "${project(':background_fetch').projectDir}/libs"
-        }
-        maven {
-            url "${project(':flutter_background_geolocation').projectDir}/libs"
-        }
-        maven { url 'https://developer.huawei.com/repo/' }
     }
 }
 

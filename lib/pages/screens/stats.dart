@@ -37,7 +37,7 @@ class StatsPageState extends State<StatsPage> {
   }
 
   TextStyle secondaryStyle = TextStyle(
-    color: Color(0xFF686873),
+    color: const Color(0xFF686873),
     fontSize: 14.sp,
     fontFamily: 'SFProText',
     fontWeight: FontWeight.w400,
@@ -58,28 +58,20 @@ class StatsPageState extends State<StatsPage> {
       top: false,
       child: Scaffold(
         body: Container(
-          margin: EdgeInsets.only(top: kIsWeb ? 35.h : Platform.isIOS ? 50.h : 35.h),
+          margin: EdgeInsets.only(
+              top: kIsWeb
+                  ? 35.h
+                  : Platform.isIOS
+                      ? 50.h
+                      : 35.h),
           child: SingleChildScrollView(
             child: Column(children: [
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => HomePage()));
-                      },
-                      child: SizedBox(
-                        height: 28.h,
-                        width: 28.w,
-                        child: SvgPicture.asset(
-                          AppIcons.back,
-                        ),
-                      ),
-                    ),
                     Center(
                       child: Text(
                         "Statistics",
@@ -133,7 +125,7 @@ class StatsPageState extends State<StatsPage> {
               SizedBox(height: 50.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Divider(thickness: 1.h, color: Color(0xFFD0D0D0)),
+                child: Divider(thickness: 1.h, color: const Color(0xFFD0D0D0)),
               ),
 
               Column(
@@ -148,7 +140,7 @@ class StatsPageState extends State<StatsPage> {
                         Text(
                           'hours',
                           style: TextStyle(
-                            color: Color(0xFF686873),
+                            color: const Color(0xFF686873),
                             fontSize: 16.sp,
                             fontFamily: 'SFProText',
                             fontWeight: FontWeight.w500,
@@ -162,7 +154,7 @@ class StatsPageState extends State<StatsPage> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Container(
+                    child: SizedBox(
                       height: 300,
                       child: BarChart(
                         BarChartData(
@@ -172,11 +164,11 @@ class StatsPageState extends State<StatsPage> {
                             left: BorderSide.none,
                             right: BorderSide.none,
                             bottom: BorderSide(
-                              color: Color(0xFFD0D0D0),
+                              color: const Color(0xFFD0D0D0),
                               width: 1.w,
                             ),
                           )),
-                          gridData: FlGridData(
+                          gridData: const FlGridData(
                             drawHorizontalLine: true,
                             drawVerticalLine: false,
                           ),
@@ -190,7 +182,7 @@ class StatsPageState extends State<StatsPage> {
                                   return Text(
                                     value.toInt().toString(),
                                     style: TextStyle(
-                                      color: Color(0xFF686873),
+                                      color: const Color(0xFF686873),
                                       fontSize: 14.sp,
                                       fontFamily: 'SFProText',
                                       fontWeight: FontWeight.w600,
@@ -199,13 +191,13 @@ class StatsPageState extends State<StatsPage> {
                                 },
                               ),
                             ),
-                            rightTitles: AxisTitles(
+                            rightTitles: const AxisTitles(
                               sideTitles: SideTitles(showTitles: false),
                             ),
-                            topTitles: AxisTitles(
+                            topTitles: const AxisTitles(
                               sideTitles: SideTitles(showTitles: false),
                             ),
-                            bottomTitles: AxisTitles(
+                            bottomTitles: const AxisTitles(
                               sideTitles: SideTitles(showTitles: false),
                             ),
                           ),
@@ -413,7 +405,7 @@ class StatsPageState extends State<StatsPage> {
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFFEAECF0)),
+                    side: const BorderSide(width: 1, color: Color(0xFFEAECF0)),
                     borderRadius: BorderRadius.circular(16.r),
                   ),
                 ),
@@ -472,7 +464,7 @@ class StatsPageState extends State<StatsPage> {
               ),
             ],
           ),
-          Spacer(),
+          const Spacer(),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -513,7 +505,7 @@ class StatsPageState extends State<StatsPage> {
               ),
             ],
           ),
-          Spacer(),
+          const Spacer(),
         ],
       ),
     );
@@ -558,7 +550,7 @@ class StatsPageState extends State<StatsPage> {
             Text(
               'Summary',
               style: TextStyle(
-                color: Color(0xFF9B9BA1),
+                color: const Color(0xFF9B9BA1),
                 fontSize: 14.sp,
                 fontFamily: 'SFProText',
                 fontWeight: FontWeight.w400,

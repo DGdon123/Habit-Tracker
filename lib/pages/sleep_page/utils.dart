@@ -18,9 +18,9 @@ class SleepPageUtils {
   }
 
   /// returns a list of days between the start and end date
-  List<String> findDayRange(String startDateStr, String endDateStr) {
-    DateTime startDate = DateTime.parse(startDateStr);
-    DateTime endDate = DateTime.parse(endDateStr);
+  List<String> findDayRange() {
+    DateTime endDate = DateTime.now();
+    DateTime startDate = endDate.subtract(Duration(days: 6));
 
     List<String> dayList = [];
     for (var i = startDate;

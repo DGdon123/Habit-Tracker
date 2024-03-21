@@ -125,36 +125,12 @@ Widget getTitles(double value, TitleMeta meta) {
     fontFamily: 'SFProText',
     fontWeight: FontWeight.w400,
   );
-  String text;
-  switch (value.toInt()) {
-    case 0:
-      text = 'Sun';
-      break;
-    case 1:
-      text = 'Mon';
-      break;
-    case 2:
-      text = 'Tue';
-      break;
-    case 3:
-      text = 'Wed';
-      break;
-    case 4:
-      text = 'Thu';
-      break;
-    case 5:
-      text = 'Fri';
-      break;
-    case 6:
-      text = 'Sat';
-      break;
-    default:
-      text = '';
-      break;
-  }
+
+  var dayRange = SleepPageUtils().findDayRange();
+
   return SideTitleWidget(
     axisSide: meta.axisSide,
     space: 4,
-    child: Text(text, style: style),
+    child: Text(dayRange[value.toInt()], style: style),
   );
 }

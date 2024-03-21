@@ -185,8 +185,8 @@ class SleepPageState extends State<SleepPage> {
                                     firstDate: DateTime(2024, 3, 1),
                                   );
                                 }).then((value) {
-                              debugPrint("Value: $value, ${value.runtimeType}");
-                              if (value!.isEmpty) return;
+                              if (value == null) return;
+                              if (value.isEmpty) return;
                               context.read<StartEndDateProvider>().setStartDate(
                                   startDate: value["startDate"],
                                   endDate: value["endDate"]);
@@ -194,12 +194,15 @@ class SleepPageState extends State<SleepPage> {
                           },
                           child: Row(
                             children: [
+                              // date filtering
                               Consumer<StartEndDateProvider>(
                                 builder:
                                     (context, startEndDateProvider, child) {
                                   var startDate =
                                       startEndDateProvider.startDate;
                                   var endDate = startEndDateProvider.endDate;
+                                  debugPrint(
+                                      "StartDate: $startDate, EndDate: $endDate");
                                   return Text(
                                     '${DateFormat("MMM dd").format(startDate)} - ${DateFormat("MMM dd").format(endDate)}',
                                     style: TextStyles().subtitleStyle,

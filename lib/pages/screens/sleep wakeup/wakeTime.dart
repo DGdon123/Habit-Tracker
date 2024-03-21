@@ -2,6 +2,7 @@ import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:habit_tracker/pages/sleep_page/utils.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/styles.dart';
@@ -20,9 +21,22 @@ class _WakeTimeState extends State<WakeTime> {
   void sleepTimeSet(Time newTime) {
     _timeWake = newTime;
 
+    var startTime =
+        DateTime(2024, 1, 1, widget.sleepTime.hour, widget.sleepTime.minute);
+    var endTime = DateTime(2024, 1, 2, _timeWake.hour, _timeWake.minute);
+
+    // if (endTime.isBefore(startTime)) {
+    //   endTime = endTime.add(Duration(days: 1));
+    // }
+
+    var difference = endTime.difference(startTime);
+    debugPrint("Difference: $difference, ${widget.sleepTime}, $_timeWake");
+
     SleepFireStoreServices().addNewSleepTime(
-        sleepTime: widget.sleepTime.format(context),
-        wakeTime: _timeWake.format(context));
+      sleepTime: widget.sleepTime.format(context),
+      wakeTime: _timeWake.format(context),
+      difference: SleepPageUtils().roundHourAndMinute(difference.inMinutes),
+    );
   }
 
   @override

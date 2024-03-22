@@ -17,4 +17,13 @@ class TextStyles {
     fontFamily: 'SFProText',
     fontWeight: FontWeight.w800,
   );
+
+  TextStyle secondaryTextStyle(double fontSize, FontWeight fontWeight) {
+    return TextStyle(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: Colors.black.withOpacity(0.75),
+      fontFamily: 'SFProText',
+    );
+  }
 }

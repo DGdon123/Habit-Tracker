@@ -14,7 +14,9 @@ import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/sleep%20wakeup/sleepTime.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/bar_graph.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/custom_bar_chart.dart';
+import 'package:habit_tracker/pages/sleep_page/widgets/sleep_details.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.dart';
+import 'package:habit_tracker/provider/avg_sleep_provider.dart';
 import 'package:habit_tracker/provider/start_end_date_provider.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
@@ -166,86 +168,7 @@ class SleepPageState extends State<SleepPage> {
               SizedBox(
                 height: 30.h,
               ),
-
-              // date range picker
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            await showDialog<Map<String, dynamic>>(
-                                context: context,
-                                builder: (_) {
-                                  return StartEndDatePicker(
-                                    firstDate: DateTime(2024, 3, 1),
-                                  );
-                                }).then((value) {
-                              if (value == null) return;
-                              if (value.isEmpty) return;
-                              context.read<StartEndDateProvider>().setStartDate(
-                                  startDate: value["startDate"],
-                                  endDate: value["endDate"]);
-                            });
-                          },
-                          child: Row(
-                            children: [
-                              // date filtering
-                              Consumer<StartEndDateProvider>(
-                                builder:
-                                    (context, startEndDateProvider, child) {
-                                  var startDate =
-                                      startEndDateProvider.startDate;
-                                  var endDate = startEndDateProvider.endDate;
-                                  debugPrint(
-                                      "StartDate: $startDate, EndDate: $endDate");
-                                  return Text(
-                                    '${DateFormat("MMM dd").format(startDate)} - ${DateFormat("MMM dd").format(endDate)}',
-                                    style: TextStyles().subtitleStyle,
-                                  );
-                                },
-                              ),
-                              SizedBox(
-                                width: 10.w,
-                              ),
-                              SvgPicture.asset(AppIcons.dropdown),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          '${DateTime.now().year}',
-                          style: TextStyles()
-                              .secondaryTextStyle(14.sp, FontWeight.w400),
-                        )
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          '7H',
-                          style: TextStyles().subtitleStyle,
-                        ),
-                        Text(
-                          'Avg sleep time',
-                          style: TextStyles()
-                              .secondaryTextStyle(14.sp, FontWeight.w400),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(
-                height: 40.h,
-              ),
-
-              BarGraph(),
+              SleepDetails(),
             ],
           ),
         ),

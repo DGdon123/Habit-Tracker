@@ -7,6 +7,7 @@ import 'package:habit_tracker/auth/login_page.dart';
 import 'package:habit_tracker/onboarding/onboardingScreen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/provider/avg_sleep_provider.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 
 import 'package:habit_tracker/pages/auth_onboarding_deciding_screen.dart';
@@ -27,6 +28,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (_) => UserRepository.instance()),
       ChangeNotifierProvider(create: (_) => SelectedDateProvider()),
       ChangeNotifierProvider(create: (_) => StartEndDateProvider()),
+      ChangeNotifierProvider(create: (_) => AvgSleepProvider()),
     ],
     child: EasyLocalization(
       supportedLocales: const [

@@ -9,7 +9,9 @@ import 'package:habit_tracker/utils/text_styles.dart';
 import 'package:provider/provider.dart';
 
 class BarGraph extends StatelessWidget {
-  const BarGraph({super.key});
+  BarGraph({super.key});
+
+  double highestDifference = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,13 @@ class BarGraph extends StatelessWidget {
             } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
               return const Center(child: Text("No data found"));
             }
+
+            for (var doc in snapshot.data!.docs) {
+              if (double.parse(doc['difference']) > highestDifference) {
+                highestDifference = double.parse(doc['difference']);
+              }
+            }
+
             return SizedBox(
               height: 300,
               child: BarChart(
@@ -46,7 +55,7 @@ class BarGraph extends StatelessWidget {
                     drawHorizontalLine: true,
                     drawVerticalLine: false,
                   ),
-                  maxY: 10,
+                  maxY: highestDifference,
                   barGroups: getBarChartGroups(snapshot.data!.docs),
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
@@ -86,18 +95,15 @@ List<BarChartGroupData> getBarChartGroups(
 
   var dateRange = SleepPageUtils().findLast7Days();
 
-  debugPrint("Date range: $dateRange");
-
   for (int index = 0; index < dateRange.length; index++) {
     String date = dateRange[index];
-    bool containsDate = false;
+
     double difference = 0;
 
     // Check if the date is contained in the docs
     for (var doc in docs) {
       // Assuming doc contains a field named 'date' which stores the date in the format 'YYYY-MM-DD'
       if (doc['addedAt'] == date) {
-        containsDate = true;
         difference = double.parse(doc['difference']);
         break;
       }

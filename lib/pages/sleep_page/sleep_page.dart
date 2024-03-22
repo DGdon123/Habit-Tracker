@@ -245,7 +245,7 @@ class SleepPageState extends State<SleepPage> {
                 height: 40.h,
               ),
 
-              const BarGraph(),
+              BarGraph(),
             ],
           ),
         ),

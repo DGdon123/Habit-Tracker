@@ -24,7 +24,7 @@ class FocusPageState extends State<FocusPage> {
   Time _time = Time(hour: 00, minute: 25, second: 59);
   bool iosStyle = true;
   final PageController _pageController = PageController(
-    viewportFraction: 0.8,
+    viewportFraction: 0.82,
     initialPage: 0,
   );
 
@@ -121,12 +121,13 @@ class FocusPageState extends State<FocusPage> {
                 children: [
                   Padding(
                     padding:
-                        EdgeInsets.only(right: 10.w, top: 10.w, bottom: 30.h),
+                        EdgeInsets.only(right: 10.w, top: 10.h, bottom: 25.h),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        SizedBox(
+                        Container(
+                          alignment: Alignment.center,
                           height: 250.h,
                           child: showPicker(
                               context: context,
@@ -196,206 +197,204 @@ class FocusPageState extends State<FocusPage> {
                   Positioned(
                     bottom: 0,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            height: 100.h,
-                            width: 200.w,
-                            child: PageView(
-                              controller: _pageController,
-                              scrollDirection: Axis.horizontal,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: const Color(0xFFFCDCD3),
-                                            borderRadius:
-                                                BorderRadius.circular(10.r)),
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 27.w, vertical: 20.w),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Column(
-                                              children: [
-                                                SizedBox(
-                                                  height: 30.h,
-                                                  width: 30.w,
-                                                  child: Image.asset(
-                                                    AppImages.read,
-                                                    fit: BoxFit.contain,
-                                                  ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 35.w, vertical: 0.h),
+                      child: Container(
+                        child: SizedBox(
+                          height: 100.h,
+                          width: 200.w,
+                          child: PageView(
+                            controller: _pageController,
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 7),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: const Color(0xFFFCDCD3),
+                                          borderRadius:
+                                              BorderRadius.circular(10.r)),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 27.w, vertical: 20.w),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 30.h,
+                                                width: 30.w,
+                                                child: Image.asset(
+                                                  AppImages.read,
+                                                  fit: BoxFit.contain,
                                                 ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              width: 5.w,
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Read',
-                                                  style: presetStyle,
-                                                ),
-                                                Text(
-                                                  '20min',
-                                                  style: presetStyle2,
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 3),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: const Color(0xFFCFFFE5),
-                                            borderRadius:
-                                                BorderRadius.circular(10.r)),
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 20.w, vertical: 20.w),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Column(
-                                              children: [
-                                                SizedBox(
-                                                  height: 30.h,
-                                                  width: 30.w,
-                                                  child: Image.asset(
-                                                    AppImages.walk,
-                                                    fit: BoxFit.contain,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              width: 5.w,
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Walk',
-                                                  style: presetStyle,
-                                                ),
-                                                Text(
-                                                  '30min',
-                                                  style: presetStyle2,
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                // meditate
-                                Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 3),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: const Color(0xFFD5ECE0),
-                                            borderRadius:
-                                                BorderRadius.circular(10.r)),
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 20.w, vertical: 20.w),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Column(
-                                              children: [
-                                                SizedBox(
-                                                  height: 30.h,
-                                                  width: 30.w,
-                                                  child: Image.asset(
-                                                    AppImages.meditate,
-                                                    fit: BoxFit.contain,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              width: 5.w,
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Meditate',
-                                                  style: presetStyle,
-                                                ),
-                                                Text(
-                                                  '15min',
-                                                  style: presetStyle2,
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 3),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            color: AppColors.primaryColor,
-                                            borderRadius:
-                                                BorderRadius.circular(10.r),
+                                              ),
+                                            ],
                                           ),
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 20.w,
-                                                vertical: 28.h),
-                                            child: Row(
-                                              children: [
-                                                SvgPicture.asset(
-                                                  AppIcons.plus,
-                                                  height: 24.h,
-                                                ),
-                                                Text(
-                                                  'Add new',
-                                                  style: presetStyle,
-                                                )
-                                              ],
-                                            ),
-                                          )),
-                                    ],
-                                  ),
+                                          SizedBox(
+                                            width: 5.w,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Read',
+                                                style: presetStyle,
+                                              ),
+                                              Text(
+                                                '20min',
+                                                style: presetStyle2,
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 7),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: const Color(0xFFCFFFE5),
+                                          borderRadius:
+                                              BorderRadius.circular(10.r)),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 27.w, vertical: 20.w),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 30.h,
+                                                width: 30.w,
+                                                child: Image.asset(
+                                                  AppImages.walk,
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            width: 5.w,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Walk',
+                                                style: presetStyle,
+                                              ),
+                                              Text(
+                                                '30min',
+                                                style: presetStyle2,
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // meditate
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 7),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: const Color(0xFFD5ECE0),
+                                          borderRadius:
+                                              BorderRadius.circular(10.r)),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 27.w, vertical: 20.w),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 30.h,
+                                                width: 30.w,
+                                                child: Image.asset(
+                                                  AppImages.meditate,
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            width: 5.w,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Meditate',
+                                                style: presetStyle,
+                                              ),
+                                              Text(
+                                                '15min',
+                                                style: presetStyle2,
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 7),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(10.r),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 27.w, vertical: 28.h),
+                                          child: Row(
+                                            children: [
+                                              SvgPicture.asset(
+                                                AppIcons.plus,
+                                                height: 24.h,
+                                              ),
+                                              Text(
+                                                'Add new',
+                                                style: presetStyle,
+                                              )
+                                            ],
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),

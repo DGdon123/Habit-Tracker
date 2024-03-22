@@ -12,11 +12,10 @@ class AppIcons {
   static const String customize = 'assets/icons/customize.svg';
   static const String xp = 'assets/icons/xp.svg';
   static const String status = 'assets/icons/status.svg';
-  static const String timer = 'assets/icons/timer.svg';
+  static const String timer = 'assets/icons/timer2.svg';
   static const String focus = 'assets/icons/focus.svg';
   static const String friends = 'assets/icons/friends.svg';
   static const String stats = 'assets/icons/stats.svg';
-  static const String logout = 'assets/icons/logout.png';
   static const String sleep = 'assets/icons/sleep.svg';
   static const String profile = 'assets/icons/profile.svg';
   static const String unfriend = 'assets/icons/unfriend.svg';
@@ -48,4 +47,17 @@ class AppIcons {
   static const String beard = 'assets/icons/beard.svg';
   static const String undo = 'assets/icons/undo.svg';
   static const String redo = 'assets/icons/redo.svg';
+  static const String add = 'assets/icons/add.svg';
+  static const String mainxp = 'assets/icons/mainxp.svg';
+  static const String timer3 = 'assets/icons/timer3.svg';
+  static const String logout = 'assets/icons/logout.png';
+  static const String foucsed = 'assets/icons/focus.png';
+  static const String phone = 'assets/icons/smartphone.png';
+  static const String workout = 'assets/icons/workout.png';
+  static const String home = 'assets/icons/home.png';
+  static const String headphone = 'assets/icons/headphone.png';
+  static const String lofi = 'assets/icons/musicalnote.png';
+  static const String paino = 'assets/icons/keyboard.png';
+  static const String jazz = 'assets/icons/jazz.png';
+  static const String zen = 'assets/icons/therapy.png';
 }

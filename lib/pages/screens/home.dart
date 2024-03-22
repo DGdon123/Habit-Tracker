@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/location/current_location.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
+import 'package:habit_tracker/pages/screens/friends.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
@@ -79,27 +80,28 @@ class _HomeState extends State<Home> {
 
   Column sleepTime() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Sleep Time',
+          'Wake up      Sleep   ',
           style: headingStyle,
         ),
         SizedBox(
-          height: 10.h,
+          height: 5.h,
         ),
         Container(
           width: 180.w,
-          height: 90.h,
+          height: 100.h,
           decoration: ShapeDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
-              colors: [
-                Color(0xFF007566),
-                Color(0xFF47EFDA),
-              ],
-            ),
+            color: const Color(0xfbd4bcdf),
+            // gradient: LinearGradient(
+            //   begin: Alignment.bottomLeft,
+            //   end: Alignment.topRight,
+            //   colors: [
+            //     Color(0xFF007566),
+            //     Color(0xFF47EFDA),
+            //   ],
+            // ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.r),
             ),
@@ -113,17 +115,17 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.mode_night,
-                      color: Colors.white,
-                      size: 18.sp,
+                      Icons.light_mode,
+                      color: AppColors.lightBlack,
+                      size: 34.sp,
                     ),
                     SizedBox(
                       height: 10.h,
                     ),
                     Text(
-                      '23:00',
+                      '06:00',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.black,
                         fontSize: 20.sp,
                         fontFamily: 'SFProText',
                         fontWeight: FontWeight.w800,
@@ -136,17 +138,17 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.light_mode,
-                      color: Colors.white,
-                      size: 20.sp,
+                      Icons.dark_mode_rounded,
+                      color: AppColors.lightBlack,
+                      size: 30.sp,
                     ),
                     SizedBox(
-                      height: 10.h,
+                      height: 12.h,
                     ),
                     Text(
-                      '06:00',
+                      '23:00',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.black,
                         fontSize: 20.sp,
                         fontFamily: 'SFProText',
                         fontWeight: FontWeight.w800,
@@ -167,72 +169,59 @@ class _HomeState extends State<Home> {
 
   Column screenTime() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           'Screen Time',
           style: headingStyle,
         ),
         SizedBox(
-          height: 10.h,
+          height: 5.h,
         ),
         Container(
           width: 180.w,
-          height: 90.h,
+          height: 100.h,
           decoration: ShapeDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.bottomRight,
-              end: Alignment.topLeft,
-              colors: [
-                Color(0xFF0F32ED),
-                Color(0xFF5FDCCC),
-              ],
-            ),
+            color: const Color(0xfbf6c9ce),
+            // gradient: LinearGradient(
+            //   begin: Alignment.bottomRight,
+            //    end: Alignment.topLeft,
+            //   colors: [
+            //     Color(0xFF0F32ED),
+            //     Color(0xFF5FDCCC),
+            //   ],
+            // ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.r),
             ),
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.w),
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Image.asset(
+                  AppIcons.phone,
+                  width: 40,
+                  color: AppColors.lightBlack,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '6h 14m',
+                      '3:00 h',
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 40.sp,
+                        color: AppColors.black,
+                        fontSize: 28.sp,
                         fontFamily: 'SFProText',
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w800,
                         height: 0,
                       ),
                     ),
-                    Row(
-                      children: [
-                        SvgPicture.asset(
-                          AppIcons.status,
-                          color: Colors.white.withOpacity(0.75),
-                          height: 12.h,
-                        ),
-                        SizedBox(
-                          width: 5.w,
-                        ),
-                        Text(
-                          '12% from last week',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.75),
-                            fontSize: 12.sp,
-                            fontFamily: 'SFProText',
-                            fontWeight: FontWeight.w400,
-                            height: 0,
-                          ),
-                        ),
-                      ],
-                    )
                   ],
                 ),
               ],
@@ -247,90 +236,79 @@ class _HomeState extends State<Home> {
 
   Column workoutTime() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Workout',
+          'Today\'s Workout',
           style: headingStyle,
         ),
         SizedBox(
-          height: 10.h,
+          height: 5.h,
         ),
         Container(
           width: 180.w,
           height: 100.h,
           decoration: ShapeDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
-              colors: [
-                Color.fromARGB(255, 4, 87, 76),
-                Color(0xFF00D0B5),
-              ],
-            ),
+            color: const Color(0xfbafdcde),
+            // gradient: LinearGradient(
+            //   begin: Alignment.bottomLeft,
+            //   end: Alignment.topRight,
+            //   colors: [
+            //     Color.fromARGB(255, 4, 87, 76),
+            //     Color(0xFF00D0B5),
+            //   ],
+            // ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.r),
             ),
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Joined at',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontFamily: 'SFProText',
-                            fontWeight: FontWeight.w500,
-                            height: 0,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10.h,
-                        ),
-                        Text(
-                          '06:00',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20.sp,
-                            fontFamily: 'SFProText',
-                            fontWeight: FontWeight.w800,
-                            height: 0,
-                          ),
-                        ),
-                      ],
+                    Image.asset(
+                      AppIcons.workout,
+                      width: 45,
+                      color: AppColors.lightBlack,
+                    ),
+                    const SizedBox(
+                      width: 12,
                     ),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text(
-                          'Left at',
+                        Text(
+                          '16:00',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
+                            color: AppColors.black,
+                            fontSize: 23.sp,
                             fontFamily: 'SFProText',
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w800,
                             height: 0,
                           ),
                         ),
-                        SizedBox(
-                          height: 10.h,
+                        Text(
+                          'to',
+                          style: TextStyle(
+                            color: AppColors.black.withOpacity(0.7),
+                            fontSize: 16.sp,
+                            fontFamily: 'SFProText',
+                            fontWeight: FontWeight.w800,
+                            height: 0,
+                          ),
                         ),
                         Text(
-                          '06:00',
+                          '18:00',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20.sp,
+                            color: AppColors.black,
+                            fontSize: 23.sp,
                             fontFamily: 'SFProText',
                             fontWeight: FontWeight.w800,
                             height: 0,
@@ -340,31 +318,6 @@ class _HomeState extends State<Home> {
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 8.h,
-                ),
-                Row(
-                  children: [
-                    SvgPicture.asset(
-                      AppIcons.status,
-                      color: Colors.white.withOpacity(0.75),
-                      height: 12.h,
-                    ),
-                    SizedBox(
-                      width: 5.w,
-                    ),
-                    Text(
-                      '12% from last week',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.75),
-                        fontSize: 12.sp,
-                        fontFamily: 'SFProText',
-                        fontWeight: FontWeight.w400,
-                        height: 0,
-                      ),
-                    ),
-                  ],
-                )
               ],
             ),
           ),
@@ -377,108 +330,106 @@ class _HomeState extends State<Home> {
 
   Column focusTime() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           'Focused Time',
           style: headingStyle,
         ),
         SizedBox(
-          height: 10.h,
+          height: 5.h,
         ),
-        Stack(
-          children: [
-            Container(
-              width: 180.w,
-              height: 100.h,
-              decoration: ShapeDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment(-0.97, -0.22),
-                  end: Alignment(0.97, 0.22),
-                  colors: [
-                    Color(0x5E0028FF),
-                    Color(0xFF2AC5B1),
-                  ],
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.r),
+        Container(
+          width: 180.w,
+          height: 100.h,
+          decoration: ShapeDecoration(
+            color: const Color(0xfbc9eeb5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                top: 0,
+                bottom: 0,
+                right: 0,
+                child: SvgPicture.asset(
+                  AppIcons.timer,
+                  height: 80.h,
+                  color: Colors.white.withOpacity(0.3),
                 ),
               ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.w),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          'Focus Timer',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10.sp,
-                            fontFamily: 'SFProText',
-                            fontWeight: FontWeight.w600,
-                            height: 0,
-                          ),
+                        Image.asset(
+                          AppIcons.foucsed,
+                          width: 40,
+                          color: AppColors.lightBlack,
                         ),
-                        Text(
-                          '00:47:39',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28.sp,
-                            fontFamily: 'SFProText',
-                            fontWeight: FontWeight.w800,
-                            height: 0,
-                          ),
+                        const SizedBox(
+                          width: 10,
                         ),
-                        SizedBox(
-                          height: 3.h,
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10.w, vertical: 5.w),
-                          decoration: ShapeDecoration(
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(width: 1.w, color: Colors.white),
-                              borderRadius: BorderRadius.circular(100.r),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              '4:39 h',
+                              style: TextStyle(
+                                color: AppColors.black,
+                                fontSize: 28.sp,
+                                fontFamily: 'SFProText',
+                                fontWeight: FontWeight.w800,
+                                height: 0,
+                              ),
                             ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Start Now',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10.sp,
-                                  fontFamily: 'SFProText',
-                                  fontWeight: FontWeight.w600,
-                                  height: 0,
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10.w, vertical: 5.w),
+                              decoration: ShapeDecoration(
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                      width: 1.w, color: AppColors.black),
+                                  borderRadius: BorderRadius.circular(100.r),
                                 ),
                               ),
-                            ],
-                          ),
-                        )
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Start Now',
+                                    style: TextStyle(
+                                      color: AppColors.black,
+                                      fontSize: 10.sp,
+                                      fontFamily: 'SFProText',
+                                      fontWeight: FontWeight.w600,
+                                      height: 0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ],
                     ),
                   ],
                 ),
               ),
-            ),
-            Positioned(
-              top: 0,
-              bottom: 0,
-              right: 0,
-              child: SvgPicture.asset(
-                AppIcons.timer,
-                height: 100.h,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -490,30 +441,60 @@ class _HomeState extends State<Home> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CurrentLocation(),
-                ),
-              );
-            },
-            child: Container(
-              height: 50.h,
-              width: 50.w,
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.all(Radius.circular(16.r)),
+          Column(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FriendsPage(),
+                    ),
+                  );
+                },
+                child: Container(
+                    height: 50.h,
+                    width: 50.w,
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor,
+                      borderRadius: BorderRadius.all(Radius.circular(16.r)),
+                    ),
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(
+                      AppIcons.friends,
+                      color: Colors.black,
+                      height: 25.h,
+                      width: 25.w,
+                    )),
               ),
-              alignment: Alignment.center,
-              child: SvgPicture.asset(
-                AppIcons.customize,
-                color: AppColors.black,
-                height: 35.h,
-                width: 35.w,
+              const SizedBox(
+                height: 10,
               ),
-            ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CurrentLocation(),
+                    ),
+                  );
+                },
+                child: Container(
+                    height: 50.h,
+                    width: 50.w,
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor,
+                      borderRadius: BorderRadius.all(Radius.circular(16.r)),
+                    ),
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(
+                      AppIcons.customize,
+                      color: Colors.black,
+                      height: 35.h,
+                      width: 35.w,
+                    )),
+              ),
+            ],
           ),
           TextButton(
               onPressed: () async {
@@ -523,36 +504,29 @@ class _HomeState extends State<Home> {
                   content: Text("Total duration: $duration"),
                 ));
               },
-              child: Text("Usage")),
+              child: const Text("Usage")),
           Container(
-            height: 40.h,
-            decoration: BoxDecoration(
-              color: AppColors.mainBlue,
-              borderRadius: BorderRadius.all(Radius.circular(16.r)),
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              child: Row(
-                children: [
-                  SvgPicture.asset(
-                    AppIcons.xp,
-                    height: 20.h,
-                    width: 20.w,
-                  ),
-                  SizedBox(
-                    width: 5.w,
-                  ),
-                  Text(
-                    '1452 XP',
+            margin: const EdgeInsets.only(top: 10),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SvgPicture.asset(
+                  AppIcons.mainxp,
+                  height: 34,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 38),
+                  child: Text(
+                    '1450',
                     style: TextStyle(
                       fontFamily: 'SFProText',
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w900,
                       color: AppColors.white,
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
           ),
         ],

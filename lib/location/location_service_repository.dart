@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:background_locator_2/location_dto.dart';
 
+import '../main.dart';
 import 'file_manager.dart';
 
 class LocationServiceRepository {
@@ -53,7 +54,7 @@ class LocationServiceRepository {
   }
 
   Future<void> callback(LocationDto locationDto) async {
-    print('$_count location in dart: ${locationDto.toString()}');
+    logger.d('$_count location in dart: ${locationDto.toString()}');
     await setLogPosition(_count, locationDto);
     final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
     send?.send(locationDto.toJson());

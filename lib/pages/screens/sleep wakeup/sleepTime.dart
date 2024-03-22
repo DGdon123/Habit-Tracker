@@ -7,15 +7,20 @@ import 'package:habit_tracker/pages/screens/sleep%20wakeup/wakeTime.dart';
 import 'package:habit_tracker/utils/colors.dart';
 
 class SleepTime extends StatefulWidget {
+  const SleepTime({super.key});
+
   @override
   State<SleepTime> createState() => _SleepTimeState();
 }
 
 class _SleepTimeState extends State<SleepTime> {
   Time _time = Time(hour: 20, minute: 30);
+  bool iosStyle = true;
 
   void onTimeChanged(Time newTime) {
-    _time = newTime;
+    setState(() {
+      _time = newTime;
+    });
 
     Navigator.pop(context); // popping the current dialog
   }
@@ -25,7 +30,7 @@ class _SleepTimeState extends State<SleepTime> {
     return AlertDialog(
       alignment: Alignment.center,
       elevation: 0,
-      backgroundColor: Color.fromRGBO(255, 0, 0, 0),
+      backgroundColor: const Color.fromRGBO(255, 0, 0, 0),
 
       // Render inline widget
       content: Container(
@@ -81,7 +86,7 @@ class _SleepTimeState extends State<SleepTime> {
                 // wheelHeight: 300.h,
                 hideButtons: false,
                 cancelStyle: TextStyle(
-                  color: Color.fromARGB(255, 255, 0, 0).withOpacity(0.75),
+                  color: const Color.fromARGB(255, 255, 0, 0).withOpacity(0.75),
                   fontSize: 16.sp,
                   fontFamily: 'SFProText',
                   fontWeight: FontWeight.w500,
@@ -93,13 +98,58 @@ class _SleepTimeState extends State<SleepTime> {
                 value: _time,
                 onChange: onTimeChanged,
                 isOnChangeValueMode: false,
-
+                onChangeDateTime: (DateTime dateTime) {
+                  int hour = dateTime.hour;
+                  int minute = dateTime.minute;
+                  print(hour);
+                  print(minute);
+                },
                 minuteInterval: TimePickerInterval.FIVE,
                 iosStylePicker: true,
-
+                minHour: 0,
+                maxHour: 21,
                 is24HrFormat: false,
               ),
             ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return WakeTime(
+                              sleepTime: _time); // Use the custom dialog
+                        },
+                      );
+                    },
+                    child: Container(
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFF00FFDE),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(1000),
+                        ),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.w),
+                      child: Text(
+                        "Next",
+                        style: TextStyle(
+                          color: AppColors.textBlack,
+                          fontSize: 18.sp,
+                          fontFamily: 'SFProText',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),

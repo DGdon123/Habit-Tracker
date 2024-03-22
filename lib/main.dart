@@ -12,9 +12,12 @@ import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/pages/auth_onboarding_deciding_screen.dart';
 
 import 'package:provider/provider.dart';
-
+import 'package:logger/logger.dart';
 import 'auth/repositories/user_repository.dart';
 
+var logger = Logger(
+  printer: PrettyPrinter(),
+);
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");

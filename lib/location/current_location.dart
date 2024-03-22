@@ -5,8 +5,10 @@ import 'package:background_locator_2/background_locator.dart';
 import 'package:background_locator_2/location_dto.dart';
 import 'package:background_locator_2/settings/android_settings.dart' as wwe;
 import 'package:background_locator_2/settings/ios_settings.dart' as pre;
+import 'package:background_locator_2/settings/locator_settings.dart';
 import 'package:habit_tracker/location/location_callback_handler.dart';
 import 'package:habit_tracker/location/location_service_repository.dart';
+import 'package:habit_tracker/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -14,9 +16,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/textfields.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart' as img;
 
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:location_permissions/location_permissions.dart';
 import 'file_manager.dart';
 
@@ -35,11 +36,10 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
   final TextEditingController _textEditingController = TextEditingController();
   final TextEditingController _textEditingController1 = TextEditingController();
   List<String> _places = [];
-  Position? _currentPosition;
+  img.Position? _currentPosition;
   String? _errorMessage;
   final String _location = "None";
   ReceivePort port = ReceivePort();
-
   String logStr = '';
   bool isRunning1 = false;
   LocationDto? lastLocation;
@@ -68,19 +68,20 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
 
   Future<void> initPlatformState() async {
     print('Initializing...');
-    await BackgroundLocator.initialize();
+
     logStr = await FileManager.readLogFile();
     print('Initialization done');
     final isRunning = await BackgroundLocator.isServiceRunning();
     setState(() {
       isRunning1 = isRunning;
     });
-    print('Running ${isRunning.toString()}');
+    print('Running ${isRunning1.toString()}');
   }
 
   @override
   void initState() {
     super.initState();
+
     _getCurrentLocation();
     _selectedTime = TimeOfDay.now();
     if (IsolateNameServer.lookupPortByName(
@@ -96,6 +97,7 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
     port.listen(
       (dynamic data) async {
         await updateUI(data);
+        await BackgroundLocator.initialize();
       },
     );
     initPlatformState();
@@ -103,7 +105,7 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
 
   Future<void> _getCurrentLocation() async {
     try {
-      Position? position = await _determinePosition();
+      img.Position? position = await _determinePosition();
       setState(() {
         _currentPosition = position;
         _errorMessage = null;
@@ -117,28 +119,28 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
   }
 
   String? currentAddress;
-  Future<Position> _determinePosition() async {
+  Future<img.Position> _determinePosition() async {
     bool serviceEnabled;
-    LocationPermission permission;
+    img.LocationPermission permission;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    serviceEnabled = await img.Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       throw 'Location services are disabled.';
     }
 
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
+    permission = await img.Geolocator.checkPermission();
+    if (permission == img.LocationPermission.denied) {
+      permission = await img.Geolocator.requestPermission();
+      if (permission == img.LocationPermission.denied) {
         throw 'Location permissions are denied';
       }
     }
 
-    if (permission == LocationPermission.deniedForever) {
+    if (permission == img.LocationPermission.deniedForever) {
       throw 'Location permissions are permanently denied, we cannot request permissions.';
     }
 
-    return await Geolocator.getCurrentPosition();
+    return await img.Geolocator.getCurrentPosition();
   }
 
   Future<void> _getLocationDetails(double latitude, double longitude) async {
@@ -255,43 +257,65 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
           permissionLevel: LocationPermissionLevel.locationAlways,
         );
         if (permission == PermissionStatus.granted) {
+          logger.d(permission);
           return true;
         } else {
+          logger.d(permission);
           return false;
         }
-        break;
+
       case PermissionStatus.granted:
         return true;
-        break;
+
       default:
         return false;
-        break;
     }
   }
 
   Future<void> _startLocator() async {
-    Map<String, dynamic> data = {'countInit': 1};
+    Map<String, dynamic> initData = {
+      'countInit': 1
+    }; // Initialize data for location update
+    // Log the initialization data
+
+    // Register location update with BackgroundLocator
     return await BackgroundLocator.registerLocationUpdate(
-        LocationCallbackHandler.callback,
-        initCallback: LocationCallbackHandler.initCallback,
-        initDataCallback: data,
-        disposeCallback: LocationCallbackHandler.disposeCallback,
-        iosSettings:
-            const pre.IOSSettings(distanceFilter: 0, stopWithTerminate: true),
-        autoStop: false,
-        androidSettings: const wwe.AndroidSettings(
-            interval: 5,
-            distanceFilter: 0,
-            client: wwe.LocationClient.google,
-            androidNotificationSettings: wwe.AndroidNotificationSettings(
-                notificationChannelName: 'Location tracking',
-                notificationTitle: 'Start Location Tracking',
-                notificationMsg: 'Track location in background',
-                notificationBigMsg:
-                    'Background location is on to keep the app up-tp-date with your location. This is required for main features to work properly when the app is not running.',
-                notificationIconColor: Colors.grey,
-                notificationTapCallback:
-                    LocationCallbackHandler.notificationCallback)));
+      LocationCallbackHandler.callback,
+      // Specify init callback and data
+      initCallback: LocationCallbackHandler.initCallback,
+      initDataCallback: initData,
+      // Specify dispose callback
+      disposeCallback: LocationCallbackHandler.disposeCallback,
+      // Configure iOS settings
+      iosSettings: const pre.IOSSettings(
+        accuracy: LocationAccuracy.NAVIGATION, // Specify accuracy
+        distanceFilter: 0, // Specify distance filter
+        stopWithTerminate: true, // Specify whether to stop with app termination
+      ),
+      // Disable auto stop
+      autoStop: false,
+      // Configure Android settings
+      androidSettings: const wwe.AndroidSettings(
+        accuracy: LocationAccuracy.NAVIGATION, // Specify accuracy
+        interval: 5, // Specify interval for location updates
+        distanceFilter: 0, // Specify distance filter
+        client: wwe.LocationClient.google, // Specify location client
+        // Configure Android notification settings
+        androidNotificationSettings: wwe.AndroidNotificationSettings(
+          notificationChannelName:
+              'Location tracking', // Specify notification channel name
+          notificationTitle:
+              'Start Location Tracking', // Specify notification title
+          notificationMsg: 'Track location in background',
+          // Specify notification message
+          notificationBigMsg:
+              'Background location is on to keep the app up-to-date with your location. This is required for main features to work properly when the app is not running.', // Specify big notification message
+          notificationIconColor: Colors.grey, // Specify notification icon color
+          notificationTapCallback: LocationCallbackHandler
+              .notificationCallback, // Specify notification tap callback
+        ),
+      ),
+    );
   }
 
   @override
@@ -411,12 +435,6 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
                 labelText: 'Gym Time',
                 keyboardType: TextInputType.name,
               ),
-            ),
-          ),
-          Center(
-            child: Text(
-              _location,
-              style: const TextStyle(),
             ),
           ),
           _textEditingController.text.isNotEmpty

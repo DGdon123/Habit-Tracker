@@ -58,11 +58,13 @@ dependencies:
   
   path_provider: ^2.1.2
   location_permissions: ^4.0.1
+  logger: ^2.1.0
   background_locator_2: ^2.0.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

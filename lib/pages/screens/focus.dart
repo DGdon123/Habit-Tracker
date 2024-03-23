@@ -12,6 +12,7 @@ import 'package:habit_tracker/pages/screens/focusTimer/focusMain.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
+import 'package:quickalert/quickalert.dart';
 
 class FocusPage extends StatefulWidget {
   const FocusPage({super.key});
@@ -27,8 +28,185 @@ class FocusPageState extends State<FocusPage> {
     viewportFraction: 0.82,
     initialPage: 0,
   );
+  @override
+  void initState() {
+    super.initState();
+    // Add initial pages or load data from storage
+    pages = [
+      InkWell(
+        onTap: () {
+          setState(() {
+            labelText = "Read";
+            hour1 = 0;
+            minute1 = 20;
+            second1 = 0;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 7),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    color: const Color(0xFFFCDCD3),
+                    borderRadius: BorderRadius.circular(10.r)),
+                padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.w),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 30.h,
+                          width: 30.w,
+                          child: Image.asset(
+                            AppImages.read,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: 5.w,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Read',
+                          style: presetStyle,
+                        ),
+                        Text(
+                          '20min',
+                          style: presetStyle2,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      InkWell(
+        onTap: () {
+          setState(() {
+            labelText = "Walk";
+            hour1 = 0;
+            minute1 = 30;
+            second1 = 0;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 7),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    color: const Color(0xFFCFFFE5),
+                    borderRadius: BorderRadius.circular(10.r)),
+                padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.w),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 30.h,
+                          width: 30.w,
+                          child: Image.asset(
+                            AppImages.walk,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: 5.w,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Walk',
+                          style: presetStyle,
+                        ),
+                        Text(
+                          '30min',
+                          style: presetStyle2,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      // meditate
+      InkWell(
+        onTap: () {
+          setState(() {
+            labelText = "Meditate";
+            hour1 = 0;
+            minute1 = 15;
+            second1 = 0;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 7),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    color: const Color(0xFFD5ECE0),
+                    borderRadius: BorderRadius.circular(10.r)),
+                padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.w),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 30.h,
+                          width: 30.w,
+                          child: Image.asset(
+                            AppImages.meditate,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: 5.w,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Meditate',
+                          style: presetStyle,
+                        ),
+                        Text(
+                          '15min',
+                          style: presetStyle2,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ];
+    // Add the "Add new" button at the end
+  }
 
-  String labelText = "Read";
+  String labelText = "No Label";
 
   void onTimeChanged(Time newTime) {
     setState(() {
@@ -36,70 +214,261 @@ class FocusPageState extends State<FocusPage> {
     });
   }
 
+  // Default icon
+
   int hour = 0;
   int minute = 0;
   int second = 0;
+  int hour1 = 0;
+  int minute1 = 0;
+  int second1 = 0;
+  // Function to show the add new dialog
+  String label = '';
+  int hours3 = 0;
+  int minutes3 = 0;
+  int seconds3 = 0;
+  List<Widget> pages = [];
+  void _showAddNewDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: Text(
+            'Add New Timer',
+            style: TextStyle(
+              color: const Color(0xFF040415),
+              fontSize: 18.sp,
+              fontFamily: 'SFProText',
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                onChanged: (value) {
+                  setState(() {
+                    label = value;
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: 'Label',
+                  hintStyle: TextStyle(
+                    color: Colors.black.withOpacity(0.75),
+                    fontSize: 18.sp,
+                    fontFamily: 'SFProText',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextField(
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
+                    hours3 = int.parse(value);
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: 'Hours',
+                  hintStyle: TextStyle(
+                    color: Colors.black.withOpacity(0.75),
+                    fontSize: 18.sp,
+                    fontFamily: 'SFProText',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextField(
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
+                    minutes3 = int.parse(value);
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: 'Minutes',
+                  hintStyle: TextStyle(
+                    color: Colors.black.withOpacity(0.75),
+                    fontSize: 18.sp,
+                    fontFamily: 'SFProText',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextField(
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
+                    seconds3 = int.parse(value);
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: 'Seconds',
+                  hintStyle: TextStyle(
+                    color: Colors.black.withOpacity(0.75),
+                    fontSize: 18.sp,
+                    fontFamily: 'SFProText',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              // Input field for label
+            ],
+          ),
+          actions: [
+            // Button to save the input data
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                if (label.isEmpty) {
+                  QuickAlert.show(
+                    context: context,
+                    type: QuickAlertType.error,
+                    confirmBtnColor: AppColors.mainBlue,
+                    title: 'Error...',
+                    text: 'Please, fill up all the fields!',
+                  );
+                } else {
+                  Widget newPage = InkWell(
+                    onTap: () {
+                      setState(() {
+                        labelText = label;
+                        hour1 = hours3;
+                        minute1 = minutes3;
+                        second1 = seconds3;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7),
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                color: const Color(0xFFD5ECE0),
+                                borderRadius: BorderRadius.circular(10.r)),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 40.w, vertical: 20.w),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 30.h,
+                                      width: 30.w,
+                                      child: Image.asset(
+                                        AppImages.other,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: 5.w,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      label,
+                                      style: presetStyle,
+                                    ),
+                                    Text(
+                                      '$minutes3 min',
+                                      style: presetStyle2,
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                  setState(() {
+                    // Add the new page to the pages list
+                    pages.add(newPage);
+                    Navigator.pop(context);
+                  });
+                }
+              },
+              child: const Text(
+                'Save',
+                style: TextStyle(
+                  color: AppColors.mainBlue,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
+  TextStyle presetStyle = TextStyle(
+    color: AppColors.textBlack,
+    fontSize: 14.sp,
+    fontFamily: 'SFProText',
+    fontWeight: FontWeight.w500,
+  );
+
+  TextStyle presetStyle2 = TextStyle(
+    color: AppColors.textBlack,
+    fontSize: 12.sp,
+    fontFamily: 'SFProText',
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle labelStyle = TextStyle(
+    color: const Color(0xFF040415),
+    fontSize: 18.sp,
+    fontFamily: 'SFProText',
+    fontWeight: FontWeight.w600,
+  );
+
+  TextStyle labelStyle2 = TextStyle(
+    color: Colors.black.withOpacity(0.75),
+    fontSize: 18.sp,
+    fontFamily: 'SFProText',
+    fontWeight: FontWeight.w400,
+  );
   @override
   Widget build(BuildContext context) {
-    TextStyle presetStyle = TextStyle(
-      color: AppColors.textBlack,
-      fontSize: 14.sp,
-      fontFamily: 'SFProText',
-      fontWeight: FontWeight.w500,
-    );
-
-    TextStyle presetStyle2 = TextStyle(
-      color: AppColors.textBlack,
-      fontSize: 12.sp,
-      fontFamily: 'SFProText',
-      fontWeight: FontWeight.w400,
-    );
-
-    TextStyle labelStyle = TextStyle(
-      color: const Color(0xFF040415),
-      fontSize: 18.sp,
-      fontFamily: 'SFProText',
-      fontWeight: FontWeight.w600,
-    );
-
-    TextStyle labelStyle2 = TextStyle(
-      color: Colors.black.withOpacity(0.75),
-      fontSize: 18.sp,
-      fontFamily: 'SFProText',
-      fontWeight: FontWeight.w400,
-    );
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        backgroundColor: AppColors.white,
-        body: Container(
-          margin: EdgeInsets.only(
-              top: kIsWeb
-                  ? 35.h
-                  : Platform.isIOS
-                      ? 50.h
-                      : 35.h),
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      body: Container(
+        margin: EdgeInsets.only(
+            top: kIsWeb
+                ? 35.h
+                : Platform.isIOS
+                    ? 50.h
+                    : 35.h),
+        child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: SizedBox(
-                        height: 28.h,
-                        width: 28.w,
-                        child: SvgPicture.asset(
-                          AppIcons.back,
-                        ),
-                      ),
-                    ),
                     Center(
                       child: Text(
                         "Focus Timer",
@@ -109,10 +478,6 @@ class FocusPageState extends State<FocusPage> {
                             fontWeight: FontWeight.w900,
                             color: AppColors.textBlack),
                       ),
-                    ),
-                    SizedBox(
-                      height: 28.h,
-                      width: 28.w,
                     ),
                   ],
                 ),
@@ -161,14 +526,29 @@ class FocusPageState extends State<FocusPage> {
                                       hour: hour,
                                       minute: minute,
                                       second: second);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => FocusMainScreen(
-                                                hour: hour,
-                                                minute: minute,
-                                                second: second,
-                                              )));
+                                  if (minute1 == 0) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                FocusMainScreen(
+                                                  label: labelText,
+                                                  hour: hour,
+                                                  minute: minute,
+                                                  second: second,
+                                                )));
+                                  } else {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                FocusMainScreen(
+                                                  label: labelText,
+                                                  hour: hour1,
+                                                  minute: minute1,
+                                                  second: second1,
+                                                )));
+                                  }
                                 });
                                 print(_time.toString());
                               },
@@ -196,209 +576,60 @@ class FocusPageState extends State<FocusPage> {
                   ),
                   Positioned(
                     bottom: 0,
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 35.w, vertical: 0.h),
-                      child: Container(
-                        child: SizedBox(
-                          height: 100.h,
-                          width: 200.w,
-                          child: PageView(
-                            controller: _pageController,
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 7),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          color: const Color(0xFFFCDCD3),
-                                          borderRadius:
-                                              BorderRadius.circular(10.r)),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 27.w, vertical: 20.w),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              SizedBox(
-                                                height: 30.h,
-                                                width: 30.w,
-                                                child: Image.asset(
-                                                  AppImages.read,
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            width: 5.w,
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Read',
-                                                style: presetStyle,
-                                              ),
-                                              Text(
-                                                '20min',
-                                                style: presetStyle2,
-                                              ),
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 7),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          color: const Color(0xFFCFFFE5),
-                                          borderRadius:
-                                              BorderRadius.circular(10.r)),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 27.w, vertical: 20.w),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              SizedBox(
-                                                height: 30.h,
-                                                width: 30.w,
-                                                child: Image.asset(
-                                                  AppImages.walk,
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            width: 5.w,
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Walk',
-                                                style: presetStyle,
-                                              ),
-                                              Text(
-                                                '30min',
-                                                style: presetStyle2,
-                                              ),
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              // meditate
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 7),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          color: const Color(0xFFD5ECE0),
-                                          borderRadius:
-                                              BorderRadius.circular(10.r)),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 27.w, vertical: 20.w),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              SizedBox(
-                                                height: 30.h,
-                                                width: 30.w,
-                                                child: Image.asset(
-                                                  AppImages.meditate,
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            width: 5.w,
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Meditate',
-                                                style: presetStyle,
-                                              ),
-                                              Text(
-                                                '15min',
-                                                style: presetStyle2,
-                                              ),
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 7),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.primaryColor,
-                                          borderRadius:
-                                              BorderRadius.circular(10.r),
-                                        ),
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 27.w, vertical: 28.h),
-                                          child: Row(
-                                            children: [
-                                              SvgPicture.asset(
-                                                AppIcons.plus,
-                                                height: 24.h,
-                                              ),
-                                              Text(
-                                                'Add new',
-                                                style: presetStyle,
-                                              )
-                                            ],
-                                          ),
-                                        )),
-                                  ],
-                                ),
-                              ),
-                            ],
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 25.w, vertical: 0.h),
+                          child: SizedBox(
+                            height: 100.h,
+                            width: 220.w,
+                            child: PageView(
+                              controller: _pageController,
+                              scrollDirection: Axis.horizontal,
+                              children: pages,
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ],
+              ),
+              InkWell(
+                onTap: () {
+                  _showAddNewDialog(context);
+                },
+                child: Column(
+                  children: [
+                    Container(
+                        margin: const EdgeInsets.only(left: 48),
+                        width: 120.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.h),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                AppIcons.plus,
+                                height: 24.h,
+                              ),
+                              Text(
+                                'Add new',
+                                style: presetStyle,
+                              )
+                            ],
+                          ),
+                        )),
+                  ],
+                ),
               ),
               SizedBox(
                 height: 30.h,
@@ -560,10 +791,6 @@ class FocusPageState extends State<FocusPage> {
                       Text(
                         'Ting Tong',
                         style: labelStyle2,
-                      ),
-                      Icon(
-                        Icons.chevron_right,
-                        size: 18.h,
                       ),
                     ],
                   )

@@ -59,7 +59,7 @@ class ProfilePageState extends State<ProfilePage>
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const HomePage()));
+                                  builder: (context) =>  HomePage()));
                         },
                         child: SizedBox(
                           height: 28.h,

@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -7,7 +6,8 @@ class TriangleTooltip extends StatelessWidget {
   final List<TooltipOption> options;
   final Color backgroundColor;
 
-  TriangleTooltip({required this.options, required this.backgroundColor});
+  const TriangleTooltip(
+      {super.key, required this.options, required this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
@@ -25,37 +25,46 @@ class TriangleTooltip extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: options
                     .map(
-                      (option) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(option.icon, height: 18, ),
-                        SizedBox(width: 8),
-                        Text(option.label),
-                      ],
-                    ),
-                  ),
-                )
+                      (option) => InkWell(
+                        onTap: option.onPressed,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 12),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Image.asset(
+                                option.icon,
+                                height: 18,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(option.label),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
                     .toList(),
               ),
             ),
           ),
         ),
-
         Positioned(
           right: 10,
           top: 2,
           child: Container(
-            margin: EdgeInsets.only(bottom: 0),
+            margin: const EdgeInsets.only(bottom: 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(width: 120,),
+                Container(
+                  width: 120,
+                ),
                 Container(
                   child: CustomPaint(
-                    size: Size(30, 15), // Size of your triangle
-                    painter: TrianglePainter(color: Colors.grey.withOpacity(0.3)),
+                    size: const Size(30, 15), // Size of your triangle
+                    painter:
+                        TrianglePainter(color: Colors.grey.withOpacity(0.3)),
                   ),
                 ),
               ],
@@ -92,6 +101,11 @@ class TrianglePainter extends CustomPainter {
 class TooltipOption {
   final String icon;
   final String label;
+  final void Function() onPressed; // Specify the function type correctly
 
-  TooltipOption({required this.icon, required this.label});
+  TooltipOption({
+    required this.icon,
+    required this.onPressed, // Corrected function definition
+    required this.label,
+  });
 }

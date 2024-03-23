@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
-
+import 'package:audioplayers/audioplayers.dart' as de;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,17 +8,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
 import 'package:habit_tracker/widgets/tooltip.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'package:quickalert/quickalert.dart';
 
 class FocusMainScreen extends StatefulWidget {
   int? hour;
   int? minute;
+  String? label;
   int? second;
-  FocusMainScreen({this.hour, this.minute, this.second, super.key});
+  FocusMainScreen({this.hour, this.label, this.minute, this.second, super.key});
 
   @override
   State<FocusMainScreen> createState() => _FocusMainScreenState();
@@ -26,6 +29,8 @@ class FocusMainScreen extends StatefulWidget {
 
 class _FocusMainScreenState extends State<FocusMainScreen> {
   final _isHours = true;
+  de.AudioPlayer audioPlayer = de.AudioPlayer();
+
   bool started = false;
   double _progressValue = 1;
   bool showHeadphoneOptions = false;
@@ -34,6 +39,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
   @override
   void initState() {
     super.initState();
+    log(widget.label.toString());
     time(); // Call time() function to calculate milli
 
     _stopWatchTimer = StopWatchTimer(
@@ -44,6 +50,25 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
         // Calculate remaining progress value
         _progressValue = remainingMilliseconds / milli;
         setState(() {});
+        if (_progressValue == 0) {
+          playMusic(de.AssetSource('tingtong.mp3'));
+          QuickAlert.show(
+            onConfirmBtnTap: () {
+              audioPlayer.stop();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(
+                            initialIndex: 3,
+                          )));
+            },
+            context: context,
+            confirmBtnText: 'Exit',
+            type: QuickAlertType.info,
+            confirmBtnColor: AppColors.mainBlue,
+            text: 'Your focus timer has been completed!',
+          );
+        }
       },
       onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
       onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
@@ -81,6 +106,19 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
     milli = hoursInMillis + minutesInMillis + secondsInMillis;
   }
 
+  Future<void> playMusic(de.Source filename) async {
+    // Stop any currently playing music
+
+    // Calculate the total duration in seconds
+
+    // Play the specified music file at the specified position
+    await audioPlayer.play(filename,
+        volume: 100, mode: de.PlayerMode.mediaPlayer);
+    audioPlayer.setReleaseMode(de.ReleaseMode.loop);
+    // Indicate that the music playback has started
+    print('Music playback started');
+  }
+
   @override
   void dispose() async {
     super.dispose();
@@ -98,13 +136,15 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
     return user?.displayName;
   }
 
+// Get individual components of the current date (year, month, day)
+
   Future<void> addUser(int hours, int minutes, int seconds) {
     CollectionReference users =
         FirebaseFirestore.instance.collection('focus_timer');
 
     return users
         .add({
-          'Label': 'Meditate',
+          'Label': widget.label ?? 'Meditate',
           'Hours': hours,
           'Minutes': minutes,
           'Seconds': seconds,
@@ -137,6 +177,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                         children: [
                           GestureDetector(
                             onTap: () {
+                              audioPlayer.stop();
                               Navigator.pop(context);
                             },
                             child: SizedBox(
@@ -324,6 +365,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                             children: [
                               InkWell(
                                 onTap: () {
+                                  audioPlayer.stop();
                                   Navigator.pop(context);
                                 },
                                 child: const Icon(
@@ -371,10 +413,30 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                 child: TriangleTooltip(
                   backgroundColor: Colors.white,
                   options: [
-                    TooltipOption(icon: AppIcons.lofi, label: 'Lofi'),
-                    TooltipOption(icon: AppIcons.paino, label: 'Paino'),
-                    TooltipOption(icon: AppIcons.jazz, label: 'Jazz'),
-                    TooltipOption(icon: AppIcons.zen, label: 'Zen'),
+                    TooltipOption(
+                        icon: AppIcons.lofi,
+                        label: 'Lofi',
+                        onPressed: () {
+                          playMusic(de.AssetSource('lofi.mp3'));
+                        }),
+                    TooltipOption(
+                        icon: AppIcons.paino,
+                        label: 'Piano',
+                        onPressed: () {
+                          playMusic(de.AssetSource('piano.mp3'));
+                        }),
+                    TooltipOption(
+                        icon: AppIcons.jazz,
+                        label: 'Jazz',
+                        onPressed: () {
+                          playMusic(de.AssetSource('jazz.mp3'));
+                        }),
+                    TooltipOption(
+                        icon: AppIcons.zen,
+                        label: 'Zen',
+                        onPressed: () {
+                          playMusic(de.AssetSource('zen.mp3'));
+                        }),
                   ],
                 ),
               ),

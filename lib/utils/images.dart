@@ -6,6 +6,7 @@ class AppImages {
   static const String characterFull = 'assets/images/characterfull.png';
   static const String emoji = 'assets/images/Emoji.png';
   static const String walk = 'assets/images/walk.png';
+  static const String other = 'assets/images/round.png';
   static const String read = 'assets/images/read.png';
   static const String meditate = 'assets/images/meditate.png';
   static const String fitbit = 'assets/images/fitbit.png';

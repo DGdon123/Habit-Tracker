@@ -12,14 +12,21 @@ import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  int? initialIndex;
+  HomePage({this.initialIndex, super.key});
 
   @override
   State<HomePage> createState() => HomePageState();
 }
 
 class HomePageState extends State<HomePage> {
-  int _currentIndex = 2;
+  int? _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex ?? 2;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +36,7 @@ class HomePageState extends State<HomePage> {
         splashColor: Colors.transparent,
       ),
       child: Scaffold(
-        body: _getPage(_currentIndex),
+        body: _getPage(_currentIndex!),
         bottomNavigationBar: Stack(
           alignment: Alignment.center,
           children: [
@@ -65,7 +72,7 @@ class HomePageState extends State<HomePage> {
                   height: 0,
                 ),
                 backgroundColor: const Color(0xfbf1f4ff),
-                currentIndex: _currentIndex,
+                currentIndex: _currentIndex!,
                 onTap: (index) {
                   setState(() {
                     _currentIndex = index;

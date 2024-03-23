@@ -91,7 +91,7 @@ class HomePage1 extends StatelessWidget {
           case Status.Authenticating1:
             return const LoginScreen();
           case Status.Authenticated:
-            return const HomePage();
+            return HomePage();
         }
       },
     );

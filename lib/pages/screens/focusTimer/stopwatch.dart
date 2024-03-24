@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:habit_tracker/main.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
@@ -16,18 +17,18 @@ import 'package:habit_tracker/widgets/tooltip.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:quickalert/quickalert.dart';
 
-class FocusMainScreen extends StatefulWidget {
+class StopWatchScreen extends StatefulWidget {
   int? hour;
   int? minute;
   String? label;
   int? second;
-  FocusMainScreen({this.hour, this.label, this.minute, this.second, super.key});
+  StopWatchScreen({this.hour, this.label, this.minute, this.second, super.key});
 
   @override
-  State<FocusMainScreen> createState() => _FocusMainScreenState();
+  State<StopWatchScreen> createState() => _FocusMainScreenState();
 }
 
-class _FocusMainScreenState extends State<FocusMainScreen> {
+class _FocusMainScreenState extends State<StopWatchScreen> {
   final _isHours = true;
   de.AudioPlayer audioPlayer = de.AudioPlayer();
 
@@ -42,33 +43,15 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
     log(widget.label.toString());
     time(); // Call time() function to calculate milli
 
+    // Initialize and start the stopwatch timer
     _stopWatchTimer = StopWatchTimer(
-      mode: StopWatchMode.countDown,
+      mode: StopWatchMode.countUp,
       presetMillisecond: milli,
       onChange: (value) {
         int remainingMilliseconds = value;
         // Calculate remaining progress value
         _progressValue = remainingMilliseconds / milli;
         setState(() {});
-        if (_progressValue == 0) {
-          playMusic(de.AssetSource('tingtong.mp3'));
-          QuickAlert.show(
-            onConfirmBtnTap: () {
-              audioPlayer.stop();
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomePage(
-                            initialIndex: 3,
-                          )));
-            },
-            context: context,
-            confirmBtnText: 'Exit',
-            type: QuickAlertType.info,
-            confirmBtnColor: AppColors.mainBlue,
-            text: 'Your focus timer has been completed!',
-          );
-        }
       },
       onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
       onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
@@ -79,16 +62,6 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
         print('onEnded');
       },
     );
-
-    _stopWatchTimer.rawTime.listen((value) =>
-        print('rawTime $value ${StopWatchTimer.getDisplayTime(value)}'));
-
-    _stopWatchTimer.minuteTime.listen((value) => print('minuteTime $value'));
-    _stopWatchTimer.secondTime.listen((value) => print('secondTime $value'));
-    _stopWatchTimer.records.listen((value) => print('records $value'));
-    _stopWatchTimer.fetchStopped
-        .listen((value) => print('stopped from stream'));
-    _stopWatchTimer.fetchEnded.listen((value) => print('ended from stream'));
 
     /// Can be set preset time. This case is "00:01.23".
     // _stopWatchTimer.setPresetTime(mSec: 1234);
@@ -140,7 +113,10 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
 
   Future<void> addUser(int hours, int minutes, int seconds) {
     CollectionReference users =
-        FirebaseFirestore.instance.collection('focus_timer');
+        FirebaseFirestore.instance.collection('stopwatch');
+    logger.d(hours);
+    logger.d(minutes);
+    logger.d(seconds);
 
     return users
         .add({
@@ -190,7 +166,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                           ),
                           Center(
                             child: Text(
-                              "  Focus Timer",
+                              "Stopwatch",
                               style: TextStyle(
                                   fontFamily: 'SFProText',
                                   fontSize: 24.sp,
@@ -304,52 +280,8 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 30),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          color: Colors.black,
-                          padding: const EdgeInsets.all(4),
-                          child: Container(
-                            color: Colors.white,
-                            padding: const EdgeInsets.all(3),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 220,
-                                  height: 20,
-                                  child: LinearProgressIndicator(
-                                    value: _progressValue,
-                                    backgroundColor: const Color(0xfbffffff),
-                                    valueColor:
-                                        const AlwaysStoppedAnimation<Color>(
-                                            AppColors.black),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  '${(_progressValue * 100).toStringAsFixed(0)}%',
-                                  style: const TextStyle(
-                                    color: AppColors.lightBlack,
-                                    fontSize: 20,
-                                    fontFamily: 'SFProText',
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
                     const SizedBox(
-                      height: 15,
+                      height: 35,
                     ),
 
                     /// Button
@@ -382,27 +314,6 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                                       addUser(hours, minutes, seconds);
                                     });
                                   } else {
-                                    if (widget.hour == 0 &&
-                                        widget.minute == 0 &&
-                                        widget.second == 0) {
-                                      QuickAlert.show(
-                                        context: context,
-                                        onConfirmBtnTap: () {
-                                          Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HomePage(
-                                                        initialIndex: 3,
-                                                      )),
-                                              (route) => false);
-                                        },
-                                        confirmBtnColor: AppColors.mainBlue,
-                                        type: QuickAlertType.error,
-                                        title: 'Oops...',
-                                        text: 'Sorry, timer cannot be 0.',
-                                      );
-                                    }
                                     _stopWatchTimer.onStartTimer();
                                     setState(() {
                                       started = true;

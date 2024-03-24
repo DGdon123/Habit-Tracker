@@ -55,7 +55,6 @@ dependencies:
   calendar_date_picker2: ^0.5.5
   flutter_dotenv: ^5.1.0
   fluttertoast: ^8.2.4
-  
   path_provider: ^2.1.2
   location_permissions: ^4.0.1
   logger: ^2.1.0

@@ -6,11 +6,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/auth/login_page.dart';
 import 'package:habit_tracker/onboarding/onboardingScreen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:habit_tracker/pages/home_page.dart';
+
 import 'package:habit_tracker/provider/dob_provider.dart';
 
 import 'package:habit_tracker/pages/auth_onboarding_deciding_screen.dart';
-
 import 'package:provider/provider.dart';
 import 'package:logger/logger.dart';
 import 'auth/repositories/user_repository.dart';

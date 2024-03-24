@@ -248,26 +248,36 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
   }
 
   Future<bool> _checkLocationPermission() async {
+    // Check the current status of location permission
     final access = await LocationPermissions().checkPermissionStatus();
+
     switch (access) {
       case PermissionStatus.unknown:
       case PermissionStatus.denied:
       case PermissionStatus.restricted:
+        // If the permission status is unknown, denied, or restricted,
+        // request the location permission.
         final permission = await LocationPermissions().requestPermissions(
           permissionLevel: LocationPermissionLevel.locationAlways,
         );
+
+        // Check if the permission is granted after the request.
         if (permission == PermissionStatus.granted) {
           logger.d(permission);
+          // Permission granted, return true.
           return true;
         } else {
           logger.d(permission);
+          // Permission not granted, return false.
           return false;
         }
 
       case PermissionStatus.granted:
+        // If the permission status is already granted, return true.
         return true;
 
       default:
+        // Handle any unexpected permission status here.
         return false;
     }
   }

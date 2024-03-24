@@ -1,5 +1,8 @@
 import 'dart:io';
+import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -7,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:habit_tracker/main.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
@@ -26,6 +30,158 @@ class StatsPageState extends State<StatsPage> {
   DateTime? startDate;
   DateTime? endDate;
   DateTime today = DateTime.now();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? getUserID() {
+    User? user = _auth.currentUser;
+    return user?.uid;
+  }
+
+  Map<String, dynamic> userLabels = {};
+  Map<String, dynamic> userLabels2 = {};
+  bool select = false;
+  Future<Map<String, dynamic>> fetchUsers() async {
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('stopwatch');
+
+    String? userID = getUserID(); // Get the current user's ID
+    // Initialize a list to hold the Text widgets
+
+    if (userID != null) {
+      try {
+        QuerySnapshot snapshot =
+            await users.where('ID', isEqualTo: userID).get();
+        if (snapshot.docs.isNotEmpty) {
+          for (var doc in snapshot.docs) {
+            var data = doc.data()
+                as Map<String, dynamic>; // Cast data to Map<String, dynamic>
+
+            // Iterate through each field in the data and create a Text widget for each field
+            userLabels.addAll(data);
+            logger.d(userLabels);
+          }
+        } else {
+          print('No data found for the current user');
+        }
+      } catch (error) {
+        print("Failed to fetch users: $error");
+      }
+    } else {
+      print('User ID is null');
+    }
+
+    return userLabels; // Return the list of Text widgets
+  }
+
+  Future<Map<String, dynamic>> fetchUsers2() async {
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('focus_timer');
+
+    String? userID = getUserID(); // Get the current user's ID
+    // Initialize a list to hold the Text widgets
+
+    if (userID != null) {
+      try {
+        QuerySnapshot snapshot =
+            await users.where('ID', isEqualTo: userID).get();
+        if (snapshot.docs.isNotEmpty) {
+          for (var doc in snapshot.docs) {
+            var data = doc.data()
+                as Map<String, dynamic>; // Cast data to Map<String, dynamic>
+
+            // Iterate through each field in the data and create a Text widget for each field
+
+            userLabels2.addAll(
+                data); // Create a Text widget for the field and add it to the list
+
+            logger.d(userLabels2);
+          }
+        } else {
+          print('No data found for the current user');
+        }
+      } catch (error) {
+        print("Failed to fetch users: $error");
+      }
+    } else {
+      print('User ID is null');
+    }
+
+    return userLabels2; // Return the list of Text widgets
+  }
+
+  Padding piechartIndicator() {
+    // Call updatePieChartSections to fetch user labels and update the pieChartSections list
+    updatePieChartSections();
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Column(
+        children: pieChartSections
+            .map((section) => Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 10.h,
+                      height: 10.h,
+                      decoration: BoxDecoration(
+                        color: section.color,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(100.r),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Text(
+                      section.title,
+                      style: secondaryStyle,
+                    ),
+                    SizedBox(width: 10.w),
+                    Text(
+                      '${section.value}%',
+                      style: statusStyle(AppColors.textBlack),
+                    ),
+                  ],
+                ))
+            .toList(),
+      ),
+    );
+  }
+
+  List<PieChartSectionData> pieChartSections = [];
+
+  Future<void> updatePieChartSections() async {
+    // Fetch user labels
+
+    // Iterate over user labels and create PieChartSectionData objects
+    userLabels.forEach((key, value) {
+      // Skip keys that are not labels
+
+      // Extract the label value
+      String label = value['Label'].toString();
+      logger.d(label);
+      // Create a PieChartSectionData object for each label
+      PieChartSectionData section = PieChartSectionData(
+        color: getRandomColor(), // Get a random color for the section
+        value: 30, // Set the value to 0 initially
+        title: label, // Set the label as the title
+        radius: 150,
+        titleStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 10.sp,
+          fontFamily: 'SFProText',
+          fontWeight: FontWeight.w600,
+          height: 0.20,
+        ),
+      );
+
+      // Add the section to the pieChartSections list
+      pieChartSections.add(section);
+    });
+  }
+
+  Color getRandomColor() {
+    // Generate a random color
+    return Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
+  }
 
   TextStyle statusStyle(Color textColor) {
     return TextStyle(
@@ -49,6 +205,12 @@ class StatsPageState extends State<StatsPage> {
     fontFamily: 'SFProText',
     fontWeight: FontWeight.w500,
   );
+  @override
+  void initState() {
+    super.initState();
+    fetchUsers();
+    fetchUsers2();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +243,6 @@ class StatsPageState extends State<StatsPage> {
                             fontWeight: FontWeight.w900,
                             color: AppColors.textBlack),
                       ),
-                    ),
-                    SizedBox(
-                      height: 28.h,
-                      width: 28.w,
                     ),
                   ],
                 ),
@@ -216,41 +374,6 @@ class StatsPageState extends State<StatsPage> {
     );
   }
 
-  Padding piechartIndicator() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: Column(
-        children: pieChartSections
-            .map((section) => Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 10.h,
-                      height: 10.h,
-                      decoration: BoxDecoration(
-                        color: section.color,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(100.r),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      section.title,
-                      style: secondaryStyle,
-                    ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      '${section.value}%',
-                      style: statusStyle(AppColors.textBlack),
-                    ),
-                  ],
-                ))
-            .toList(),
-      ),
-    );
-  }
-
   List<BarChartGroupData> barChartGroups = [
     BarChartGroupData(x: 0, barRods: [
       BarChartRodData(
@@ -290,61 +413,6 @@ class StatsPageState extends State<StatsPage> {
     ]),
   ];
 
-  List<PieChartSectionData> pieChartSections = [
-    PieChartSectionData(
-      color: Colors.blue,
-      value: 30,
-      title: 'Study',
-      radius: 150,
-      titleStyle: TextStyle(
-        color: Colors.white,
-        fontSize: 10.sp,
-        fontFamily: 'SFProText',
-        fontWeight: FontWeight.w600,
-        height: 0.20,
-      ),
-    ),
-    PieChartSectionData(
-      color: Colors.green,
-      value: 10,
-      title: 'Screen Time',
-      radius: 150,
-      titleStyle: TextStyle(
-        color: Colors.white,
-        fontSize: 10.sp,
-        fontFamily: 'SFProText',
-        fontWeight: FontWeight.w600,
-        height: 0.20,
-      ),
-    ),
-    PieChartSectionData(
-      color: Colors.red,
-      value: 35,
-      title: 'Reading',
-      radius: 150,
-      titleStyle: TextStyle(
-        color: Colors.white,
-        fontSize: 10.sp,
-        fontFamily: 'SFProText',
-        fontWeight: FontWeight.w600,
-        height: 0.20,
-      ),
-    ),
-    PieChartSectionData(
-      color: Colors.pink,
-      value: 25,
-      title: 'Workout',
-      radius: 150,
-      titleStyle: TextStyle(
-        color: Colors.white,
-        fontSize: 10.sp,
-        fontFamily: 'SFProText',
-        fontWeight: FontWeight.w600,
-        height: 0.20,
-      ),
-    ),
-  ];
-
   Padding datePicker(String formattedDate, BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -354,18 +422,6 @@ class StatsPageState extends State<StatsPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'This week',
-                style: TextStyle(
-                  color: AppColors.textBlack,
-                  fontSize: 16.sp,
-                  fontFamily: 'SFProText',
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(
-                height: 5.h,
-              ),
               Text(
                 '${startDate != null ? DateFormat("MMM dd").format(startDate!) : formattedDate} - ${endDate != null ? DateFormat("MMM dd").format(endDate!) : ''}',
                 style: secondaryStyle,

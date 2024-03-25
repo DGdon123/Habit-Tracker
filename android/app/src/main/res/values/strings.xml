@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HabitTest</string>
+    <string name="fb_login_protocol_scheme">fb391083973734626</string>
+    <string name="facebook_app_id">391083973734626</string>
+    <string name="facebook_client_token">25f9e93f143be2e7be2b56056ff73c3a</string>
+</resources>

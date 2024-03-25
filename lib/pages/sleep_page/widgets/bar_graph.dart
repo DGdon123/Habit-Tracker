@@ -1,23 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/pages/sleep_page/utils.dart';
-import 'package:habit_tracker/provider/avg_sleep_provider.dart';
 import 'package:habit_tracker/provider/start_end_date_provider.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/text_styles.dart';
 import 'package:provider/provider.dart';
 
-class BarGraph extends StatefulWidget {
-  const BarGraph({super.key});
+class BarGraph extends StatelessWidget {
+  BarGraph({super.key});
 
-  @override
-  State<BarGraph> createState() => _BarGraphState();
-}
-
-class _BarGraphState extends State<BarGraph> {
   double highestDifference = 0.0;
 
   @override
@@ -30,9 +23,6 @@ class _BarGraphState extends State<BarGraph> {
               endDate: DateTime.now()),
           builder: (context, snapshot) {
             debugPrint("Snapshot range: ${snapshot.data?.docs}");
-
-            double totalTime = 0.0;
-
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
@@ -45,13 +35,7 @@ class _BarGraphState extends State<BarGraph> {
               if (double.parse(doc['difference']) > highestDifference) {
                 highestDifference = double.parse(doc['difference']);
               }
-              totalTime += double.parse(doc['difference']);
             }
-
-            Future.delayed(Duration(milliseconds: 200), () {
-              Provider.of<AvgSleepProvider>(context, listen: false)
-                  .setAvgTime(totalTime / 7);
-            });
 
             return SizedBox(
               height: 300,
@@ -124,6 +108,8 @@ List<BarChartGroupData> getBarChartGroups(
         break;
       }
     }
+
+    debugPrint("Bar graph: $difference");
 
     // Add BarChartGroupData with value 10 if the date is contained in docs, otherwise add 0
     barChartGroups.add(

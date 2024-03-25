@@ -9,7 +9,7 @@ import 'package:habit_tracker/utils/styles.dart';
 
 class WakeTime extends StatefulWidget {
   final Time sleepTime;
-  const WakeTime({super.key, required this.sleepTime});
+  const WakeTime({required this.sleepTime});
   @override
   State<WakeTime> createState() => _WakeTimeState();
 }
@@ -32,10 +32,6 @@ class _WakeTimeState extends State<WakeTime> {
     var difference = endTime.difference(startTime);
     debugPrint("Difference: $difference, ${widget.sleepTime}, $_timeWake");
 
-    setState(() {
-      _timeWake = newTime;
-    });
-    Navigator.pop(context);
     SleepFireStoreServices().addNewSleepTime(
       sleepTime: widget.sleepTime.format(context),
       wakeTime: _timeWake.format(context),
@@ -88,7 +84,7 @@ class _WakeTimeState extends State<WakeTime> {
                 },
                 dialogInsetPadding:
                     EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.h),
-                unselectedColor: const Color.fromRGBO(0, 0, 0, 0.75),
+                unselectedColor: Color.fromRGBO(0, 0, 0, 0.75),
                 hourLabel: 'Hour',
                 minuteLabel: 'Minutes',
                 // width: 350.w,
@@ -96,7 +92,7 @@ class _WakeTimeState extends State<WakeTime> {
                 // wheelHeight: 300.h,
 
                 cancelStyle: TextStyle(
-                  color: const Color.fromARGB(255, 255, 0, 0).withOpacity(0.75),
+                  color: Color.fromARGB(255, 255, 0, 0).withOpacity(0.75),
                   fontSize: 16.sp,
                   fontFamily: 'SFProText',
                   fontWeight: FontWeight.w500,
@@ -119,38 +115,6 @@ class _WakeTimeState extends State<WakeTime> {
                 is24HrFormat: false,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFF00FFDE),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(1000),
-                        ),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.w),
-                      child: Text(
-                        "Save",
-                        style: TextStyle(
-                          color: AppColors.textBlack,
-                          fontSize: 18.sp,
-                          fontFamily: 'SFProText',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
           ],
         ),
       ),

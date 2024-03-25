@@ -9,6 +9,8 @@ import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
 
+import 'customize character/customizeCharater.dart';
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -475,7 +477,9 @@ class _HomeState extends State<Home> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const CurrentLocation(),
+                      builder: (context) {
+                        return const CustomizeCharacter();
+                      },
                     ),
                   );
                 },

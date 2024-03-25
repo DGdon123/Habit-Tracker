@@ -21,15 +21,23 @@ class _CustomizeCharacterState extends State<CustomizeCharacter> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      top: false,
       child: Scaffold(
         body: Container(
-          margin: EdgeInsets.only(top: kIsWeb ? 35.h :Platform.isIOS ? 50.h : 30),
+          margin: EdgeInsets.only(
+              top: kIsWeb
+                  ? 35.h
+                  : Platform.isIOS
+                      ? 50.h
+                      : 30),
           child: Column(
             children: [
               topBar(),
               SizedBox(
-                height:kIsWeb ? 20.h : Platform.isIOS ? 5.h : 20.h,
+                height: kIsWeb
+                    ? 20.h
+                    : Platform.isIOS
+                        ? 5.h
+                        : 20.h,
               ),
               Expanded(
                 child: ListView(
@@ -304,188 +312,6 @@ class _CustomizeCharacterState extends State<CustomizeCharacter> {
                                   border: Border(
                                     bottom: BorderSide(
                                         width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 0.w, color: Color(0xFFD0D0D0)),
                                   ),
                                 ),
                                 child: Image.asset(

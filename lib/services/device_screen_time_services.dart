@@ -15,6 +15,7 @@ class DeviceScreenTimeServices {
 
       for (var info in infoList) {
         usageDuration += info.usage;
+
         debugPrint("App: ${info.packageName}, Usage: ${info.usage}");
       }
 

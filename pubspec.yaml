@@ -55,11 +55,13 @@ dependencies:
   calendar_date_picker2: ^0.5.5
   flutter_dotenv: ^5.1.0
   fluttertoast: ^8.2.4
-
   path_provider: ^2.1.2
   location_permissions: ^4.0.1
+  logger: ^2.1.0
   background_locator_2: ^2.0.6
   flutter_facebook_auth: ^6.1.1
+  audioplayers: ^6.0.0
+  quickalert: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -88,6 +90,7 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/translations/
+    - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

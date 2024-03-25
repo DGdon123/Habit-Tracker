@@ -1,29 +1,27 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer';
 import 'dart:io';
-
+import 'package:audioplayers/audioplayers.dart' as de;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:stop_watch_timer/stop_watch_timer.dart';
-
+import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
+import 'package:habit_tracker/widgets/tooltip.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'package:quickalert/quickalert.dart';
 
 class FocusMainScreen extends StatefulWidget {
-  final int? hour;
-  final int? minute;
-  final int? second;
-  const FocusMainScreen({
-    super.key,
-    this.hour,
-    this.minute,
-    this.second,
-  });
+  int? hour;
+  int? minute;
+  String? label;
+  int? second;
+  FocusMainScreen({this.hour, this.label, this.minute, this.second, super.key});
 
   @override
   State<FocusMainScreen> createState() => _FocusMainScreenState();
@@ -31,15 +29,17 @@ class FocusMainScreen extends StatefulWidget {
 
 class _FocusMainScreenState extends State<FocusMainScreen> {
   final _isHours = true;
-  bool started = false;
-  double _progressValue = 1.0;
+  de.AudioPlayer audioPlayer = de.AudioPlayer();
 
+  bool started = false;
+  double _progressValue = 1;
+  bool showHeadphoneOptions = false;
   int milli = 0;
   late StopWatchTimer _stopWatchTimer;
-
   @override
   void initState() {
     super.initState();
+    log(widget.label.toString());
     time(); // Call time() function to calculate milli
 
     _stopWatchTimer = StopWatchTimer(
@@ -50,6 +50,25 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
         // Calculate remaining progress value
         _progressValue = remainingMilliseconds / milli;
         setState(() {});
+        if (_progressValue == 0) {
+          playMusic(de.AssetSource('tingtong.mp3'));
+          QuickAlert.show(
+            onConfirmBtnTap: () {
+              audioPlayer.stop();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(
+                            initialIndex: 3,
+                          )));
+            },
+            context: context,
+            confirmBtnText: 'Exit',
+            type: QuickAlertType.info,
+            confirmBtnColor: AppColors.mainBlue,
+            text: 'Your focus timer has been completed!',
+          );
+        }
       },
       onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
       onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
@@ -87,6 +106,19 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
     milli = hoursInMillis + minutesInMillis + secondsInMillis;
   }
 
+  Future<void> playMusic(de.Source filename) async {
+    // Stop any currently playing music
+
+    // Calculate the total duration in seconds
+
+    // Play the specified music file at the specified position
+    await audioPlayer.play(filename,
+        volume: 100, mode: de.PlayerMode.mediaPlayer);
+    audioPlayer.setReleaseMode(de.ReleaseMode.loop);
+    // Indicate that the music playback has started
+    print('Music playback started');
+  }
+
   @override
   void dispose() async {
     super.dispose();
@@ -104,13 +136,15 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
     return user?.displayName;
   }
 
+// Get individual components of the current date (year, month, day)
+
   Future<void> addUser(int hours, int minutes, int seconds) {
     CollectionReference users =
         FirebaseFirestore.instance.collection('focus_timer');
 
     return users
         .add({
-          'Label': 'Meditate',
+          'Label': widget.label ?? 'Meditate',
           'Hours': hours,
           'Minutes': minutes,
           'Seconds': seconds,
@@ -127,215 +161,307 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        body: Container(
-          child: ListView(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+        body: Stack(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 45),
+              child: SingleChildScrollView(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              audioPlayer.stop();
+                              Navigator.pop(context);
+                            },
+                            child: SizedBox(
+                              height: 28,
+                              width: 28,
+                              child: SvgPicture.asset(
+                                AppIcons.back,
+                              ),
+                            ),
+                          ),
+                          Center(
+                            child: Text(
+                              "  Focus Timer",
+                              style: TextStyle(
+                                  fontFamily: 'SFProText',
+                                  fontSize: 24.sp,
+                                  fontWeight: FontWeight.w900,
+                                  color: AppColors.textBlack),
+                            ),
+                          ),
+                          GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  showHeadphoneOptions = !showHeadphoneOptions;
+                                });
+                              },
+                              child: Image.asset(
+                                AppIcons.headphone,
+                                width: 35,
+                              ))
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    Image.asset(
+                      AppImages.characterFull,
+                      height: 350,
+                    ),
+                    const SizedBox(height: 20),
+
+                    StreamBuilder<int>(
+                      stream: _stopWatchTimer.rawTime,
+                      initialData: _stopWatchTimer.rawTime.value,
+                      builder: (context, snap) {
+                        final value = snap.data!;
+                        hours = int.parse(
+                            StopWatchTimer.getDisplayTimeHours(value));
+                        minutes = int.parse(
+                            StopWatchTimer.getDisplayTimeMinute(value));
+                        seconds = int.parse(
+                            StopWatchTimer.getDisplayTimeSecond(value));
+                        final displayTime = StopWatchTimer.getDisplayTime(value,
+                            hours: _isHours, milliSecond: false);
+                        return Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        displayTime,
+                                        style: TextStyle(
+                                          color: AppColors.textBlack,
+                                          fontSize: 65.sp,
+                                          fontFamily: 'SFProText',
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 50.w),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(
+                                          'HOURS',
+                                          style: TextStyle(
+                                            color:
+                                                Colors.black.withOpacity(0.5),
+                                            fontSize: 14.sp,
+                                            fontFamily: 'SFProText',
+                                            fontWeight: FontWeight.w400,
+                                            height: 0.10,
+                                          ),
+                                        ),
+                                        Text(
+                                          'MINUTES',
+                                          style: TextStyle(
+                                            color:
+                                                Colors.black.withOpacity(0.5),
+                                            fontSize: 14.sp,
+                                            fontFamily: 'SFProText',
+                                            fontWeight: FontWeight.w400,
+                                            height: 0.10,
+                                          ),
+                                        ),
+                                        Text(
+                                          'SECONDS',
+                                          style: TextStyle(
+                                            color:
+                                                Colors.black.withOpacity(0.5),
+                                            fontSize: 14.sp,
+                                            fontFamily: 'SFProText',
+                                            fontWeight: FontWeight.w400,
+                                            height: 0.10,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
                       },
-                      child: SizedBox(
-                        height: 28.h,
-                        width: 28.w,
-                        child: SvgPicture.asset(
-                          AppIcons.back,
-                        ),
-                      ),
                     ),
-                    Center(
-                      child: Text(
-                        "Focus Timer",
-                        style: TextStyle(
-                            fontFamily: 'SFProText',
-                            fontSize: 24.sp,
-                            fontWeight: FontWeight.w900,
-                            color: AppColors.textBlack),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 28.h,
-                      width: 28.w,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Image.asset(
-                AppImages.characterFull,
-                height: 450.h,
-              ),
-              SizedBox(height: 20.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 300.w,
-                    height: 50.h,
-                    child: LinearProgressIndicator(
-                      value: _progressValue,
-                      backgroundColor: const Color(0x7FD9D9D9),
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                          AppColors.primaryColor),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 5.w,
-                  ),
-                  Text(
-                    '${(_progressValue * 100).toStringAsFixed(0)}%',
-                    style: TextStyle(
-                      color: AppColors.textBlack,
-                      fontSize: 24.sp,
-                      fontFamily: 'SFProText',
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 20.h,
-              ),
-              StreamBuilder<int>(
-                stream: _stopWatchTimer.rawTime,
-                initialData: _stopWatchTimer.rawTime.value,
-                builder: (context, snap) {
-                  final value = snap.data!;
-                  hours = int.parse(StopWatchTimer.getDisplayTimeHours(value));
-                  minutes =
-                      int.parse(StopWatchTimer.getDisplayTimeMinute(value));
-                  seconds =
-                      int.parse(StopWatchTimer.getDisplayTimeSecond(value));
-                  final displayTime = StopWatchTimer.getDisplayTime(value,
-                      hours: _isHours, milliSecond: false);
-                  return Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        child: Column(
-                          children: [
-                            Row(
+
+                    const SizedBox(height: 30),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          color: Colors.black,
+                          padding: const EdgeInsets.all(4),
+                          child: Container(
+                            color: Colors.white,
+                            padding: const EdgeInsets.all(3),
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                SizedBox(
+                                  width: 220,
+                                  height: 20,
+                                  child: LinearProgressIndicator(
+                                    value: _progressValue,
+                                    backgroundColor: const Color(0xfbffffff),
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(
+                                            AppColors.black),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
                                 Text(
-                                  displayTime,
-                                  style: TextStyle(
-                                    color: AppColors.textBlack,
-                                    fontSize: 65.sp,
+                                  '${(_progressValue * 100).toStringAsFixed(0)}%',
+                                  style: const TextStyle(
+                                    color: AppColors.lightBlack,
+                                    fontSize: 20,
                                     fontFamily: 'SFProText',
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ],
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 50.w),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Text(
-                                    'HOURS',
-                                    style: TextStyle(
-                                      color: Colors.black.withOpacity(0.5),
-                                      fontSize: 14.sp,
-                                      fontFamily: 'SFProText',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0.10,
-                                    ),
-                                  ),
-                                  Text(
-                                    'MINUTES',
-                                    style: TextStyle(
-                                      color: Colors.black.withOpacity(0.5),
-                                      fontSize: 14.sp,
-                                      fontFamily: 'SFProText',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0.10,
-                                    ),
-                                  ),
-                                  Text(
-                                    'SECONDS',
-                                    style: TextStyle(
-                                      color: Colors.black.withOpacity(0.5),
-                                      fontSize: 14.sp,
-                                      fontFamily: 'SFProText',
-                                      fontWeight: FontWeight.w400,
-                                      height: 0.10,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-
-              /// Button
-              ///
-              ///
-              SizedBox(
-                height: 50.h,
-              ),
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 50.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        if (_stopWatchTimer.isRunning) {
-                          _stopWatchTimer.onStopTimer();
-                          setState(() {
-                            started = false;
-                            addUser(hours, minutes, seconds);
-                          });
-                        } else {
-                          _stopWatchTimer.onStartTimer();
-                          setState(() {
-                            started = true;
-                          });
-                        }
-                      },
-                      child: Container(
-                        width: 70.h,
-                        height: 70.w,
-                        decoration: ShapeDecoration(
-                          color: const Color(0xFF00FFDE),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(1000.r),
                           ),
                         ),
-                        child: started
-                            ? Icon(
-                                Icons.pause,
-                                size: 40.h,
-                                color: Colors.white,
-                              )
-                            : Icon(
-                                Icons.play_arrow,
-                                size: 40.h,
-                                color: Colors.white,
+                      ],
+                    ),
+
+                    const SizedBox(
+                      height: 15,
+                    ),
+
+                    /// Button
+                    ///
+                    ///
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 290,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  audioPlayer.stop();
+                                  Navigator.pop(context);
+                                },
+                                child: const Icon(
+                                  Icons.cancel_outlined,
+                                  size: 65,
+                                ),
                               ),
-                      ),
+                              GestureDetector(
+                                onTap: () {
+                                  if (_stopWatchTimer.isRunning) {
+                                    _stopWatchTimer.onStopTimer();
+                                    setState(() {
+                                      started = false;
+                                      addUser(hours, minutes, seconds);
+                                    });
+                                  } else {
+                                    if (widget.hour == 0 &&
+                                        widget.minute == 0 &&
+                                        widget.second == 0) {
+                                      QuickAlert.show(
+                                        context: context,
+                                        onConfirmBtnTap: () {
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      HomePage(
+                                                        initialIndex: 3,
+                                                      )),
+                                              (route) => false);
+                                        },
+                                        confirmBtnColor: AppColors.mainBlue,
+                                        type: QuickAlertType.error,
+                                        title: 'Oops...',
+                                        text: 'Sorry, timer cannot be 0.',
+                                      );
+                                    }
+                                    _stopWatchTimer.onStartTimer();
+                                    setState(() {
+                                      started = true;
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                    color: Colors.transparent,
+                                    child: Icon(
+                                      started
+                                          ? Icons.pause_circle_outline_rounded
+                                          : Icons.play_circle_outline,
+                                      size: 65,
+                                    )),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+            if (showHeadphoneOptions)
+              Positioned(
+                right: 10,
+                top: 75,
+                child: TriangleTooltip(
+                  backgroundColor: Colors.white,
+                  options: [
+                    TooltipOption(
+                        icon: AppIcons.lofi,
+                        label: 'Lofi',
+                        onPressed: () {
+                          playMusic(de.AssetSource('lofi.mp3'));
+                        }),
+                    TooltipOption(
+                        icon: AppIcons.paino,
+                        label: 'Piano',
+                        onPressed: () {
+                          playMusic(de.AssetSource('piano.mp3'));
+                        }),
+                    TooltipOption(
+                        icon: AppIcons.jazz,
+                        label: 'Jazz',
+                        onPressed: () {
+                          playMusic(de.AssetSource('jazz.mp3'));
+                        }),
+                    TooltipOption(
+                        icon: AppIcons.zen,
+                        label: 'Zen',
+                        onPressed: () {
+                          playMusic(de.AssetSource('zen.mp3'));
+                        }),
+                  ],
+                ),
+              ),
+          ],
         ),
       ),
     );

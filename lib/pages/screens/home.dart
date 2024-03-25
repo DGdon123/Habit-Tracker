@@ -7,11 +7,13 @@ import 'package:habit_tracker/location/current_location.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/pages/screens/friends.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.dart';
+import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
+import 'package:provider/provider.dart';
 
 import 'customize character/customizeCharater.dart';
 
@@ -97,7 +99,7 @@ class _HomeState extends State<Home> {
         ),
         GestureDetector(
           onTap: () {
-            debugPrint("Wake time");
+            context.read<IndexProvider>().setSelectedIndex(0);
           },
           child: Container(
             width: 180.w,
@@ -118,83 +120,77 @@ class _HomeState extends State<Home> {
             ),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 15.w),
-              child: Stack(
-                children: [
-                  StreamBuilder<QuerySnapshot>(
-                      stream:
-                          SleepFireStoreServices().listenToTodayAddedSleepTime,
-                      builder: (context, snapshot) {
-                        debugPrint("Snapshot: ${snapshot.data?.docs.length}");
+              child: StreamBuilder<QuerySnapshot>(
+                  stream: SleepFireStoreServices().listenToTodayAddedSleepTime,
+                  builder: (context, snapshot) {
+                    debugPrint("Snapshot: ${snapshot.data?.docs.length}");
 
-                        var snapshotLength = snapshot.data?.docs.length;
+                    var snapshotLength = snapshot.data?.docs.length;
 
-                        // we got data
-                        if (snapshot.hasData &&
-                            snapshot.connectionState ==
-                                ConnectionState.active &&
-                            snapshotLength != 0) {
-                          var doc = snapshot.data!.docs[0];
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // we got data
+                    if (snapshot.hasData &&
+                        snapshot.connectionState == ConnectionState.active &&
+                        snapshotLength != 0) {
+                      var doc = snapshot.data!.docs[0];
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.light_mode,
-                                    color: AppColors.lightBlack,
-                                    size: 34.sp,
-                                  ),
-                                  SizedBox(
-                                    height: 10.h,
-                                  ),
-                                  Text(
-                                    doc.get("wakeTime"),
-                                    style: TextStyle(
-                                      color: AppColors.black,
-                                      fontSize: 20.sp,
-                                      fontFamily: 'SFProText',
-                                      fontWeight: FontWeight.w800,
-                                      height: 0,
-                                    ),
-                                  ),
-                                ],
+                              Icon(
+                                Icons.light_mode,
+                                color: AppColors.lightBlack,
+                                size: 34.sp,
                               ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.dark_mode_rounded,
-                                    color: AppColors.lightBlack,
-                                    size: 30.sp,
-                                  ),
-                                  SizedBox(
-                                    height: 12.h,
-                                  ),
-                                  Text(
-                                    doc.get("sleepTime"),
-                                    style: TextStyle(
-                                      color: AppColors.black,
-                                      fontSize: 20.sp,
-                                      fontFamily: 'SFProText',
-                                      fontWeight: FontWeight.w800,
-                                      height: 0,
-                                    ),
-                                  ),
-                                ],
+                              SizedBox(
+                                height: 10.h,
+                              ),
+                              Text(
+                                doc.get("wakeTime"),
+                                style: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 20.sp,
+                                  fontFamily: 'SFProText',
+                                  fontWeight: FontWeight.w800,
+                                  height: 0,
+                                ),
                               ),
                             ],
-                          );
-                        } else if (snapshotLength == 0) {
-                          return const Center(
-                              child: Text("Add your sleep and wake time."));
-                        } else if (snapshot.hasError) {
-                          return const Text('Something went wrong');
-                        }
-                        return const CircularProgressIndicator();
-                      }),
-                ],
-              ),
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.dark_mode_rounded,
+                                color: AppColors.lightBlack,
+                                size: 30.sp,
+                              ),
+                              SizedBox(
+                                height: 12.h,
+                              ),
+                              Text(
+                                doc.get("sleepTime"),
+                                style: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 20.sp,
+                                  fontFamily: 'SFProText',
+                                  fontWeight: FontWeight.w800,
+                                  height: 0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    } else if (snapshotLength == 0) {
+                      return const Center(
+                          child: Text("Add your sleep and wake time."));
+                    } else if (snapshot.hasError) {
+                      return const Text('Something went wrong');
+                    }
+                    return const CircularProgressIndicator();
+                  }),
             ),
           ),
         ),

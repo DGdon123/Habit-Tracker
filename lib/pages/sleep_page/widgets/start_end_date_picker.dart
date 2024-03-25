@@ -60,7 +60,7 @@ class _StartEndDatePickerState extends State<StartEndDatePicker> {
           style: TextButton.styleFrom(
             backgroundColor: Colors.red.shade600,
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop<Map>(context, {}),
           child: const Text('Cancel'),
         ),
         TextButton(

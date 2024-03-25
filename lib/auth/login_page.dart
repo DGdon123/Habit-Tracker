@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:habit_tracker/auth/repositories/facebook_auth.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
 import 'package:habit_tracker/auth/signup_page.dart';
 import 'package:habit_tracker/utils/buttons.dart';
@@ -391,23 +392,28 @@ class _LoginScreenState extends State<LoginScreen> {
           width: 35.w,
         ),
         // button login with facebook
-        Container(
-          width: 65.w,
-          height: 65.h,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100.r),
-            border: Border.all(
-              width: 1.w,
-              color: AppColors.seperatorColor,
+        GestureDetector(
+          onTap: () {
+            AuthFacebook().signInWithFacebook();
+          },
+          child: Container(
+            width: 65.w,
+            height: 65.h,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100.r),
+              border: Border.all(
+                width: 1.w,
+                color: AppColors.seperatorColor,
+              ),
             ),
-          ),
-          child: SizedBox(
-            height: 26.h,
-            width: 26.w,
-            child: SvgPicture.asset(
-              AppIcons.facebook,
-              fit: BoxFit.contain,
+            child: SizedBox(
+              height: 26.h,
+              width: 26.w,
+              child: SvgPicture.asset(
+                AppIcons.facebook,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ),

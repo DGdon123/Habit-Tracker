@@ -4,7 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SleepFireStoreServices {
-  void addNewSleepTime({required String sleepTime, required String wakeTime}) {
+  void addNewSleepTime(
+      {required String sleepTime,
+      required String wakeTime,
+      required String difference}) {
     debugPrint("Sleep time: $sleepTime, Wake time: $wakeTime");
 
     var sleepTimeRef = FirebaseFirestore.instance.collection("sleep-time");
@@ -20,6 +23,8 @@ class SleepFireStoreServices {
       "sleepTime": sleepTime.toString(),
       "wakeTime": wakeTime.toString(),
       "addedAt": date,
+      "difference": difference,
+      "timestamp": DateTime.now().millisecondsSinceEpoch
     });
   }
 
@@ -34,6 +39,17 @@ class SleepFireStoreServices {
         .collection('sleep-time')
         .where("userID", isEqualTo: user!.uid)
         .where("addedAt", isEqualTo: date)
+        .snapshots();
+  }
+
+  // returns sleep data range from start date to end date
+  Stream<QuerySnapshot<Map<String, dynamic>>> getSleepDataRange(
+      {required DateTime startDate, required DateTime endDate}) {
+    var user = FirebaseAuth.instance.currentUser;
+
+    return FirebaseFirestore.instance
+        .collection("sleep-time")
+        .where("userID", isEqualTo: user!.uid)
         .snapshots();
   }
 }

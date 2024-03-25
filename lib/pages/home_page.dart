@@ -9,26 +9,19 @@ import 'package:habit_tracker/pages/screens/profile.dart';
 
 import 'package:habit_tracker/pages/screens/stats.dart';
 import 'package:habit_tracker/pages/sleep_page/sleep_page.dart';
+import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
-  int? initialIndex;
-  HomePage({this.initialIndex, super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => HomePageState();
 }
 
 class HomePageState extends State<HomePage> {
-  int? _currentIndex;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentIndex = widget.initialIndex ?? 2;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -37,7 +30,7 @@ class HomePageState extends State<HomePage> {
         splashColor: Colors.transparent,
       ),
       child: Scaffold(
-        body: _getPage(_currentIndex!),
+        body: _getPage(),
         bottomNavigationBar: Stack(
           alignment: Alignment.center,
           children: [
@@ -73,18 +66,17 @@ class HomePageState extends State<HomePage> {
                   height: 0,
                 ),
                 backgroundColor: const Color(0xfbf1f4ff),
-                currentIndex: _currentIndex!,
+                currentIndex: context.watch<IndexProvider>().selectedIndex,
                 onTap: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
+                  context.read<IndexProvider>().setSelectedIndex(index);
+                  debugPrint("Index: $index");
                 },
                 items: [
                   BottomNavigationBarItem(
                     icon: SvgPicture.asset(
                       AppIcons.sleep,
                       height: 20.h,
-                      color: _currentIndex == 0
+                      color: context.watch<IndexProvider>().selectedIndex == 0
                           ? AppColors.mainBlue
                           : const Color.fromARGB(255, 0, 0, 0),
                     ),
@@ -94,7 +86,7 @@ class HomePageState extends State<HomePage> {
                     icon: SvgPicture.asset(
                       AppIcons.stats,
                       height: 20.h,
-                      color: _currentIndex == 1
+                      color: context.watch<IndexProvider>().selectedIndex == 1
                           ? AppColors.mainBlue
                           : const Color.fromARGB(255, 0, 0, 0),
                     ),
@@ -111,7 +103,7 @@ class HomePageState extends State<HomePage> {
                     icon: SvgPicture.asset(
                       AppIcons.timer,
                       height: 20.h,
-                      color: _currentIndex == 3
+                      color: context.watch<IndexProvider>().selectedIndex == 3
                           ? AppColors.mainBlue
                           : const Color.fromARGB(255, 0, 0, 0),
                     ),
@@ -121,7 +113,7 @@ class HomePageState extends State<HomePage> {
                     icon: Icon(
                       Icons.person_outline,
                       size: 20.h,
-                      color: _currentIndex == 4
+                      color: context.watch<IndexProvider>().selectedIndex == 4
                           ? AppColors.mainBlue
                           : const Color.fromARGB(255, 0, 0, 0),
                     ),
@@ -132,14 +124,12 @@ class HomePageState extends State<HomePage> {
             ),
             GestureDetector(
                 onTap: () {
-                  setState(() {
-                    _currentIndex = 2;
-                  });
+                  context.read<IndexProvider>().setSelectedIndex(2);
                 },
                 child: Image.asset(
                   AppIcons.home,
                   width: 50,
-                  color: _currentIndex == 2
+                  color: context.watch<IndexProvider>().selectedIndex == 2
                       ? AppColors.mainBlue
                       : AppColors.black.withOpacity(0.5),
                 )),
@@ -149,8 +139,8 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _getPage(int index) {
-    switch (index) {
+  Widget _getPage() {
+    switch (context.watch<IndexProvider>().selectedIndex) {
       case 0:
         return const SleepPage();
       case 1:

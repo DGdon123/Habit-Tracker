@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/location/current_location.dart';
@@ -94,100 +95,106 @@ class _HomeState extends State<Home> {
         SizedBox(
           height: 5.h,
         ),
-        Container(
-          width: 180.w,
-          height: 100.h,
-          decoration: ShapeDecoration(
-            color: const Color(0xfbd4bcdf),
-            // gradient: LinearGradient(
-            //   begin: Alignment.bottomLeft,
-            //   end: Alignment.topRight,
-            //   colors: [
-            //     Color(0xFF007566),
-            //     Color(0xFF47EFDA),
-            //   ],
-            // ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.r),
+        GestureDetector(
+          onTap: () {
+            debugPrint("Wake time");
+          },
+          child: Container(
+            width: 180.w,
+            height: 100.h,
+            decoration: ShapeDecoration(
+              color: const Color(0xfbd4bcdf),
+              // gradient: LinearGradient(
+              //   begin: Alignment.bottomLeft,
+              //   end: Alignment.topRight,
+              //   colors: [
+              //     Color(0xFF007566),
+              //     Color(0xFF47EFDA),
+              //   ],
+              // ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.r),
+              ),
             ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.w),
-            child: Stack(
-              children: [
-                StreamBuilder<QuerySnapshot>(
-                    stream:
-                        SleepFireStoreServices().listenToTodayAddedSleepTime,
-                    builder: (context, snapshot) {
-                      debugPrint("Snapshot: ${snapshot.data?.docs.length}");
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              child: Stack(
+                children: [
+                  StreamBuilder<QuerySnapshot>(
+                      stream:
+                          SleepFireStoreServices().listenToTodayAddedSleepTime,
+                      builder: (context, snapshot) {
+                        debugPrint("Snapshot: ${snapshot.data?.docs.length}");
 
-                      var snapshotLength = snapshot.data?.docs.length;
+                        var snapshotLength = snapshot.data?.docs.length;
 
-                      // we got data
-                      if (snapshot.hasData &&
-                          snapshot.connectionState == ConnectionState.active &&
-                          snapshotLength != 0) {
-                        var doc = snapshot.data!.docs[0];
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.light_mode,
-                                  color: AppColors.lightBlack,
-                                  size: 34.sp,
-                                ),
-                                SizedBox(
-                                  height: 10.h,
-                                ),
-                                Text(
-                                  doc.get("wakeTime"),
-                                  style: TextStyle(
-                                    color: AppColors.black,
-                                    fontSize: 20.sp,
-                                    fontFamily: 'SFProText',
-                                    fontWeight: FontWeight.w800,
-                                    height: 0,
+                        // we got data
+                        if (snapshot.hasData &&
+                            snapshot.connectionState ==
+                                ConnectionState.active &&
+                            snapshotLength != 0) {
+                          var doc = snapshot.data!.docs[0];
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.light_mode,
+                                    color: AppColors.lightBlack,
+                                    size: 34.sp,
                                   ),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.dark_mode_rounded,
-                                  color: AppColors.lightBlack,
-                                  size: 30.sp,
-                                ),
-                                SizedBox(
-                                  height: 12.h,
-                                ),
-                                Text(
-                                  doc.get("sleepTime"),
-                                  style: TextStyle(
-                                    color: AppColors.black,
-                                    fontSize: 20.sp,
-                                    fontFamily: 'SFProText',
-                                    fontWeight: FontWeight.w800,
-                                    height: 0,
+                                  SizedBox(
+                                    height: 10.h,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      } else if (snapshotLength == 0) {
-                        return const Center(
-                            child: Text("Add your sleep and wake time."));
-                      } else if (snapshot.hasError) {
-                        return const Text('Something went wrong');
-                      }
-                      return const CircularProgressIndicator();
-                    }),
-              ],
+                                  Text(
+                                    doc.get("wakeTime"),
+                                    style: TextStyle(
+                                      color: AppColors.black,
+                                      fontSize: 20.sp,
+                                      fontFamily: 'SFProText',
+                                      fontWeight: FontWeight.w800,
+                                      height: 0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.dark_mode_rounded,
+                                    color: AppColors.lightBlack,
+                                    size: 30.sp,
+                                  ),
+                                  SizedBox(
+                                    height: 12.h,
+                                  ),
+                                  Text(
+                                    doc.get("sleepTime"),
+                                    style: TextStyle(
+                                      color: AppColors.black,
+                                      fontSize: 20.sp,
+                                      fontFamily: 'SFProText',
+                                      fontWeight: FontWeight.w800,
+                                      height: 0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        } else if (snapshotLength == 0) {
+                          return const Center(
+                              child: Text("Add your sleep and wake time."));
+                        } else if (snapshot.hasError) {
+                          return const Text('Something went wrong');
+                        }
+                        return const CircularProgressIndicator();
+                      }),
+                ],
+              ),
             ),
           ),
         ),

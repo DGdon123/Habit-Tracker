@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/settings/settings.dart';
+import 'package:habit_tracker/services/user_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -278,9 +279,20 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
               TextButton(
                 onPressed: searchText.isEmpty
                     ? null
-                    : () {
+                    : () async {
+                        final users = await UserFireStoreServices()
+                            .searchUserByUserName(searchText);
+
+                        if (users.docs.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("User not found")));
+                          return;
+                        }
+
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const FriendSearchedPage()));
+                            builder: (context) => FriendSearchedPage(
+                                  searchResults: users.docs,
+                                )));
                       },
                 child: const Text("Search"),
               ),

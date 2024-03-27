@@ -47,11 +47,7 @@ class UserRepository with ChangeNotifier {
       notifyListeners();
 
       // Sign in with email and password
-      final credential = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
-
-      debugPrint("Credential: $credential");
-
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
       // If signInWithEmailAndPassword succeeds, update status and return true
       _status = Status.Authenticated;
       notifyListeners();
@@ -152,10 +148,19 @@ class UserRepository with ChangeNotifier {
       debugPrint("Authenticating user repo");
 
       // Create user with email and password
-      await _auth.createUserWithEmailAndPassword(
+      final authResponse = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      debugPrint("Authenticating user repo: ${authResponse}");
+
+      // adding details to the firestore
+      UserFireStoreServices().addUser(
+          uid: authResponse.user!.uid,
+          email: email,
+          name: username,
+          photoUrl: "");
 
       // Get the current user
       User? user = _auth.currentUser;

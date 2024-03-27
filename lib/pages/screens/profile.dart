@@ -290,7 +290,9 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                         }
 
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const FriendSearchedPage()));
+                            builder: (context) => FriendSearchedPage(
+                                  searchResults: users.docs,
+                                )));
                       },
                 child: const Text("Search"),
               ),

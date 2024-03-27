@@ -12,6 +12,8 @@ import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
 
+import '../friend_searched_page/friend_searched_page.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -29,7 +31,7 @@ class ProfilePageState extends State<ProfilePage>
 
   final List<Widget> _pages = [
     const ActivityPage(),
-    const FriendsPageTab(),
+    FriendsPageTab(),
   ];
 
   @override
@@ -59,7 +61,7 @@ class ProfilePageState extends State<ProfilePage>
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>  HomePage()));
+                                  builder: (context) => HomePage()));
                         },
                         child: SizedBox(
                           height: 28.h,
@@ -247,8 +249,15 @@ class ProfilePageState extends State<ProfilePage>
   }
 }
 
-class FriendsPageTab extends StatelessWidget {
+class FriendsPageTab extends StatefulWidget {
   const FriendsPageTab({super.key});
+
+  @override
+  State<FriendsPageTab> createState() => _FriendsPageTabState();
+}
+
+class _FriendsPageTabState extends State<FriendsPageTab> {
+  String searchText = "";
 
   @override
   Widget build(BuildContext context) {
@@ -256,6 +265,27 @@ class FriendsPageTab extends StatelessWidget {
       backgroundColor: AppColors.primaryColor.withOpacity(0.15),
       body: Column(
         children: [
+          Row(
+            children: [
+              // searching friends based on their name
+              Expanded(child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    searchText = value;
+                  });
+                },
+              )),
+              TextButton(
+                onPressed: searchText.isEmpty
+                    ? null
+                    : () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const FriendSearchedPage()));
+                      },
+                child: const Text("Search"),
+              ),
+            ],
+          ),
           SizedBox(
             height: 5.h,
           ),

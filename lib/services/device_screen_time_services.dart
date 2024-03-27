@@ -5,7 +5,7 @@ class DeviceScreenTimeServices {
   Future<Duration> getUsageStats() async {
     try {
       DateTime endDate = DateTime.now();
-      DateTime startDate = endDate.subtract(Duration(hours: 1));
+      DateTime startDate = endDate.subtract(const Duration(hours: 1));
       List<AppUsageInfo> infoList =
           await AppUsage().getAppUsage(startDate, endDate);
 
@@ -15,6 +15,7 @@ class DeviceScreenTimeServices {
 
       for (var info in infoList) {
         usageDuration += info.usage;
+
         debugPrint("App: ${info.packageName}, Usage: ${info.usage}");
       }
 

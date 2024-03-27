@@ -245,16 +245,32 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      '3:00 h',
-                      style: TextStyle(
-                        color: AppColors.black,
-                        fontSize: 28.sp,
-                        fontFamily: 'SFProText',
-                        fontWeight: FontWeight.w800,
-                        height: 0,
-                      ),
-                    ),
+                    FutureBuilder(
+                        future: DeviceScreenTimeServices().getUsageStats(),
+                        builder: (_, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text("Error");
+                          }
+
+                          var duration = snapshot.data;
+
+                          var hours = duration!.inHours % 60;
+                          var minutes = duration.inMinutes % 60;
+
+                          return Text(
+                            '$hours:$minutes h',
+                            style: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 28.sp,
+                              fontFamily: 'SFProText',
+                              fontWeight: FontWeight.w800,
+                              height: 0,
+                            ),
+                          );
+                        }),
                   ],
                 ),
               ],

@@ -153,6 +153,8 @@ class UserRepository with ChangeNotifier {
         password: password,
       );
 
+      //
+
       debugPrint("Authenticating user repo: ${authResponse}");
 
       // adding details to the firestore

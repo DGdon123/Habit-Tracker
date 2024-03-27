@@ -28,4 +28,11 @@ class UserFireStoreServices {
       "uid": uid,
     });
   }
+
+  /// searches username by username
+  Future<QuerySnapshot> searchUserByUserName(String name) async {
+    final response = await userCollection.where('name', isEqualTo: name).get();
+
+    return response;
+  }
 }

@@ -8,7 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:habit_tracker/auth/signup_page.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/home.dart';
-import 'package:habit_tracker/services/user_firesotre_services.dart';
+import 'package:habit_tracker/services/user_firestore_services.dart';
 import 'package:provider/provider.dart';
 
 import '../login_page.dart';

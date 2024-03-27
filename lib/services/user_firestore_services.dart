@@ -23,7 +23,7 @@ class UserFireStoreServices {
 
     await userCollection.doc(uid).set({
       'email': email,
-      'name': name,
+      'name': name.toLowerCase().trim(),
       'photoUrl': photoUrl,
       "uid": uid,
     });
@@ -31,7 +31,14 @@ class UserFireStoreServices {
 
   /// searches username by username
   Future<QuerySnapshot> searchUserByUserName(String name) async {
-    final response = await userCollection.where('name', isEqualTo: name).get();
+    final startTerm = name.toLowerCase();
+    final endTerm =
+        name.toLowerCase() + '\uf8ff'; // '\uf8ff' is a high surrogate character
+
+    final response = await userCollection
+        .where('name', isGreaterThanOrEqualTo: startTerm)
+        .where('name', isLessThanOrEqualTo: endTerm)
+        .get();
 
     return response;
   }

@@ -30,4 +30,14 @@ class FriendRequestFirestoreServices {
       }
     });
   }
+
+  void acceptFriendRequest({required String senderID}) {
+    // first removing
+    removeFriendRequest(senderID: senderID);
+
+    // adding to friends collection
+    FirebaseFirestore.instance.collection("friends").doc(userID).set({
+      "friends": FieldValue.arrayUnion([senderID])
+    }, SetOptions(merge: true));
+  }
 }

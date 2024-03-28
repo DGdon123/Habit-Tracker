@@ -31,7 +31,8 @@ class FriendRequestCard extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.check),
                         onPressed: () {
-                          // accept friend request
+                          FriendRequestFirestoreServices()
+                              .acceptFriendRequest(senderID: senderID);
                         },
                       ),
                       IconButton(

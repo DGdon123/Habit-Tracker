@@ -18,4 +18,16 @@ class FriendRequestFirestoreServices {
       "timestamp": DateTime.now().millisecondsSinceEpoch
     });
   }
+
+  void removeFriendRequest({required String senderID}) {
+    friendRequestRef
+        .where("senderID", isEqualTo: senderID)
+        .where("receiverID", isEqualTo: userID)
+        .get()
+        .then((value) {
+      for (var doc in value.docs) {
+        doc.reference.delete();
+      }
+    });
+  }
 }

@@ -17,14 +17,17 @@ class ReceivedFriendRequest extends StatelessWidget {
             var cards = <Widget>[];
 
             for (var doc in docs) {
-              var data = doc.data() as Map<String, dynamic>;
+              var data = doc.data();
               cards.add(FriendRequestCard(
                 senderID: data["senderID"],
               ));
             }
 
             return Column(
-              children: cards,
+              children: [
+                Text("Received Friend Request ${cards.length}"),
+                ...cards
+              ],
             );
           }
           return const SizedBox();

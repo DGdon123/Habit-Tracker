@@ -283,7 +283,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                         final users = await UserFireStoreServices()
                             .searchUserByUserName(searchText);
 
-                        if (users.docs.isEmpty) {
+                        if (users.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text("User not found")));
                           return;
@@ -291,7 +291,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
 
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => FriendSearchedPage(
-                                  searchResults: users.docs,
+                                  searchResults: users,
                                 )));
                       },
                 child: const Text("Search"),

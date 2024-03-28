@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/pages/profile_page/widgets/received_friend_request.dart';
 import 'package:habit_tracker/pages/screens/settings/settings.dart';
 import 'package:habit_tracker/services/user_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
@@ -298,6 +299,10 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
               ),
             ],
           ),
+          SizedBox(
+            height: 5.h,
+          ),
+          const ReceivedFriendRequest(),
           SizedBox(
             height: 5.h,
           ),

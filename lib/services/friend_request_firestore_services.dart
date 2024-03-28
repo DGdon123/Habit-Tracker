@@ -7,7 +7,7 @@ class FriendRequestFirestoreServices {
   var userID = FirebaseAuth.instance.currentUser!.uid;
 
   Stream<QuerySnapshot<Map<String, dynamic>>>
-      checkForReceivedFriendRequestNotification() {
+      listenForReceivedFriendRequestNotification() {
     return friendRequestRef.where("receiverID", isEqualTo: userID).snapshots();
   }
 

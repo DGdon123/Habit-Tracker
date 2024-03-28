@@ -30,6 +30,13 @@ class UserFireStoreServices {
     });
   }
 
+  /// searches by uid
+  Future<QueryDocumentSnapshot> searchUserByUid(String uid) async {
+    final response = await userCollection.where('uid', isEqualTo: uid).get();
+
+    return response.docs.first;
+  }
+
   /// searches username by username
   Future<List<QueryDocumentSnapshot>> searchUserByUserName(String name) async {
     final startTerm = name.toLowerCase();

@@ -245,7 +245,7 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    FutureBuilder(
+                    FutureBuilder<Duration>(
                         future: DeviceScreenTimeServices().getUsageStats(),
                         builder: (_, snapshot) {
                           if (snapshot.connectionState ==

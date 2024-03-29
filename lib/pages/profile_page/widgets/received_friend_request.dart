@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/pages/profile_page/widgets/friend_request_card.dart';
 import 'package:habit_tracker/services/friend_firestore_services.dart';
@@ -7,7 +8,7 @@ class ReceivedFriendRequest extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FriendFirestoreServices()
             .listenForReceivedFriendRequestNotification(),
         builder: (_, snapshot) {

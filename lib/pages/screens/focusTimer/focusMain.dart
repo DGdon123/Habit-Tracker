@@ -177,8 +177,18 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              audioPlayer.stop();
-                              Navigator.pop(context);
+                              if (started == false) {
+                                audioPlayer.stop();
+                                Navigator.pop(context);
+                              } else {
+                                QuickAlert.show(
+                                  context: context,
+                                  confirmBtnColor: AppColors.mainBlue,
+                                  type: QuickAlertType.error,
+                                  title: 'Error...',
+                                  text: 'Please stop the timer!',
+                                );
+                              }
                             },
                             child: SizedBox(
                               height: 28,
@@ -190,7 +200,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                           ),
                           Center(
                             child: Text(
-                              "  Focus Timer",
+                              "Focus Timer",
                               style: TextStyle(
                                   fontFamily: 'SFProText',
                                   fontSize: 24.sp,
@@ -365,8 +375,18 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  audioPlayer.stop();
-                                  Navigator.pop(context);
+                                  if (started == false) {
+                                    audioPlayer.stop();
+                                    Navigator.pop(context);
+                                  } else {
+                                    QuickAlert.show(
+                                      context: context,
+                                      confirmBtnColor: AppColors.mainBlue,
+                                      type: QuickAlertType.error,
+                                      title: 'Error...',
+                                      text: 'Please stop the timer!',
+                                    );
+                                  }
                                 },
                                 child: const Icon(
                                   Icons.cancel_outlined,

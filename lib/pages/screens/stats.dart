@@ -38,6 +38,8 @@ class StatsPageState extends State<StatsPage> {
 
   Map<String, dynamic> userLabels = {};
   Map<String, dynamic> userLabels2 = {};
+  List<Map<String, dynamic>> dataList = [];
+  List<Map<String, dynamic>> dataList2 = [];
   bool select = false;
   Future<Map<String, dynamic>> fetchUsers() async {
     CollectionReference users =
@@ -54,11 +56,10 @@ class StatsPageState extends State<StatsPage> {
           for (var doc in snapshot.docs) {
             var data = doc.data()
                 as Map<String, dynamic>; // Cast data to Map<String, dynamic>
-
-            // Iterate through each field in the data and create a Text widget for each field
-            userLabels.addAll(data);
-            logger.d(userLabels);
+            dataList.add(data); // Add user data to the list
           }
+          userLabels['data'] = dataList;
+          logger.d(userLabels);
         } else {
           print('No data found for the current user');
         }
@@ -87,14 +88,10 @@ class StatsPageState extends State<StatsPage> {
           for (var doc in snapshot.docs) {
             var data = doc.data()
                 as Map<String, dynamic>; // Cast data to Map<String, dynamic>
-
-            // Iterate through each field in the data and create a Text widget for each field
-
-            userLabels2.addAll(
-                data); // Create a Text widget for the field and add it to the list
-
-            logger.d(userLabels2);
+            dataList2.add(data); // Add user data to the list
           }
+          userLabels2['data'] = dataList2;
+          logger.d(userLabels2);
         } else {
           print('No data found for the current user');
         }
@@ -110,10 +107,9 @@ class StatsPageState extends State<StatsPage> {
 
   Padding piechartIndicator() {
     // Call updatePieChartSections to fetch user labels and update the pieChartSections list
-    updatePieChartSections();
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: Column(
         children: pieChartSections
             .map((section) => Row(
@@ -131,10 +127,10 @@ class StatsPageState extends State<StatsPage> {
                     ),
                     SizedBox(width: 10.w),
                     Text(
-                      section.title,
+                      '${section.title} :',
                       style: secondaryStyle,
                     ),
-                    SizedBox(width: 10.w),
+                    SizedBox(width: 5.w),
                     Text(
                       '${section.value}%',
                       style: statusStyle(AppColors.textBlack),
@@ -146,41 +142,118 @@ class StatsPageState extends State<StatsPage> {
     );
   }
 
+  double? maxY;
+  int? maxValue;
+  List<BarChartGroupData> barChartGroups = [];
   List<PieChartSectionData> pieChartSections = [];
-
+  List<Map<String, dynamic>> labelDataList =
+      []; // Create a map to aggregate values for each unique label
+  // Create a map to aggregate values for each unique label
+  Map<String, int> labelValues = {};
+  Map<String, int> labelValues1 = {};
   Future<void> updatePieChartSections() async {
-    // Fetch user labels
+    // Clear the pieChartSectFuture<void> updatePieChartSections() async {
+    // Clear the pieChartSections list before updating it
 
-    // Iterate over user labels and create PieChartSectionData objects
-    userLabels.forEach((key, value) {
-      // Skip keys that are not labels
+    // Fetch user labels from both sources
+    Map<String, dynamic> labels1 = await fetchUsers();
+    Map<String, dynamic> labels2 = await fetchUsers2();
 
-      // Extract the label value
-      String label = value['Label'].toString();
-      logger.d(label);
-      // Create a PieChartSectionData object for each label
+// Iterate over user labels from the first source and aggregate values for each label
+    labels1['data'].forEach((labelData) {
+      String label = labelData['Label'].toString();
+      int hours = labelData['Hours'];
+      int minutes = labelData['Minutes'];
+      int seconds = labelData['Seconds'];
+      int totalSeconds = hours;
+      int value = 1; // Set the default value
+      labelValues[label] = (labelValues[label] ?? 0) + value;
+      labelValues1[label] = (labelValues1[label] ?? 0) + totalSeconds.toInt();
+      labelDataList.add({
+        'Label': label,
+        'Hours': hours,
+        'Minutes': minutes,
+        'Seconds': seconds,
+      });
+    });
+
+// Iterate over user labels from the second source and aggregate values for each label
+    labels2['data'].forEach((labelData) {
+      String label = labelData['Label'].toString();
+      int hours = labelData['Hours'];
+      int minutes = labelData['Minutes'];
+      int seconds = labelData['Seconds'];
+      int totalSeconds = hours;
+      int value = 5; // Set the default value
+      labelValues[label] = (labelValues[label] ?? 0) + value;
+      labelValues1[label] = (labelValues1[label] ?? 0) + totalSeconds.toInt();
+      labelDataList.add({
+        'Label': label,
+        'Hours': hours,
+        'Minutes': minutes,
+        'Seconds': seconds,
+      });
+    });
+// Create PieChartSectionData objects based on the aggregated values
+    labelValues.forEach((label, value) {
       PieChartSectionData section = PieChartSectionData(
-        color: getRandomColor(), // Get a random color for the section
-        value: 30, // Set the value to 0 initially
-        title: label, // Set the label as the title
+        color: getColorForLabel(label),
+        value: value.toDouble(), // Set the aggregated value
+        title: label,
         radius: 150,
         titleStyle: TextStyle(
           color: Colors.white,
-          fontSize: 10.sp,
+          fontSize: 13.sp,
           fontFamily: 'SFProText',
           fontWeight: FontWeight.w600,
-          height: 0.20,
         ),
       );
-
-      // Add the section to the pieChartSections list
-      pieChartSections.add(section);
+      setState(() {
+        pieChartSections.add(section);
+      });
     });
+
+// Create BarChartGroupData objects based on the aggregated values
+    barChartGroups = labelValues1.entries.map((entry) {
+      String label = entry.key;
+      int value = entry.value;
+      logger.d(value);
+      return BarChartGroupData(x: value, barRods: [
+        BarChartRodData(
+          borderRadius: BorderRadius.circular(100.r),
+          width: 40.w,
+          toY: 0,
+          fromY: value.toDouble(), // Use the aggregated value
+          color: getColorForLabel(label),
+        ),
+      ]);
+    }).toList();
+    maxValue = labelValues1.values
+        .fold(0, (prev, value) => value > prev! ? value : prev);
+
+// Calculate maxY by adding a constant offset to the maximum value
+    maxY = maxValue!.toDouble() + 1;
   }
 
   Color getRandomColor() {
     // Generate a random color
     return Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
+  }
+
+  Color getColorForLabel(String label) {
+    // Generate a hash for the label
+    int hashCode = label.hashCode.abs();
+
+    // Use the hash to seed the random number generator
+    Random random = Random(hashCode);
+
+    // Generate random values for red, green, and blue channels
+    int red = random.nextInt(256);
+    int green = random.nextInt(256);
+    int blue = random.nextInt(256);
+
+    // Construct and return the color using the generated values
+    return Color.fromRGBO(red, green, blue, 1.0);
   }
 
   TextStyle statusStyle(Color textColor) {
@@ -210,6 +283,7 @@ class StatsPageState extends State<StatsPage> {
     super.initState();
     fetchUsers();
     fetchUsers2();
+    updatePieChartSections();
   }
 
   @override
@@ -261,110 +335,121 @@ class StatsPageState extends State<StatsPage> {
               SizedBox(
                 height: 30.h,
               ),
-              datePicker(formattedDate, context),
-              SizedBox(
-                height: 50.h,
-              ),
-              SizedBox(
-                height: 300.h,
-                width: 300.w,
-                child: PieChart(
-                  PieChartData(
-                    sections: pieChartSections,
-                    borderData: FlBorderData(show: false),
-                    centerSpaceRadius: 0,
-                    sectionsSpace: 0,
-                    centerSpaceColor: Colors.white,
-                  ),
-                ),
-              ),
-              SizedBox(height: 70.h),
-              piechartIndicator(),
-              SizedBox(height: 50.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Divider(thickness: 1.h, color: const Color(0xFFD0D0D0)),
-              ),
 
-              Column(
-                children: [
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Row(
+              labelValues.isNotEmpty
+                  ? Column(
                       children: [
-                        Text(
-                          'hours',
-                          style: TextStyle(
-                            color: const Color(0xFF686873),
-                            fontSize: 16.sp,
-                            fontFamily: 'SFProText',
-                            fontWeight: FontWeight.w500,
+                        datePicker(formattedDate, context),
+                        SizedBox(
+                          height: 50.h,
+                        ),
+                        SizedBox(
+                          height: 300.h,
+                          width: 300.w,
+                          child: PieChart(
+                            PieChartData(
+                              sections: pieChartSections,
+                              borderData: FlBorderData(show: false),
+                              centerSpaceRadius: 0,
+                              sectionsSpace: 0,
+                              centerSpaceColor: Colors.white,
+                            ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30.h,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: SizedBox(
-                      height: 300,
-                      child: BarChart(
-                        BarChartData(
-                          borderData: FlBorderData(
-                              border: Border(
-                            top: BorderSide.none,
-                            left: BorderSide.none,
-                            right: BorderSide.none,
-                            bottom: BorderSide(
-                              color: const Color(0xFFD0D0D0),
-                              width: 1.w,
+                        SizedBox(height: 50.h),
+                        piechartIndicator(),
+                        SizedBox(height: 30.h),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          child: Divider(
+                              thickness: 1.h, color: const Color(0xFFD0D0D0)),
+                        ),
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 20.h,
                             ),
-                          )),
-                          gridData: const FlGridData(
-                            drawHorizontalLine: true,
-                            drawVerticalLine: false,
-                          ),
-                          maxY: 14,
-                          barGroups: barChartGroups,
-                          titlesData: FlTitlesData(
-                            leftTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                getTitlesWidget: (value, meta) {
-                                  return Text(
-                                    value.toInt().toString(),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'hours',
                                     style: TextStyle(
                                       color: const Color(0xFF686873),
-                                      fontSize: 14.sp,
+                                      fontSize: 16.sp,
                                       fontFamily: 'SFProText',
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                  );
-                                },
+                                  ),
+                                ],
                               ),
                             ),
-                            rightTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
+                            SizedBox(
+                              height: 30.h,
                             ),
-                            topTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              child: SizedBox(
+                                height: 300,
+                                child: BarChart(
+                                  BarChartData(
+                                    borderData: FlBorderData(
+                                        border: Border(
+                                      top: BorderSide.none,
+                                      left: BorderSide.none,
+                                      right: BorderSide.none,
+                                      bottom: BorderSide(
+                                        color: const Color(0xFFD0D0D0),
+                                        width: 1.w,
+                                      ),
+                                    )),
+                                    gridData: const FlGridData(
+                                      drawHorizontalLine: true,
+                                      drawVerticalLine: false,
+                                    ),
+                                    maxY: maxY,
+                                    barGroups: barChartGroups,
+                                    titlesData: FlTitlesData(
+                                      leftTitles: AxisTitles(
+                                        sideTitles: SideTitles(
+                                          showTitles: true,
+                                          getTitlesWidget: (value, meta) {
+                                            return Text(
+                                              value.toInt().toString(),
+                                              style: TextStyle(
+                                                color: const Color(0xFF686873),
+                                                fontSize: 14.sp,
+                                                fontFamily: 'SFProText',
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      rightTitles: const AxisTitles(
+                                        sideTitles:
+                                            SideTitles(showTitles: false),
+                                      ),
+                                      topTitles: const AxisTitles(
+                                        sideTitles:
+                                            SideTitles(showTitles: false),
+                                      ),
+                                      bottomTitles: const AxisTitles(
+                                        sideTitles:
+                                            SideTitles(showTitles: false),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                            bottomTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                          ),
+                          ],
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                      ],
+                    )
+                  : Container(),
+
               SizedBox(height: 100.h),
               // Hours on the left side
             ]),
@@ -373,45 +458,6 @@ class StatsPageState extends State<StatsPage> {
       ),
     );
   }
-
-  List<BarChartGroupData> barChartGroups = [
-    BarChartGroupData(x: 0, barRods: [
-      BarChartRodData(
-        borderRadius: BorderRadius.circular(100.r),
-        width: 40.w,
-        toY: 0,
-        fromY: 3, // Use the same data from the pie chart (adjust as needed)
-        color: Colors.blue,
-      ),
-    ]),
-    BarChartGroupData(x: 1, barRods: [
-      BarChartRodData(
-        borderRadius: BorderRadius.circular(100.r),
-        width: 40.w,
-        toY: 0,
-        fromY: 7, // Use the same data from the pie chart (adjust as needed)
-        color: Colors.green,
-      ),
-    ]),
-    BarChartGroupData(x: 2, barRods: [
-      BarChartRodData(
-        borderRadius: BorderRadius.circular(100.r),
-        width: 40.w,
-        toY: 0,
-        fromY: 12, // Use the same data from the pie chart (adjust as needed)
-        color: Colors.red,
-      ),
-    ]),
-    BarChartGroupData(x: 3, barRods: [
-      BarChartRodData(
-        borderRadius: BorderRadius.circular(100.r),
-        width: 40.w,
-        toY: 0,
-        fromY: 5, // Use the same data from the pie chart (adjust as needed)
-        color: Colors.pink,
-      ),
-    ]),
-  ];
 
   Padding datePicker(String formattedDate, BuildContext context) {
     return Padding(

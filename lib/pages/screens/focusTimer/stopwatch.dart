@@ -46,7 +46,7 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
     // Initialize and start the stopwatch timer
     _stopWatchTimer = StopWatchTimer(
       mode: StopWatchMode.countUp,
-      presetMillisecond: milli,
+      presetMillisecond: 0,
       onChange: (value) {
         int remainingMilliseconds = value;
         // Calculate remaining progress value
@@ -153,8 +153,18 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              audioPlayer.stop();
-                              Navigator.pop(context);
+                              if (started == false) {
+                                audioPlayer.stop();
+                                Navigator.pop(context);
+                              } else {
+                                QuickAlert.show(
+                                  context: context,
+                                  confirmBtnColor: AppColors.mainBlue,
+                                  type: QuickAlertType.error,
+                                  title: 'Error...',
+                                  text: 'Please stop the timer!',
+                                );
+                              }
                             },
                             child: SizedBox(
                               height: 28,
@@ -297,8 +307,18 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  audioPlayer.stop();
-                                  Navigator.pop(context);
+                                  if (started == false) {
+                                    audioPlayer.stop();
+                                    Navigator.pop(context);
+                                  } else {
+                                    QuickAlert.show(
+                                      context: context,
+                                      confirmBtnColor: AppColors.mainBlue,
+                                      type: QuickAlertType.error,
+                                      title: 'Error...',
+                                      text: 'Please stop the timer!',
+                                    );
+                                  }
                                 },
                                 child: const Icon(
                                   Icons.cancel_outlined,

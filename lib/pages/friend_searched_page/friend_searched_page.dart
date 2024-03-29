@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:habit_tracker/services/friend_request_firestore_services.dart';
+import 'package:habit_tracker/services/friend_firestore_services.dart';
 
 class FriendSearchedPage extends StatelessWidget {
   final List<QueryDocumentSnapshot> searchResults;
@@ -28,7 +28,7 @@ class FriendSearchedPage extends StatelessWidget {
             trailing: IconButton(
               icon: const Icon(Icons.person_add),
               onPressed: () {
-                FriendRequestFirestoreServices()
+                FriendFirestoreServices()
                     .sendFriendRequestNotification(receiverID: data["uid"]);
               },
             ),

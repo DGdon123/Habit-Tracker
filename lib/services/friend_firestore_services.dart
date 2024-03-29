@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class FriendRequestFirestoreServices {
+class FriendFirestoreServices {
   var friendRequestRef =
       FirebaseFirestore.instance.collection("friend-request");
   var userID = FirebaseAuth.instance.currentUser!.uid;
@@ -39,5 +39,20 @@ class FriendRequestFirestoreServices {
     FirebaseFirestore.instance.collection("friends").doc(userID).set({
       "friends": FieldValue.arrayUnion([senderID])
     }, SetOptions(merge: true));
+  }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> getDetailsOfFriend(
+      {required String friendID}) {
+    return FirebaseFirestore.instance.collection("users").doc(friendID).get();
+  }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> getAllFriends() {
+    return FirebaseFirestore.instance.collection("friends").doc(userID).get();
+  }
+
+  void removeAddedFriend({required String friendID}) {
+    FirebaseFirestore.instance.collection("friends").doc(userID).update({
+      "friends": FieldValue.arrayRemove([friendID])
+    });
   }
 }

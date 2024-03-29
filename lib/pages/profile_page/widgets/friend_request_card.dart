@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:habit_tracker/services/friend_request_firestore_services.dart';
+import 'package:habit_tracker/services/friend_firestore_services.dart';
 import 'package:habit_tracker/services/user_firestore_services.dart';
 
 class FriendRequestCard extends StatelessWidget {
@@ -31,14 +31,14 @@ class FriendRequestCard extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.check),
                         onPressed: () {
-                          FriendRequestFirestoreServices()
+                          FriendFirestoreServices()
                               .acceptFriendRequest(senderID: senderID);
                         },
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),
                         onPressed: () {
-                          FriendRequestFirestoreServices()
+                          FriendFirestoreServices()
                               .removeFriendRequest(senderID: senderID);
                         },
                       ),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class UserFireStoreServices {
@@ -29,17 +30,38 @@ class UserFireStoreServices {
     });
   }
 
+  /// searches by uid
+  Future<QueryDocumentSnapshot> searchUserByUid(String uid) async {
+    final response = await userCollection.where('uid', isEqualTo: uid).get();
+
+    return response.docs.first;
+  }
+
   /// searches username by username
-  Future<QuerySnapshot> searchUserByUserName(String name) async {
+  Future<List<QueryDocumentSnapshot>> searchUserByUserName(String name) async {
     final startTerm = name.toLowerCase();
     final endTerm =
         name.toLowerCase() + '\uf8ff'; // '\uf8ff' is a high surrogate character
+
+    var uid = FirebaseAuth.instance.currentUser!.uid;
+
+    debugPrint("Uid: $uid");
 
     final response = await userCollection
         .where('name', isGreaterThanOrEqualTo: startTerm)
         .where('name', isLessThanOrEqualTo: endTerm)
         .get();
 
-    return response;
+    List<QueryDocumentSnapshot> searchResults = [];
+
+    for (var doc in response.docs) {
+      if (doc.get("uid") == uid) {
+        debugPrint("Uid matched: ${doc.get("uid")} ${doc.get("name")}");
+        continue;
+      }
+      searchResults.add(doc);
+    }
+
+    return searchResults;
   }
 }

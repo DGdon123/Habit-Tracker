@@ -26,7 +26,12 @@ class FriendsPageState extends State<FriendsPage> {
       child: Scaffold(
         backgroundColor: AppColors.primaryColor.withOpacity(0.15),
         body: Container(
-          margin: EdgeInsets.only(top:kIsWeb ? 35.h : Platform.isIOS ? 50.h : 35.h),
+          margin: EdgeInsets.only(
+              top: kIsWeb
+                  ? 35.h
+                  : Platform.isIOS
+                      ? 50.h
+                      : 35.h),
           child: Column(
             children: [
               Padding(
@@ -37,8 +42,10 @@ class FriendsPageState extends State<FriendsPage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => HomePage()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomePage()));
                       },
                       child: SizedBox(
                         height: 28.h,

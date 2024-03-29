@@ -8,15 +8,15 @@ class FriendsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: FriendFirestoreServices().getAllFriends(),
+    return StreamBuilder(
+        stream: FriendFirestoreServices().getAllFriends(),
         builder: (_, snapshot) {
           if (snapshot.hasData) {
             debugPrint("Snapshot: ${snapshot.data}");
-            if (snapshot.data?.data() == null) {
+            if (snapshot.data!.docs.isEmpty) {
               return const Text("Add friends to see them here");
             }
-            var data = snapshot.data!.data() as Map<String, dynamic>;
+            var data = snapshot.data!.docs.first;
             var friends = data["friends"] as List<dynamic>;
 
             return Column(

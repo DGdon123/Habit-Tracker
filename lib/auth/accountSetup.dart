@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
+import 'package:easy_localization/easy_localization.dart';
+import 'package:geolocator/geolocator.dart' as img;
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
@@ -10,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
@@ -18,6 +21,12 @@ import 'package:habit_tracker/utils/icons.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:habit_tracker/utils/styles.dart';
 import 'package:provider/provider.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:http/http.dart' as http;
+import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
+import '../utils/textfields.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:latlong2/latlong.dart';
 
 class AccountSetup extends StatefulWidget {
   final String? username;
@@ -84,13 +93,6 @@ class _AccountSetupState extends State<AccountSetup> {
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: kIsWeb
-                ? 35
-                : Platform.isIOS
-                    ? 50
-                    : 35,
-          ),
           Expanded(
             child: PageView(
               controller: _pageController,
@@ -101,6 +103,7 @@ class _AccountSetupState extends State<AccountSetup> {
               },
               children: const [
                 AccountSetupBirthdate(),
+                AccountSetupSetName(),
               ],
             ),
           ),
@@ -114,7 +117,7 @@ class _AccountSetupState extends State<AccountSetup> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        1, // Replace with the total number of pages
+                        2, // Replace with the total number of pages
                         (index) => Container(
                           margin: EdgeInsets.symmetric(horizontal: 4.0.w),
                           width: currentPage == index
@@ -138,25 +141,37 @@ class _AccountSetupState extends State<AccountSetup> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    if (currentPage == 0 &&
-                        user.status != Status.Authenticating) {
-                      // Set the user status to Authenticating to show the loading indicator
-                      Status.Authenticating;
-
-                      // Perform the sign-up operation
-                      await user.signUp(
-                        context,
-                        widget.username.toString(),
-                        dobis.toString(),
-                        widget.email.toString(),
-                        widget.password.toString(),
+                    if (currentPage < _pageController.page!.round()) {
+                      // You are going back to a previous page
+                      _pageController.previousPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
                       );
+                    } else {
+                      // You are going forward to the next page
+                      if (currentPage < 1) {
+                        _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      } else {
+                        if (currentPage == 1) {
+                          await user.signUp(
+                            context,
+                            widget.username.toString(),
+                            dobis.toString(),
+                            widget.email.toString(),
+                            widget.password.toString(),
+                            
+                          );
+                        }
+                      }
                     }
                   },
                   child: Row(
                     children: [
                       Text(
-                        'Finish',
+                        currentPage == 1 ? 'Finish' : 'Next',
                         style: TextStyle(
                           color: AppColors.buttonYellow,
                           fontFamily: 'SFProText',
@@ -195,94 +210,252 @@ class AccountSetupSetName extends StatefulWidget {
 }
 
 class _AccountSetupSetNameState extends State<AccountSetupSetName> {
-  final TextEditingController _controller = TextEditingController();
+  LatLng? currentLocation;
+
+  LatLng?
+      selectedMarkerLocation; // Added variable to store the extra marker's location
+  bool searching = false;
+  String? currentAddress;
+
+  bool isLocationLoaded = false;
+  List<String> _places = [];
+  final FocusNode _searchFocusNode = FocusNode();
+  final TextEditingController _textEditingController = TextEditingController();
+
+  final TextEditingController _textEditingController2 = TextEditingController();
+  final TextEditingController _textEditingController3 = TextEditingController();
+
+  Future<void> searchPlacesInNepal() async {
+    final query = _textEditingController.text;
+    final url =
+        'https://api.mapbox.com/geocoding/v5/mapbox.places/$query.json?access_token=pk.eyJ1IjoiZGdkb24tMTIzIiwiYSI6ImNsbGFlandwcjFxNGMzcm8xbGJjNTY4bmgifQ.dGSMw7Ai7BpXWW4qQRcLgA';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      final data = jsonDecode(response.body);
+
+      final features = data['features'] as List<dynamic>;
+      final places = <String>[];
+
+      if (features.isNotEmpty) {
+        for (final feature in features) {
+          final placeName = feature['place_name'] as String;
+
+          // Extract coordinates
+          final coordinates =
+              feature['geometry']['coordinates'] as List<dynamic>;
+          final latitude = coordinates[1] as double;
+          final longitude = coordinates[0] as double;
+
+          // Format into a string "Place Name|Latitude|Longitude"
+          final formattedPlace = '$placeName|$latitude|$longitude';
+          places.add(formattedPlace);
+        }
+      } else {
+        places.add('No results found');
+      }
+
+      setState(() => _places = places);
+    } catch (e) {
+      print('Failed to get search results from Mapbox: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Scaffold(
+        body: Stack(
       children: [
-        SizedBox(
-          height: 50.h,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Row(
-            children: [
-              Text(
-                'What’s your name?',
-                style: AppTextStyles.accountSetup,
+        FlutterLocationPicker(
+            selectLocationButtonText: "Confirm Destination",
+            searchbarInputFocusBorderp: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.mainBlue, width: 0.164.w),
+            ),
+            searchBarHintText: "Loading Location",
+            loadingWidget: SizedBox(
+              height: 2.4.h,
+              width: 4.6.w,
+              child: const CircularProgressIndicator.adaptive(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppColors.primaryColor, // Set your desired color here
+                ),
+                backgroundColor: AppColors.mainBlue,
               ),
-            ],
+            ),
+            selectLocationButtonStyle: ButtonStyle(
+              overlayColor: MaterialStateProperty.all(Colors.white),
+              backgroundColor: MaterialStateProperty.all(Colors.white),
+            ),
+            locationButtonBackgroundColor: AppColors.primaryColor,
+            zoomButtonsBackgroundColor: AppColors.primaryColor,
+            zoomButtonsColor: AppColors.mainBlue,
+            locationButtonsColor: AppColors.mainBlue,
+            contributorBadgeForOSMColor: AppColors.mainBlue,
+            contributorBadgeForOSMTextColor: AppColors.mainBlue,
+            initZoom: 22,
+            minZoomLevel: 5,
+            maxZoomLevel: 18,
+            trackMyPosition: true,
+            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            searchBarBackgroundColor: Colors.white,
+            selectedLocationButtonTextstyle: const TextStyle(
+              fontSize: 18,
+              color: AppColors.mainBlue,
+              letterSpacing: 0.25,
+            ),
+            mapLanguage: 'en',
+            onError: (e) => print(e),
+            selectLocationButtonLeadingIcon: const Icon(
+              Icons.check,
+              color: AppColors.mainBlue,
+            ),
+            onPicked: (pickedData) {
+              if (_textEditingController.text != '') {
+                try {
+                  final latitude = double.parse(_textEditingController2.text);
+                  final longitude = double.parse(_textEditingController3.text);
+                  log(latitude.toString());
+                  log(longitude.toString());
+                } catch (e) {
+                  log('Error parsing latitude/longitude: $e');
+                }
+              } else {
+                try {
+                  final latitude = pickedData.latLong.latitude;
+                  final longitude = pickedData.latLong.longitude;
+                  final current = pickedData.address;
+
+                  log(latitude.toString());
+                  log(longitude.toString());
+                } catch (e) {
+                  log('Error parsing latitude/longitude: $e');
+                }
+              }
+            }),
+        Positioned(
+          top: 88,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: Container(
+              alignment: Alignment.center,
+              width: 406.w,
+              child: TextFormField(
+                cursorColor: AppColors.mainBlue,
+                maxLines: 1,
+                controller: _textEditingController,
+                focusNode: _searchFocusNode,
+                onEditingComplete: () {
+                  setState(() {
+                    searching = false;
+                    _searchFocusNode.unfocus();
+                  });
+                },
+                style: const TextStyle(fontSize: 12),
+                textInputAction: TextInputAction.done,
+                onChanged: (value) => searchPlacesInNepal(),
+                onTap: () {
+                  setState(() {
+                    searching = true;
+                  });
+                },
+                decoration: InputDecoration(
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      _textEditingController.clear();
+                    },
+                    child: const Icon(
+                      Icons.clear_outlined,
+                      size: 20,
+                      color: CupertinoColors.darkBackgroundGray,
+                    ),
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.location_on_rounded,
+                    color: AppColors.mainBlue,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 10.0),
+                  focusedErrorBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                          width: 0.8,
+                          color: AppColors.primaryColor,
+                          style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(5)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                          width: 0.8,
+                          color: AppColors.primaryColor,
+                          style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(5)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                          width: 0.8,
+                          color: AppColors.primaryColor,
+                          style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(5)),
+                  disabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                          width: 0.8,
+                          color: AppColors.primaryColor,
+                          style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(5)),
+                  border: InputBorder.none,
+                  fillColor: const Color(0xffF9F9FC),
+                  filled: true,
+                  hintText: "Search Your Gym Location",
+                  hintStyle: const TextStyle(fontSize: 12, letterSpacing: 0.35),
+                ),
+              ),
+            ),
           ),
         ),
-        SizedBox(
-          height: 50.h,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: TextFormField(
-            controller: _controller,
-            style: TextStyle(
-              fontFamily: 'SFProText',
-              fontSize: 24.sp,
-              fontWeight: FontWeight.w500,
-              color: const Color.fromARGB(255, 51, 51, 51),
-            ),
-            decoration: InputDecoration(
-              hintText: "Your Name",
-              hintStyle: TextStyle(
-                fontFamily: 'SFProText',
-                fontSize: 24.sp,
-                fontWeight: FontWeight.w500,
-                color: const Color.fromARGB(255, 51, 51, 51),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: const Color.fromARGB(255, 51, 51, 51),
-                  width: 2.w, // Change the width as needed
+        searching
+            ? Positioned(
+                top: 145,
+                child: Container(
+                  width: 406.w,
+                  height: 250.2.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                  ),
+                  margin: const EdgeInsets.only(left: 10, right: 10),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _places.length,
+                    itemBuilder: (context, index) {
+                      if (index >= 0 && index < _places.length) {
+                        final placeInfo = _places[index];
+                        final placeParts = placeInfo.split('|');
+
+                        if (placeParts.length >= 3) {
+                          final placeName = placeParts[0];
+                          final latitude = placeParts[1];
+                          final longitude = placeParts[2];
+
+                          return ListTile(
+                            title: Text(placeName),
+                            onTap: () {
+                              _textEditingController.text = placeName;
+                              _textEditingController2.text = latitude;
+                              _textEditingController3.text = longitude;
+                              // You can access latitude and longitude here
+                              log('Latitude: $latitude, Longitude: $longitude');
+                              setState(() {
+                                _places = []; // Clear search results
+                              });
+                            },
+                          );
+                        }
+                      }
+                      return const SizedBox(); // Return an empty widget if data is invalid
+                    },
+                  ),
                 ),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: const Color.fromARGB(255, 51, 51, 51),
-                  width: 2.w, // Change the width as needed
-                ),
-              ),
-              border: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 2.w,
-                  color: const Color.fromARGB(255, 51, 51, 51),
-                ),
-              ),
-              suffixIcon: _controller.text.isNotEmpty
-                  ? IconButton(
-                      iconSize: 15,
-                      icon: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.secondaryColor,
-                          borderRadius: BorderRadius.circular(100.r),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(5.h),
-                          child: Icon(
-                            Icons.clear,
-                            color: const Color.fromARGB(255, 51, 51, 51),
-                            size: 15.h,
-                          ),
-                        ),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _controller.clear();
-                        });
-                      },
-                    )
-                  : null,
-            ),
-          ),
-        )
+              )
+            : Container()
       ],
-    );
+    ));
   }
 }
 
@@ -305,6 +478,9 @@ class _AccountSetupBirthdateState extends State<AccountSetupBirthdate> {
       backgroundColor: AppColors.primaryColor,
       body: Column(
         children: [
+          SizedBox(
+            height: 15.h,
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Text(

@@ -9,10 +9,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
 import 'package:habit_tracker/widgets/tooltip.dart';
+import 'package:provider/provider.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:quickalert/quickalert.dart';
 
@@ -55,12 +57,8 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
           QuickAlert.show(
             onConfirmBtnTap: () {
               audioPlayer.stop();
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomePage(
-                            initialIndex: 3,
-                          )));
+
+              context.read<IndexProvider>().setSelectedIndex(3);
             },
             context: context,
             confirmBtnText: 'Exit',
@@ -408,14 +406,9 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                                       QuickAlert.show(
                                         context: context,
                                         onConfirmBtnTap: () {
-                                          Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HomePage(
-                                                        initialIndex: 3,
-                                                      )),
-                                              (route) => false);
+                                          context
+                                              .read<IndexProvider>()
+                                              .setSelectedIndex(3);
                                         },
                                         confirmBtnColor: AppColors.mainBlue,
                                         type: QuickAlertType.error,

@@ -18,6 +18,24 @@ class TextStyles {
     fontWeight: FontWeight.w800,
   );
 
+  // title style
+  TextStyle titleStyle = TextStyle(
+    color: AppColors.textBlack,
+    fontSize: 24.sp,
+    fontFamily: 'SFProText',
+    fontWeight: FontWeight.w600,
+  );
+
+  // subtitle style
+  TextStyle subtitleStyle = TextStyle(
+    color: AppColors.textBlack,
+    fontSize: 16.sp,
+    fontFamily: 'SFProText',
+    fontWeight: FontWeight.w500,
+  );
+
+  // secondary
+
   TextStyle secondaryTextStyle(double fontSize, FontWeight fontWeight) {
     return TextStyle(
       fontSize: fontSize,

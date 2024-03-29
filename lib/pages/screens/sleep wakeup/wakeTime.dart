@@ -2,13 +2,14 @@ import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:habit_tracker/pages/sleep_page/utils.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/styles.dart';
 
 class WakeTime extends StatefulWidget {
   final Time sleepTime;
-  const WakeTime({super.key, required this.sleepTime});
+  const WakeTime({required this.sleepTime});
   @override
   State<WakeTime> createState() => _WakeTimeState();
 }
@@ -18,13 +19,24 @@ class _WakeTimeState extends State<WakeTime> {
   bool iosStyle = true;
 
   void sleepTimeSet(Time newTime) {
-    setState(() {
-      _timeWake = newTime;
-    });
-    Navigator.pop(context);
+    _timeWake = newTime;
+
+    var startTime =
+        DateTime(2024, 1, 1, widget.sleepTime.hour, widget.sleepTime.minute);
+    var endTime = DateTime(2024, 1, 2, _timeWake.hour, _timeWake.minute);
+
+    // if (endTime.isBefore(startTime)) {
+    //   endTime = endTime.add(Duration(days: 1));
+    // }
+
+    var difference = endTime.difference(startTime);
+    debugPrint("Difference: $difference, ${widget.sleepTime}, $_timeWake");
+
     SleepFireStoreServices().addNewSleepTime(
-        sleepTime: widget.sleepTime.format(context),
-        wakeTime: _timeWake.format(context));
+      sleepTime: widget.sleepTime.format(context),
+      wakeTime: _timeWake.format(context),
+      difference: SleepPageUtils().roundHourAndMinute(difference.inMinutes),
+    );
   }
 
   @override
@@ -72,7 +84,7 @@ class _WakeTimeState extends State<WakeTime> {
                 },
                 dialogInsetPadding:
                     EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.h),
-                unselectedColor: const Color.fromRGBO(0, 0, 0, 0.75),
+                unselectedColor: Color.fromRGBO(0, 0, 0, 0.75),
                 hourLabel: 'Hour',
                 minuteLabel: 'Minutes',
                 // width: 350.w,
@@ -80,7 +92,7 @@ class _WakeTimeState extends State<WakeTime> {
                 // wheelHeight: 300.h,
 
                 cancelStyle: TextStyle(
-                  color: const Color.fromARGB(255, 255, 0, 0).withOpacity(0.75),
+                  color: Color.fromARGB(255, 255, 0, 0).withOpacity(0.75),
                   fontSize: 16.sp,
                   fontFamily: 'SFProText',
                   fontWeight: FontWeight.w500,
@@ -103,38 +115,6 @@ class _WakeTimeState extends State<WakeTime> {
                 is24HrFormat: false,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFF00FFDE),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(1000),
-                        ),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.w),
-                      child: Text(
-                        "Save",
-                        style: TextStyle(
-                          color: AppColors.textBlack,
-                          fontSize: 18.sp,
-                          fontFamily: 'SFProText',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
           ],
         ),
       ),

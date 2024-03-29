@@ -12,9 +12,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/focusTimer/focusMain.dart';
 import 'package:habit_tracker/pages/screens/focusTimer/stopwatch.dart';
+import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import '../../main.dart';
 
@@ -433,13 +435,7 @@ class FocusPageState extends State<FocusPage> {
                 } else {
                   addUser(label, hours3, minutes3, seconds3);
 
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HomePage(
-                                initialIndex: 3,
-                              )),
-                      (route) => false);
+                  context.read<IndexProvider>().setSelectedIndex(3);
                 }
               },
               child: const Text(

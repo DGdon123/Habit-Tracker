@@ -1,13 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/location/current_location.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/pages/screens/friends.dart';
+import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.dart';
+import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
+import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
+import 'package:provider/provider.dart';
+
+import 'customize character/customizeCharater.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -51,7 +59,7 @@ class _HomeState extends State<Home> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        sleepTime(),
+                        wakeSleepTime(),
                         screenTime(),
                       ],
                     ),
@@ -78,7 +86,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Column sleepTime() {
+  Column wakeSleepTime() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -89,75 +97,100 @@ class _HomeState extends State<Home> {
         SizedBox(
           height: 5.h,
         ),
-        Container(
-          width: 180.w,
-          height: 100.h,
-          decoration: ShapeDecoration(
-            color: const Color(0xfbd4bcdf),
-            // gradient: LinearGradient(
-            //   begin: Alignment.bottomLeft,
-            //   end: Alignment.topRight,
-            //   colors: [
-            //     Color(0xFF007566),
-            //     Color(0xFF47EFDA),
-            //   ],
-            // ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.r),
+        GestureDetector(
+          onTap: () {
+            context.read<IndexProvider>().setSelectedIndex(0);
+          },
+          child: Container(
+            width: 180.w,
+            height: 100.h,
+            decoration: ShapeDecoration(
+              color: const Color(0xfbd4bcdf),
+              // gradient: LinearGradient(
+              //   begin: Alignment.bottomLeft,
+              //   end: Alignment.topRight,
+              //   colors: [
+              //     Color(0xFF007566),
+              //     Color(0xFF47EFDA),
+              //   ],
+              // ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.r),
+              ),
             ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.light_mode,
-                      color: AppColors.lightBlack,
-                      size: 34.sp,
-                    ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    Text(
-                      '06:00',
-                      style: TextStyle(
-                        color: AppColors.black,
-                        fontSize: 20.sp,
-                        fontFamily: 'SFProText',
-                        fontWeight: FontWeight.w800,
-                        height: 0,
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.dark_mode_rounded,
-                      color: AppColors.lightBlack,
-                      size: 30.sp,
-                    ),
-                    SizedBox(
-                      height: 12.h,
-                    ),
-                    Text(
-                      '23:00',
-                      style: TextStyle(
-                        color: AppColors.black,
-                        fontSize: 20.sp,
-                        fontFamily: 'SFProText',
-                        fontWeight: FontWeight.w800,
-                        height: 0,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              child: StreamBuilder<QuerySnapshot>(
+                  stream: SleepFireStoreServices().listenToTodayAddedSleepTime,
+                  builder: (context, snapshot) {
+                    debugPrint("Snapshot: ${snapshot.data?.docs.length}");
+
+                    var snapshotLength = snapshot.data?.docs.length;
+
+                    // we got data
+                    if (snapshot.hasData &&
+                        snapshot.connectionState == ConnectionState.active &&
+                        snapshotLength != 0) {
+                      var doc = snapshot.data!.docs[0];
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.light_mode,
+                                color: AppColors.lightBlack,
+                                size: 34.sp,
+                              ),
+                              SizedBox(
+                                height: 10.h,
+                              ),
+                              Text(
+                                doc.get("wakeTime"),
+                                style: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 20.sp,
+                                  fontFamily: 'SFProText',
+                                  fontWeight: FontWeight.w800,
+                                  height: 0,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.dark_mode_rounded,
+                                color: AppColors.lightBlack,
+                                size: 30.sp,
+                              ),
+                              SizedBox(
+                                height: 12.h,
+                              ),
+                              Text(
+                                doc.get("sleepTime"),
+                                style: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 20.sp,
+                                  fontFamily: 'SFProText',
+                                  fontWeight: FontWeight.w800,
+                                  height: 0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    } else if (snapshotLength == 0) {
+                      return const Center(
+                          child: Text("Add your sleep and wake time."));
+                    } else if (snapshot.hasError) {
+                      return const Text('Something went wrong');
+                    }
+                    return const CircularProgressIndicator();
+                  }),
             ),
           ),
         ),
@@ -212,16 +245,32 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      '3:00 h',
-                      style: TextStyle(
-                        color: AppColors.black,
-                        fontSize: 28.sp,
-                        fontFamily: 'SFProText',
-                        fontWeight: FontWeight.w800,
-                        height: 0,
-                      ),
-                    ),
+                    FutureBuilder(
+                        future: DeviceScreenTimeServices().getUsageStats(),
+                        builder: (_, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text("Error");
+                          }
+
+                          var duration = snapshot.data;
+
+                          var hours = duration!.inHours % 60;
+                          var minutes = duration.inMinutes % 60;
+
+                          return Text(
+                            '$hours:$minutes h',
+                            style: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 28.sp,
+                              fontFamily: 'SFProText',
+                              fontWeight: FontWeight.w800,
+                              height: 0,
+                            ),
+                          );
+                        }),
                   ],
                 ),
               ],
@@ -475,7 +524,9 @@ class _HomeState extends State<Home> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const CurrentLocation(),
+                      builder: (context) {
+                        return const CustomizeCharacter();
+                      },
                     ),
                   );
                 },

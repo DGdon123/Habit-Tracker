@@ -8,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:habit_tracker/auth/signup_page.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/home.dart';
+import 'package:habit_tracker/services/user_firestore_services.dart';
 import 'package:provider/provider.dart';
 
 import '../login_page.dart';
@@ -41,12 +42,12 @@ class UserRepository with ChangeNotifier {
   Future<bool> signIn(
       BuildContext context, String email, String password) async {
     try {
+      debugPrint("Hello worl");
       _status = Status.Authenticating;
       notifyListeners();
 
       // Sign in with email and password
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-
       // If signInWithEmailAndPassword succeeds, update status and return true
       _status = Status.Authenticated;
       notifyListeners();
@@ -144,11 +145,24 @@ class UserRepository with ChangeNotifier {
       _status = Status.Authenticating;
       notifyListeners();
 
+      debugPrint("Authenticating user repo");
+
       // Create user with email and password
-      await _auth.createUserWithEmailAndPassword(
+      final authResponse = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      //
+
+      debugPrint("Authenticating user repo: ${authResponse}");
+
+      // adding details to the firestore
+      UserFireStoreServices().addUser(
+          uid: authResponse.user!.uid,
+          email: email,
+          name: username,
+          photoUrl: "");
 
       // Get the current user
       User? user = _auth.currentUser;
@@ -260,7 +274,15 @@ class UserRepository with ChangeNotifier {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      await _auth.signInWithCredential(credential);
+      final authResponse = await _auth.signInWithCredential(credential);
+
+      // adding details to the firestore
+      UserFireStoreServices().addUser(
+          uid: authResponse.user!.uid,
+          email: authResponse.user!.email.toString(),
+          name: authResponse.user!.displayName.toString(),
+          photoUrl: authResponse.user!.photoURL.toString());
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

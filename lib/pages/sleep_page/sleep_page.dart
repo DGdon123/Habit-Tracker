@@ -12,13 +12,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/sleep%20wakeup/sleepTime.dart';
+import 'package:habit_tracker/pages/sleep_page/widgets/bar_graph.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/custom_bar_chart.dart';
+import 'package:habit_tracker/pages/sleep_page/widgets/sleep_details.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.dart';
+import 'package:habit_tracker/provider/avg_sleep_provider.dart';
+import 'package:habit_tracker/provider/start_end_date_provider.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/text_styles.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import 'widgets/start_end_date_picker.dart';
 
@@ -30,37 +35,9 @@ class SleepPage extends StatefulWidget {
 }
 
 class SleepPageState extends State<SleepPage> {
-  DateTime today = DateTime.now();
-  DateTime? startDate;
-  DateTime? endDate;
-
-  int currentYear = DateTime.now().year;
-
-// title style
-  TextStyle titleStyle = TextStyle(
-    color: AppColors.textBlack,
-    fontSize: 24.sp,
-    fontFamily: 'SFProText',
-    fontWeight: FontWeight.w600,
-  );
-
-  // subtitle style
-  TextStyle subtitleStyle = TextStyle(
-    color: AppColors.textBlack,
-    fontSize: 16.sp,
-    fontFamily: 'SFProText',
-    fontWeight: FontWeight.w500,
-  );
-
   @override
   Widget build(BuildContext context) {
-    DateTime sevenDaysAgo = today.subtract(Duration(days: 7));
-
-    String formattedToday = DateFormat('MMM d').format(today);
-    String formattedSevenDaysAgo = DateFormat('MMM d').format(sevenDaysAgo);
-
-    String dateRange = '$formattedSevenDaysAgo - $formattedToday';
-
+    debugPrint("INside sleep");
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -121,7 +98,7 @@ class SleepPageState extends State<SleepPage> {
                     children: [
                       Text(
                         'Sleep Time',
-                        style: titleStyle,
+                        style: TextStyles().titleStyle,
                       ),
                       GestureDetector(
                         onTap: () {
@@ -192,67 +169,7 @@ class SleepPageState extends State<SleepPage> {
               SizedBox(
                 height: 30.h,
               ),
-
-              // date range picker
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              '${startDate != null ? DateFormat("MMM dd").format(startDate!) : dateRange} - ${endDate != null ? DateFormat("MMM dd").format(endDate!) : ''}',
-                              style: subtitleStyle,
-                            ),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            GestureDetector(
-                                onTap: () async {
-                                  var res = await showDialog<dynamic>(
-                                      context: context,
-                                      builder: (_) {
-                                        return StartEndDatePicker(
-                                          firstDate: DateTime(2024, 3, 1),
-                                        );
-                                      });
-                                },
-                                child: SvgPicture.asset(AppIcons.dropdown)),
-                          ],
-                        ),
-                        Text(
-                          '${currentYear}',
-                          style: TextStyles()
-                              .secondaryTextStyle(14.sp, FontWeight.w400),
-                        )
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          '7H',
-                          style: subtitleStyle,
-                        ),
-                        Text(
-                          'Avg sleep time',
-                          style: TextStyles()
-                              .secondaryTextStyle(14.sp, FontWeight.w400),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(
-                height: 40.h,
-              ),
-              const CustomBarChart(),
+              SleepDetails(),
             ],
           ),
         ),

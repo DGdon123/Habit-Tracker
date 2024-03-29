@@ -1,13 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:isolate';
 import 'dart:ui';
-import 'package:background_locator_2/background_locator.dart';
-import 'package:background_locator_2/location_dto.dart';
-import 'package:background_locator_2/settings/android_settings.dart' as wwe;
-import 'package:background_locator_2/settings/ios_settings.dart' as pre;
-import 'package:background_locator_2/settings/locator_settings.dart';
-import 'package:habit_tracker/location/location_callback_handler.dart';
-import 'package:habit_tracker/location/location_service_repository.dart';
 import 'package:habit_tracker/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:easy_localization/easy_localization.dart';
@@ -17,9 +12,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/textfields.dart';
 import 'package:geolocator/geolocator.dart' as img;
-
-import 'package:location_permissions/location_permissions.dart';
-import 'file_manager.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:carp_background_location/carp_background_location.dart';
 
 class CurrentLocation extends StatefulWidget {
   const CurrentLocation({super.key});
@@ -27,6 +21,8 @@ class CurrentLocation extends StatefulWidget {
   @override
   State<CurrentLocation> createState() => _OnBoardingScreenState();
 }
+
+enum LocationStatus { UNKNOWN, INITIALIZED, RUNNING, STOPPED }
 
 class _OnBoardingScreenState extends State<CurrentLocation> {
   bool isChecked = false;
@@ -39,69 +35,119 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
   img.Position? _currentPosition;
   String? _errorMessage;
   final String _location = "None";
-  ReceivePort port = ReceivePort();
   String logStr = '';
-  bool isRunning1 = false;
-  LocationDto? lastLocation;
-
-  Future<void> updateUI(dynamic data) async {
-    final log = await FileManager.readLogFile();
-
-    LocationDto? locationDto =
-        (data != null) ? LocationDto.fromJson(data) : null;
-    await _updateNotificationText(locationDto!);
-
-    setState(() {
-      if (data != null) {
-        lastLocation = locationDto;
-      }
-      logStr = log;
-    });
-  }
-
-  Future<void> _updateNotificationText(LocationDto data) async {
-    await BackgroundLocator.updateNotificationText(
-        title: "new location received",
-        msg: "${DateTime.now()}",
-        bigMsg: "${data.latitude}, ${data.longitude}");
-  }
-
-  Future<void> initPlatformState() async {
-    print('Initializing...');
-
-    logStr = await FileManager.readLogFile();
-    print('Initialization done');
-    final isRunning = await BackgroundLocator.isServiceRunning();
-    setState(() {
-      isRunning1 = isRunning;
-    });
-    print('Running ${isRunning1.toString()}');
-  }
+  LocationDto? _lastLocation;
+  StreamSubscription<LocationDto>? locationSubscription;
+  LocationStatus _status = LocationStatus.UNKNOWN;
 
   @override
   void initState() {
     super.initState();
-
+    LocationManager().interval = 1;
+    LocationManager().distanceFilter = 0;
+    LocationManager().notificationTitle = 'CARP Location Example';
+    LocationManager().notificationMsg = 'CARP is tracking your location';
+    _status = LocationStatus.INITIALIZED;
     _getCurrentLocation();
-    _selectedTime = TimeOfDay.now();
-    if (IsolateNameServer.lookupPortByName(
-            LocationServiceRepository.isolateName) !=
-        null) {
-      IsolateNameServer.removePortNameMapping(
-          LocationServiceRepository.isolateName);
+  }
+
+  void getCurrentLocation() async =>
+      onData(await LocationManager().getCurrentLocation());
+
+  void onData(LocationDto location) {
+    print('>> $location');
+    setState(() {
+      _lastLocation = location;
+    });
+  }
+
+  /// Is "location always" permission granted?
+  Future<bool> isLocationAlwaysGranted() async =>
+      await Permission.locationAlways.isGranted;
+
+  /// Tries to ask for "location always" permissions from the user.
+  /// Returns `true` if successful, `false` otherwise.
+  Future<bool> askForLocationAlwaysPermission() async {
+    bool granted = await Permission.locationAlways.isGranted;
+
+    if (!granted) {
+      granted =
+          await Permission.locationAlways.request() == PermissionStatus.granted;
     }
 
-    IsolateNameServer.registerPortWithName(
-        port.sendPort, LocationServiceRepository.isolateName);
-
-    port.listen(
-      (dynamic data) async {
-        await updateUI(data);
-        await BackgroundLocator.initialize();
-      },
-    );
-    initPlatformState();
+    return granted;
   }
+
+  /// Start listening to location events.
+  void start() async {
+    // ask for location permissions, if not already granted
+    if (!await isLocationAlwaysGranted()) {
+      await askForLocationAlwaysPermission();
+    }
+
+    locationSubscription?.cancel();
+    locationSubscription = LocationManager().locationStream.listen(onData);
+    await LocationManager().start();
+    setState(() {
+      _status = LocationStatus.RUNNING;
+    });
+  }
+
+  void stop() {
+    locationSubscription?.cancel();
+    LocationManager().stop();
+    setState(() {
+      _status = LocationStatus.STOPPED;
+    });
+  }
+
+  Widget stopButton() => SizedBox(
+        width: double.maxFinite,
+        child: ElevatedButton(
+          onPressed: stop,
+          child: const Text('STOP'),
+        ),
+      );
+
+  Widget startButton() => SizedBox(
+        width: double.maxFinite,
+        child: ElevatedButton(
+          onPressed: start,
+          child: const Text('START'),
+        ),
+      );
+
+  Widget statusText() => Text("Status: ${_status.toString().split('.').last}");
+
+  Widget currentLocationButton() => SizedBox(
+        width: double.maxFinite,
+        child: ElevatedButton(
+          onPressed: getCurrentLocation,
+          child: const Text('CURRENT LOCATION'),
+        ),
+      );
+
+  Widget locationWidget() {
+    if (_lastLocation == null) {
+      return const Text("No location yet");
+    } else {
+      return Column(
+        children: <Widget>[
+          Text(
+            '${_lastLocation!.latitude}, ${_lastLocation!.longitude}',
+          ),
+          const Text(
+            '@',
+          ),
+          Text(
+              '${DateTime.fromMillisecondsSinceEpoch(_lastLocation!.time ~/ 1)}')
+        ],
+      );
+    }
+  }
+
+  @override
+  void dispose() => super.dispose();
 
   Future<void> _getCurrentLocation() async {
     try {
@@ -162,35 +208,6 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
     }
   }
 
-  TimeOfDay? _selectedTime;
-  Future<void> _selectTime(BuildContext context) async {
-    final ThemeData theme = Theme.of(context);
-    final initialTime = _selectedTime ?? TimeOfDay.now();
-    final TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: initialTime,
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            // Change the colors here
-            primaryColor: AppColors.mainBlue, // Header background color
-
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.mainBlue, // Selected day background color
-              onPrimary: Colors.white, // Selected day text color
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (pickedTime != null && pickedTime != _selectedTime) {
-      setState(() {
-        _selectedTime = pickedTime;
-      });
-    }
-  }
-
   Future<void> searchPlacesWorldwide() async {
     final query = _textEditingController.text;
     final url =
@@ -219,159 +236,7 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
   }
 
   @override
-  void dispose() {
-    _textEditingController.dispose();
-    emailController.clear();
-    super.dispose();
-  }
-
-  void onStop() async {
-    await BackgroundLocator.unRegisterLocationUpdate();
-    final isRunning = await BackgroundLocator.isServiceRunning();
-    setState(() {
-      isRunning1 = isRunning;
-    });
-  }
-
-  void _onStart() async {
-    if (await _checkLocationPermission()) {
-      await _startLocator();
-      final isRunning = await BackgroundLocator.isServiceRunning();
-
-      setState(() {
-        isRunning1 = isRunning;
-        lastLocation = null;
-      });
-    } else {
-      // show error
-    }
-  }
-
-  Future<bool> _checkLocationPermission() async {
-    // Check the current status of location permission
-    final access = await LocationPermissions().checkPermissionStatus();
-
-    switch (access) {
-      case PermissionStatus.unknown:
-      case PermissionStatus.denied:
-      case PermissionStatus.restricted:
-        // If the permission status is unknown, denied, or restricted,
-        // request the location permission.
-        final permission = await LocationPermissions().requestPermissions(
-          permissionLevel: LocationPermissionLevel.locationAlways,
-        );
-
-        // Check if the permission is granted after the request.
-        if (permission == PermissionStatus.granted) {
-          logger.d(permission);
-          // Permission granted, return true.
-          return true;
-        } else {
-          logger.d(permission);
-          // Permission not granted, return false.
-          return false;
-        }
-
-      case PermissionStatus.granted:
-        // If the permission status is already granted, return true.
-        return true;
-
-      default:
-        // Handle any unexpected permission status here.
-        return false;
-    }
-  }
-
-  Future<void> _startLocator() async {
-    Map<String, dynamic> initData = {
-      'countInit': 1
-    }; // Initialize data for location update
-    // Log the initialization data
-
-    // Register location update with BackgroundLocator
-    return await BackgroundLocator.registerLocationUpdate(
-      LocationCallbackHandler.callback,
-      // Specify init callback and data
-      initCallback: LocationCallbackHandler.initCallback,
-      initDataCallback: initData,
-      // Specify dispose callback
-      disposeCallback: LocationCallbackHandler.disposeCallback,
-      // Configure iOS settings
-      iosSettings: const pre.IOSSettings(
-        accuracy: LocationAccuracy.NAVIGATION, // Specify accuracy
-        distanceFilter: 0, // Specify distance filter
-        stopWithTerminate: true, // Specify whether to stop with app termination
-      ),
-      // Disable auto stop
-      autoStop: false,
-      // Configure Android settings
-      androidSettings: const wwe.AndroidSettings(
-        accuracy: LocationAccuracy.NAVIGATION, // Specify accuracy
-        interval: 5, // Specify interval for location updates
-        distanceFilter: 0, // Specify distance filter
-        client: wwe.LocationClient.google, // Specify location client
-        // Configure Android notification settings
-        androidNotificationSettings: wwe.AndroidNotificationSettings(
-          notificationChannelName:
-              'Location tracking', // Specify notification channel name
-          notificationTitle:
-              'Start Location Tracking', // Specify notification title
-          notificationMsg: 'Track location in background',
-          // Specify notification message
-          notificationBigMsg:
-              'Background location is on to keep the app up-to-date with your location. This is required for main features to work properly when the app is not running.', // Specify big notification message
-          notificationIconColor: Colors.grey, // Specify notification icon color
-          notificationTapCallback: LocationCallbackHandler
-              .notificationCallback, // Specify notification tap callback
-        ),
-      ),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final start = SizedBox(
-      width: double.maxFinite,
-      child: ElevatedButton(
-        child: const Text('Start'),
-        onPressed: () {
-          _onStart();
-        },
-      ),
-    );
-    final stop = SizedBox(
-      width: double.maxFinite,
-      child: ElevatedButton(
-        child: const Text('Stop'),
-        onPressed: () {
-          onStop();
-        },
-      ),
-    );
-    final clear = SizedBox(
-      width: double.maxFinite,
-      child: ElevatedButton(
-        child: const Text('Clear Log'),
-        onPressed: () {
-          FileManager.clearLogFile();
-          setState(() {
-            logStr = '';
-          });
-        },
-      ),
-    );
-    String msgStatus = "-";
-    if (isRunning1) {
-      msgStatus = 'Is running';
-    } else {
-      msgStatus = 'Is not running';
-    }
-    final status = Text("Status: $msgStatus");
-
-    final log = Text(
-      logStr,
-    );
-
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
@@ -398,11 +263,13 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
       ),
       body: Column(
         children: [
-          start,
-          stop,
-          clear,
-          status,
-          log,
+          startButton(),
+          stopButton(),
+          currentLocationButton(),
+          const Divider(),
+          statusText(),
+          const Divider(),
+          locationWidget(),
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: 20.w,
@@ -420,33 +287,7 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 20.w,
-            ),
-            child: TextFormField(
-              readOnly: true,
-              controller: _textEditingController1,
-              onTap: () {
-                _selectTime(context);
-              },
-              validator: (value) =>
-                  (value!.isEmpty) ? "Please Enter Your Gym Time".tr() : null,
-              decoration: AppTextFieldStyles.standardInputDecoration(
-                hintText: DateFormat.jm().format(
-                  DateTime(
-                    2022,
-                    1,
-                    1,
-                    _selectedTime!.hour,
-                    _selectedTime!.minute,
-                  ),
-                ),
-                labelText: 'Gym Time',
-                keyboardType: TextInputType.name,
-              ),
-            ),
-          ),
+          Text(currentAddress.toString()),
           _textEditingController.text.isNotEmpty
               ? Expanded(
                   child: ListView.builder(

@@ -25,13 +25,24 @@ class FriendSearchedPage extends StatelessWidget {
                   ),
             title: Text(data['name']),
             subtitle: Text(data['email']),
-            trailing: IconButton(
-              icon: const Icon(Icons.person_add),
-              onPressed: () {
-                FriendFirestoreServices()
-                    .sendFriendRequestNotification(receiverID: data["uid"]);
-              },
-            ),
+            trailing: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: FriendFirestoreServices()
+                    .listenForFriendRequestSend(receiverID: data["uid"]),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                    return Icon(Icons.check);
+                  }
+                  return SizedBox(
+                    height: 46,
+                    child: IconButton(
+                      icon: const Icon(Icons.person_add),
+                      onPressed: () {
+                        FriendFirestoreServices().sendFriendRequestNotification(
+                            receiverID: data["uid"]);
+                      },
+                    ),
+                  );
+                }),
           );
         },
       )),

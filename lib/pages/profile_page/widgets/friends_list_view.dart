@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/pages/profile_page/widgets/friend_container.dart';
@@ -8,7 +9,7 @@ class FriendsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FriendFirestoreServices().getAllFriends(),
         builder: (_, snapshot) {
           if (snapshot.hasData) {
@@ -35,7 +36,8 @@ class FriendsListView extends StatelessWidget {
                   child: ListView.builder(
                     itemCount: friends.length,
                     itemBuilder: (_, index) {
-                      return FutureBuilder(
+                      return FutureBuilder<
+                              DocumentSnapshot<Map<String, dynamic>>>(
                           future: FriendFirestoreServices()
                               .getDetailsOfFriend(friendID: friends[index]),
                           builder: (_, snapshot) {

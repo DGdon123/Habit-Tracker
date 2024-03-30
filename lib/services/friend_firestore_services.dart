@@ -61,4 +61,11 @@ class FriendFirestoreServices {
       "friends": FieldValue.arrayRemove([friendID])
     });
   }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> listenForFriendRequestSend(
+      {required String receiverID}) {
+    return friendRequestRef
+        .where("receiverID", isEqualTo: receiverID)
+        .snapshots();
+  }
 }

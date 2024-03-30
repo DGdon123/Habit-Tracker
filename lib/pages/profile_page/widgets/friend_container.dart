@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:habit_tracker/pages/profile_page/widgets/delete_confirmation_dialog.dart';
 import 'package:habit_tracker/services/friend_firestore_services.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -82,7 +83,14 @@ class FriendContainer extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              FriendFirestoreServices().removeAddedFriend(friendID: uid);
+              showDialog(
+                  context: context,
+                  builder: (_) => DeleteConfirmationDialog(
+                        onTap: () {
+                          FriendFirestoreServices()
+                              .removeAddedFriend(friendID: uid);
+                        },
+                      ));
             },
             child: SvgPicture.asset(
               AppIcons.unfriend,

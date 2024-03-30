@@ -1,16 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/services/friend_firestore_services.dart';
 import 'package:habit_tracker/services/user_firestore_services.dart';
 
 class FriendRequestCard extends StatelessWidget {
   final String senderID;
-
   const FriendRequestCard({super.key, required this.senderID});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: FutureBuilder(
+      child: FutureBuilder<QueryDocumentSnapshot>(
           future: UserFireStoreServices().searchUserByUid(senderID),
           builder: (_, snapshot) {
             debugPrint("Snapshot: ${snapshot.data?.data()}");

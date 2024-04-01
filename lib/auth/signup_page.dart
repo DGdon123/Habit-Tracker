@@ -187,7 +187,7 @@ class _SignUpState extends State<SignUp> {
                               AppTextFieldStyles.standardInputDecoration(
                             hintText: 'Enter your name',
                             labelText: 'Name',
-                            keyboardType: TextInputType.emailAddress,
+                            keyboardType: TextInputType.name,
                           ),
                         ),
                       ),

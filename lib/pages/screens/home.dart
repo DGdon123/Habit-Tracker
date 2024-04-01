@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:habit_tracker/auth/repositories/gymtime_model.dart';
+import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
 import 'package:habit_tracker/location/current_location.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/pages/screens/friends.dart';
@@ -13,6 +17,7 @@ import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
 import 'customize character/customizeCharater.dart';
@@ -31,6 +36,13 @@ class _HomeState extends State<Home> {
     fontSize: 14.sp,
     color: Colors.black.withOpacity(0.65),
   );
+
+  @override
+  void initState() {
+    getLastLocationTime();
+    getLastLocationTime1();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -189,7 +201,7 @@ class _HomeState extends State<Home> {
                     } else if (snapshot.hasError) {
                       return const Text('Something went wrong');
                     }
-                    return const CircularProgressIndicator();
+                    return const SizedBox();
                   }),
             ),
           ),
@@ -250,12 +262,12 @@ class _HomeState extends State<Home> {
                         builder: (_, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const SizedBox();
                           } else if (snapshot.hasError) {
-                            return Text("Error");
+                            return const Text("Error");
                           }
 
-                          var duration = snapshot.data;
+                          var duration = snapshot.data as Duration?;
 
                           var hours = duration!.inHours % 60;
                           var minutes = duration.inMinutes % 60;
@@ -282,6 +294,69 @@ class _HomeState extends State<Home> {
   }
 
   // workout time
+  String? dateString;
+  String timeString = "00:00:00";
+  String? dateString1;
+  String timeString1 = "00:00:00";
+  Future<DateTime?> getLastLocationTime() async {
+    try {
+      // Initialize Hive
+
+      // Open the Hive box where user location times are stored
+      var box = await Hive.openBox<DataModel>('hive_box');
+
+      // Get the last added dataModel instance from the box
+      DataModel? lastDataModel =
+          box.isNotEmpty ? box.getAt(box.length - 1) : null;
+
+      // Extract the date and time from the lastDataModel instance
+      if (lastDataModel != null) {
+        setState(() {
+          dateString = lastDataModel.date;
+          timeString = lastDataModel.time!;
+        });
+
+        var dateTimeString = '$dateString $timeString';
+        log('DataModel1: $dateTimeString');
+        return DateTime.parse(dateTimeString);
+      }
+      // Close the Hive box
+      await box.close();
+    } catch (error) {
+      print('Failed to retrieve last location time: $error');
+    }
+    return null;
+  }
+
+  Future<DateTime?> getLastLocationTime1() async {
+    try {
+      // Initialize Hive
+
+      // Open the Hive box where user location times are stored
+      var box = await Hive.openBox<DataModel1>('hive_box1');
+
+      // Get the last added dataModel instance from the box
+      DataModel1? lastDataModel =
+          box.isNotEmpty ? box.getAt(box.length - 1) : null;
+
+      // Extract the date and time from the lastDataModel instance
+      if (lastDataModel != null) {
+        setState(() {
+          dateString1 = lastDataModel.date;
+          timeString1 = lastDataModel.time!;
+        });
+
+        var dateTimeString = '$dateString $timeString';
+        log('DataModel2: $dateTimeString');
+        return DateTime.parse(dateTimeString);
+      }
+      // Close the Hive box
+      await box.close();
+    } catch (error) {
+      print('Failed to retrieve last location time: $error');
+    }
+    return null;
+  }
 
   Column workoutTime() {
     return Column(
@@ -334,10 +409,10 @@ class _HomeState extends State<Home> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '16:00',
+                          timeString.toString() ?? "00:00:00",
                           style: TextStyle(
                             color: AppColors.black,
-                            fontSize: 23.sp,
+                            fontSize: 19.sp,
                             fontFamily: 'SFProText',
                             fontWeight: FontWeight.w800,
                             height: 0,
@@ -354,10 +429,10 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         Text(
-                          '18:00',
+                          timeString1.toString() ?? "00:00:00",
                           style: TextStyle(
                             color: AppColors.black,
-                            fontSize: 23.sp,
+                            fontSize: 19.sp,
                             fontFamily: 'SFProText',
                             fontWeight: FontWeight.w800,
                             height: 0,
@@ -525,7 +600,7 @@ class _HomeState extends State<Home> {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return const CustomizeCharacter();
+                        return const CurrentLocation();
                       },
                     ),
                   );

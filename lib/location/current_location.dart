@@ -3,6 +3,11 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:isolate';
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:habit_tracker/auth/repositories/gymtime_model.dart';
+import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
 import 'package:habit_tracker/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:easy_localization/easy_localization.dart';
@@ -12,9 +17,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/textfields.dart';
 import 'package:geolocator/geolocator.dart' as img;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:carp_background_location/carp_background_location.dart';
+import 'package:hive/hive.dart';
 
+// import 'package:background_fetch/background_fetch.dart';
 class CurrentLocation extends StatefulWidget {
   const CurrentLocation({super.key});
 
@@ -39,16 +47,56 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
   LocationDto? _lastLocation;
   StreamSubscription<LocationDto>? locationSubscription;
   LocationStatus _status = LocationStatus.UNKNOWN;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String? getUsername() {
+    User? user = _auth.currentUser;
+    return user?.uid;
+  }
+
+  double latitude = 0;
+  double longitude = 0;
+
+  Future<void> fetchUsers() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    String? currentUserUid = getUsername();
+
+    try {
+      QuerySnapshot snapshot = await users.get();
+
+      for (var doc in snapshot.docs) {
+        String uid = doc.id;
+        Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
+
+        if (uid == currentUserUid) {
+          // This user document matches the current user
+          // You can access the user data and do something with it
+          latitude = userData['latitude'];
+          longitude = userData['longitude'];
+
+          log('Latitude: $latitude, Longitude: $longitude');
+          // Example: Use the latitude and longitude data
+          // SomeFunctionToUseLocation(latitude, longitude);
+        }
+      }
+    } catch (error) {
+      print("Failed to fetch users: $error");
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     LocationManager().interval = 1;
     LocationManager().distanceFilter = 0;
-    LocationManager().notificationTitle = 'CARP Location Example';
-    LocationManager().notificationMsg = 'CARP is tracking your location';
+    LocationManager().notificationTitle = 'Tracking Your Location';
+    LocationManager().notificationMsg =
+        'Habit Tracker is tracking your location.';
+    LocationManager().notificationBigMsg =
+        'Habit Tracker is tracking your location.';
     _status = LocationStatus.INITIALIZED;
     _getCurrentLocation();
+    fetchUsers();
   }
 
   void getCurrentLocation() async =>
@@ -90,6 +138,7 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
     await LocationManager().start();
     setState(() {
       _status = LocationStatus.RUNNING;
+      locationWidget();
     });
   }
 
@@ -98,6 +147,8 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
     LocationManager().stop();
     setState(() {
       _status = LocationStatus.STOPPED;
+      // getLastLocationTime();
+      // getLastLocationTime1();
     });
   }
 
@@ -126,25 +177,6 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
           child: const Text('CURRENT LOCATION'),
         ),
       );
-
-  Widget locationWidget() {
-    if (_lastLocation == null) {
-      return const Text("No location yet");
-    } else {
-      return Column(
-        children: <Widget>[
-          Text(
-            '${_lastLocation!.latitude}, ${_lastLocation!.longitude}',
-          ),
-          const Text(
-            '@',
-          ),
-          Text(
-              '${DateTime.fromMillisecondsSinceEpoch(_lastLocation!.time ~/ 1)}')
-        ],
-      );
-    }
-  }
 
   @override
   void dispose() => super.dispose();
@@ -235,6 +267,129 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
     }
   }
 
+  // Function to calculate distance between two sets of latitude and longitude
+  double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    return Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
+  }
+
+  // locationWidget function to add data to Hive
+  Future<Widget> locationWidget() async {
+    if (_lastLocation == null) {
+      return const Text("No location yet");
+    } else {
+      double distance = calculateDistance(
+        latitude,
+        longitude,
+        _lastLocation!.latitude,
+        _lastLocation!.longitude,
+      );
+      log(distance.toString());
+      if (distance <= 300) {
+        // Open the Hive box where user location times are stored
+        var box = await Hive.openBox<DataModel>('hive_box');
+
+        // Create a DataModel instance with current date and time
+        var currentDate = DateTime.now().toString().split(' ')[0];
+        var currentTime = _lastLocation!.time.toString();
+        DateTime time =
+            DateTime.fromMillisecondsSinceEpoch(_lastLocation!.time ~/ 1);
+
+// Format the DateTime object to a desired string format
+        String formattedTime = DateFormat('HH:mm:ss').format(time);
+        DataModel dataModel = DataModel(date: currentDate, time: formattedTime);
+
+        // Add the dataModel instance to the Hive box
+        await box.add(dataModel);
+        await box.close();
+      } else {
+        // Open the Hive box where user location times are stored
+        var box = await Hive.openBox<DataModel1>('hive_box1');
+
+        // Create a DataModel instance with current date and time
+        var currentDate = DateTime.now().toString().split(' ')[0];
+        var currentTime = _lastLocation!.time.toString();
+        DateTime time =
+            DateTime.fromMillisecondsSinceEpoch(_lastLocation!.time ~/ 1);
+
+// Format the DateTime object to a desired string format
+        String formattedTime = DateFormat('HH:mm:ss').format(time);
+        DataModel1 dataModel1 =
+            DataModel1(date: currentDate, time: formattedTime);
+
+        // Add the dataModel instance to the Hive box
+        await box.add(dataModel1);
+        await box.close();
+      }
+
+      return Column(
+        children: <Widget>[
+          Text(
+            '${_lastLocation!.latitude}, ${_lastLocation!.longitude}',
+          ),
+          const Text('@'),
+          Text(
+            '${DateTime.fromMillisecondsSinceEpoch(_lastLocation!.time ~/ 1)}',
+          ),
+        ],
+      );
+    }
+  }
+
+// // getLastLocationTime function to retrieve data from Hive
+//   Future<DateTime?> getLastLocationTime() async {
+//     try {
+//       // Initialize Hive
+
+//       // Open the Hive box where user location times are stored
+//       var box = await Hive.openBox<DataModel>('hive_box');
+
+//       // Get the last added dataModel instance from the box
+//       DataModel? lastDataModel =
+//           box.isNotEmpty ? box.getAt(box.length - 1) : null;
+
+//       // Extract the date and time from the lastDataModel instance
+//       if (lastDataModel != null) {
+//         var dateString = lastDataModel.date;
+//         var timeString = lastDataModel.time;
+//         var dateTimeString = '$dateString $timeString';
+//         log('DataModel1: $dateTimeString');
+//         return DateTime.parse(dateTimeString);
+//       }
+//       // Close the Hive box
+//       await box.close();
+//     } catch (error) {
+//       print('Failed to retrieve last location time: $error');
+//     }
+//     return null;
+//   }
+
+//   Future<DateTime?> getLastLocationTime1() async {
+//     try {
+//       // Initialize Hive
+
+//       // Open the Hive box where user location times are stored
+//       var box = await Hive.openBox<DataModel1>('hive_box1');
+
+//       // Get the last added dataModel instance from the box
+//       DataModel1? lastDataModel =
+//           box.isNotEmpty ? box.getAt(box.length - 1) : null;
+
+//       // Extract the date and time from the lastDataModel instance
+//       if (lastDataModel != null) {
+//         var dateString = lastDataModel.date;
+//         var timeString = lastDataModel.time;
+//         var dateTimeString = '$dateString $timeString';
+//         log('DataModel2: $dateTimeString');
+//         return DateTime.parse(dateTimeString);
+//       }
+//       // Close the Hive box
+//       await box.close();
+//     } catch (error) {
+//       print('Failed to retrieve last location time: $error');
+//     }
+//     return null;
+//   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -269,7 +424,21 @@ class _OnBoardingScreenState extends State<CurrentLocation> {
           const Divider(),
           statusText(),
           const Divider(),
-          locationWidget(),
+          FutureBuilder<Widget>(
+            future: locationWidget(), // Call locationWidget() here
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // While data is loading, return a loading indicator or placeholder
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                // If an error occurs, display an error message
+                return Text('Error: ${snapshot.error}');
+              } else {
+                // If data is successfully loaded, return the widget from the future
+                return snapshot.data ?? const Text('No location yet');
+              }
+            },
+          ),
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: 20.w,

@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 
 class LocationProvider with ChangeNotifier {
-  DateTime? _selectedDate;
   double? _latitude;
   double? _longitude;
 
- 
   double? get latitude => _latitude;
   double? get longitude => _longitude;
-
-  
 
   void setLatitude(double newLatitude) {
     _latitude = newLatitude;

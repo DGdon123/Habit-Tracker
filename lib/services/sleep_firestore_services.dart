@@ -10,6 +10,7 @@ class SleepFireStoreServices {
       required String difference}) {
     debugPrint("Sleep time: $sleepTime, Wake time: $wakeTime");
 
+
     var sleepTimeRef = FirebaseFirestore.instance.collection("sleep-time");
     var userID = FirebaseAuth.instance.currentUser!.uid;
 

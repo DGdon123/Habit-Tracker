@@ -406,9 +406,13 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                                       QuickAlert.show(
                                         context: context,
                                         onConfirmBtnTap: () {
-                                          context
-                                              .read<IndexProvider>()
-                                              .setSelectedIndex(3);
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const HomePage(),
+                                              ),
+                                              (route) => false);
                                         },
                                         confirmBtnColor: AppColors.mainBlue,
                                         type: QuickAlertType.error,

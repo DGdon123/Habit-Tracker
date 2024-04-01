@@ -9,7 +9,10 @@ class UserFireStoreServices {
       {required String uid,
       required String email,
       required String name,
-      required String photoUrl}) async {
+      required String dob,
+      required String photoUrl,
+      required double latitude,
+      required double longitude}) async {
     final ifExists =
         await userCollection.where('email', isEqualTo: email).get();
 
@@ -25,6 +28,9 @@ class UserFireStoreServices {
       'email': email,
       'name': name.toLowerCase().trim(),
       'photoUrl': photoUrl,
+      'dob':dob,
+      'latitude': latitude,
+      'longitude': longitude,
       "uid": uid,
     });
   }
@@ -33,7 +39,7 @@ class UserFireStoreServices {
   Future<QuerySnapshot> searchUserByUserName(String name) async {
     final startTerm = name.toLowerCase();
     final endTerm =
-        name.toLowerCase() + '\uf8ff'; // '\uf8ff' is a high surrogate character
+        '${name.toLowerCase()}\uf8ff'; // '\uf8ff' is a high surrogate character
 
     final response = await userCollection
         .where('name', isGreaterThanOrEqualTo: startTerm)

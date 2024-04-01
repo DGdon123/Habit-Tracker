@@ -7,25 +7,20 @@ import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
-import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
+import 'package:habit_tracker/provider/location_provider.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:habit_tracker/utils/styles.dart';
 import 'package:provider/provider.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
-import '../utils/textfields.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:latlong2/latlong.dart';
 
 class AccountSetup extends StatefulWidget {
@@ -64,8 +59,15 @@ class _AccountSetupState extends State<AccountSetup> {
   Widget build(BuildContext context) {
     final user = Provider.of<UserRepository>(context);
     final dob = Provider.of<SelectedDateProvider>(context, listen: false);
-    final dobis = dob.selectedDate;
-    log(dobis.toString());
+
+    final locProvider = Provider.of<LocationProvider>(context, listen: false);
+    final lat = locProvider.latitude;
+    final longi = locProvider.longitude;
+    var dobis = dob.selectedDate ?? DateTime.now();
+    var dateString = dobis.toString().split(' ')[0]; // Extract date part
+    log(dateString); // Log only the date part
+    log(lat.toString());
+    log(longi.toString());
     return Scaffold(
       backgroundColor: AppColors.primaryColor,
       appBar: AppBar(
@@ -157,13 +159,13 @@ class _AccountSetupState extends State<AccountSetup> {
                       } else {
                         if (currentPage == 1) {
                           await user.signUp(
-                            context,
-                            widget.username.toString(),
-                            dobis.toString(),
-                            widget.email.toString(),
-                            widget.password.toString(),
-                            
-                          );
+                              context,
+                              widget.username.toString(),
+                              dateString,
+                              widget.email.toString(),
+                              widget.password.toString(),
+                              lat!.toDouble(),
+                              longi!.toDouble());
                         }
                       }
                     }
@@ -203,7 +205,11 @@ class _AccountSetupState extends State<AccountSetup> {
 }
 
 class AccountSetupSetName extends StatefulWidget {
-  const AccountSetupSetName({super.key});
+  final String? username;
+  final String? email;
+  final String? password;
+  const AccountSetupSetName(
+      {super.key, this.username, this.email, this.password});
 
   @override
   State<AccountSetupSetName> createState() => _AccountSetupSetNameState();
@@ -263,6 +269,15 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
 
   @override
   Widget build(BuildContext context) {
+    final locProvider = Provider.of<LocationProvider>(context, listen: false);
+    final user = Provider.of<UserRepository>(context);
+    final dob = Provider.of<SelectedDateProvider>(context, listen: false);
+
+    final lat = locProvider.latitude;
+    final longi = locProvider.longitude;
+    var dobis = dob.selectedDate ?? DateTime.now();
+    var dateString = dobis.toString().split(' ')[0]; // Extract date part
+    log(dateString);
     return Scaffold(
         body: Stack(
       children: [
@@ -309,11 +324,16 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
               Icons.check,
               color: AppColors.mainBlue,
             ),
-            onPicked: (pickedData) {
+            onPicked: (pickedData) async {
               if (_textEditingController.text != '') {
                 try {
                   final latitude = double.parse(_textEditingController2.text);
                   final longitude = double.parse(_textEditingController3.text);
+                  setState(() {
+                    locProvider.setLatitude(latitude);
+                    locProvider.setLongitude(longitude);
+                  });
+
                   log(latitude.toString());
                   log(longitude.toString());
                 } catch (e) {
@@ -324,7 +344,10 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
                   final latitude = pickedData.latLong.latitude;
                   final longitude = pickedData.latLong.longitude;
                   final current = pickedData.address;
-
+                  setState(() {
+                    locProvider.setLatitude(latitude);
+                    locProvider.setLongitude(longitude);
+                  });
                   log(latitude.toString());
                   log(longitude.toString());
                 } catch (e) {
@@ -439,8 +462,9 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
                               _textEditingController.text = placeName;
                               _textEditingController2.text = latitude;
                               _textEditingController3.text = longitude;
-                              // You can access latitude and longitude here
-                              log('Latitude: $latitude, Longitude: $longitude');
+                              locProvider.setLatitude(double.parse(latitude));
+                              locProvider.setLongitude(double.parse(longitude));
+
                               setState(() {
                                 _places = []; // Clear search results
                               });
@@ -473,7 +497,7 @@ class _AccountSetupBirthdateState extends State<AccountSetupBirthdate> {
   Widget build(BuildContext context) {
     final dobProvider =
         Provider.of<SelectedDateProvider>(context, listen: false);
-    final dob = dobProvider.selectedDate;
+    final dobis = dobProvider.selectedDate;
     return Scaffold(
       backgroundColor: AppColors.primaryColor,
       body: Column(
@@ -507,6 +531,7 @@ class _AccountSetupBirthdateState extends State<AccountSetupBirthdate> {
                   _selectedDate = newDate;
                 });
                 dobProvider.setSelectedDate(_selectedDate!);
+                log(dobis.toString());
               },
               pickerTheme: DateTimePickerTheme(
                 backgroundColor: Colors.transparent,

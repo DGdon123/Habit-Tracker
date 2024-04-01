@@ -9,6 +9,7 @@ import 'package:habit_tracker/auth/signup_page.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/home.dart';
 import 'package:habit_tracker/services/user_firestore_services.dart';
+import 'package:habit_tracker/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 import '../login_page.dart';
@@ -54,7 +55,7 @@ class UserRepository with ChangeNotifier {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => HomePage(),
+          builder: (context) => const HomePage(),
         ),
       );
       return true;
@@ -134,13 +135,8 @@ class UserRepository with ChangeNotifier {
     }
   }
 
-  Future<bool> signUp(
-    BuildContext context,
-    String username,
-    String dob,
-    String email,
-    String password,
-  ) async {
+  Future<bool> signUp(BuildContext context, String username, String dob,
+      String email, String password, double latitude, double longitude) async {
     try {
       _status = Status.Authenticating;
       notifyListeners();
@@ -155,32 +151,40 @@ class UserRepository with ChangeNotifier {
 
       //
 
-      debugPrint("Authenticating user repo: ${authResponse}");
+      debugPrint("Authenticating user repo: $authResponse");
 
       // adding details to the firestore
-      UserFireStoreServices().addUser(
-          uid: authResponse.user!.uid,
-          email: email,
-          name: username,
-          photoUrl: "");
+      UserFireStoreServices()
+          .addUser(
+        uid: authResponse.user!.uid,
+        email: email,
+        name: username,
+        dob: dob,
+        latitude: latitude,
+        longitude: longitude,
+        photoUrl: "",
+      )
+          .then((_) {
+        // Get the current user
+        User? user = _auth.currentUser;
 
-      // Get the current user
-      User? user = _auth.currentUser;
+        // Update user profile with username
+        user?.updateDisplayName(username);
 
-      // Update user profile with username
-      await user?.updateDisplayName(username);
-      await user?.updatePhotoURL(dob);
-      // If createUserWithEmailAndPassword succeeds, update status and return true
-      _status = Status.Authenticated;
-      notifyListeners();
+        // If createUserWithEmailAndPassword succeeds, update status and return true
+        _status = Status.Authenticated;
+        notifyListeners();
+        
 
-      // Navigate to the next screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomePage(),
-        ),
-      );
+        // Navigate to the next screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+        );
+      });
+
       return true;
     } catch (e) {
       // Handle errors
@@ -278,6 +282,9 @@ class UserRepository with ChangeNotifier {
 
       // adding details to the firestore
       UserFireStoreServices().addUser(
+          latitude: 0,
+          longitude: 0,
+          dob: "",
           uid: authResponse.user!.uid,
           email: authResponse.user!.email.toString(),
           name: authResponse.user!.displayName.toString(),
@@ -286,7 +293,7 @@ class UserRepository with ChangeNotifier {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => HomePage(),
+          builder: (context) => const HomePage(),
         ),
       );
       return true;

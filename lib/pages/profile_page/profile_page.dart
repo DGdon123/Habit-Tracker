@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/pages/profile_page/widgets/friends_list_view.dart';
+import 'package:habit_tracker/pages/profile_page/widgets/received_friend_request.dart';
 import 'package:habit_tracker/pages/screens/settings/settings.dart';
 import 'package:habit_tracker/services/user_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
@@ -264,7 +266,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                         final users = await UserFireStoreServices()
                             .searchUserByUserName(searchText);
 
-                        if (users.docs.isEmpty) {
+                        if (users.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text("User not found")));
                           return;
@@ -272,7 +274,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
 
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => FriendSearchedPage(
-                                  searchResults: users.docs,
+                                  searchResults: users,
                                 )));
                       },
                 child: const Text("Search"),
@@ -282,34 +284,11 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
           SizedBox(
             height: 5.h,
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Row(
-              children: [
-                Text(
-                  '171 Friends',
-                  style: TextStyle(
-                    color: const Color(0xFF040415),
-                    fontSize: 16.sp,
-                    fontFamily: 'SFProText',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const ReceivedFriendRequest(),
           SizedBox(
             height: 5.h,
           ),
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              itemCount: 15, // Number of items you want to repeat
-              itemBuilder: (BuildContext context, int index) {
-                return FriendsContainer(); // Your container widget
-              },
-            ),
-          ),
+          Expanded(child: FriendsListView()),
         ],
       ),
     );
@@ -364,80 +343,6 @@ class ActivityPage extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget FriendsContainer() {
-  return Container(
-    margin: EdgeInsets.only(bottom: 10.h),
-    padding: const EdgeInsets.all(16),
-    decoration: ShapeDecoration(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        side: const BorderSide(width: 1, color: Color(0xFFEAECF0)),
-        borderRadius: BorderRadius.circular(16.r),
-      ),
-      shadows: const [
-        BoxShadow(
-          color: Color(0x0F222C5C),
-          blurRadius: 68,
-          offset: Offset(58, 26),
-          spreadRadius: 0,
-        ),
-      ],
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Row(
-          children: [
-            Column(
-              children: [
-                Image.asset(
-                  AppImages.profileavatar,
-                  height: 36.h,
-                  width: 36.w,
-                ),
-              ],
-            ),
-            SizedBox(
-              width: 10.w,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'User Name',
-                  style: TextStyle(
-                    color: const Color(0xFF040415),
-                    fontSize: 16.sp,
-                    fontFamily: 'SFProText',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  '912 XP',
-                  style: TextStyle(
-                    color: const Color(0xFF9B9BA1),
-                    fontSize: 14.sp,
-                    fontFamily: 'SF Pro Text',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
-            )
-          ],
-        ),
-        GestureDetector(
-          onTap: () {},
-          child: SvgPicture.asset(
-            AppIcons.unfriend,
-            height: 32.h,
-          ),
-        ),
-      ],
-    ),
-  );
 }
 
 Widget AchievmentsContainer() {

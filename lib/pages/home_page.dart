@@ -5,14 +5,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/screens/focus.dart';
 import 'package:habit_tracker/pages/screens/home.dart';
-import 'package:habit_tracker/pages/screens/profile.dart';
-
 import 'package:habit_tracker/pages/screens/stats.dart';
 import 'package:habit_tracker/pages/sleep_page/sleep_page.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:provider/provider.dart';
+
+import 'profile_page/profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

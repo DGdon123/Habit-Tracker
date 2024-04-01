@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:habit_tracker/services/friend_firestore_services.dart';
 
 class FriendSearchedPage extends StatelessWidget {
   final List<QueryDocumentSnapshot> searchResults;
@@ -24,7 +25,24 @@ class FriendSearchedPage extends StatelessWidget {
                   ),
             title: Text(data['name']),
             subtitle: Text(data['email']),
-            trailing: Icon(Icons.person_add),
+            trailing: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: FriendFirestoreServices()
+                    .listenForFriendRequestSend(receiverID: data["uid"]),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                    return Icon(Icons.check);
+                  }
+                  return SizedBox(
+                    height: 46,
+                    child: IconButton(
+                      icon: const Icon(Icons.person_add),
+                      onPressed: () {
+                        FriendFirestoreServices().sendFriendRequestNotification(
+                            receiverID: data["uid"]);
+                      },
+                    ),
+                  );
+                }),
           );
         },
       )),

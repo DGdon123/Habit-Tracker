@@ -26,10 +26,15 @@ import 'package:habit_tracker/pages/auth_onboarding_deciding_screen.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/provider/location_provider.dart';
 import 'package:habit_tracker/provider/start_end_date_provider.dart';
+
+import 'package:habit_tracker/services/notification_firebase_services.dart';
+
+
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
+
 import 'package:provider/provider.dart';
 import 'package:logger/logger.dart';
 import 'auth/repositories/gymtime_model.dart';
@@ -44,12 +49,17 @@ Future<void> main() async {
   await EasyLocalization.ensureInitialized();
   await pre.Firebase.initializeApp();
 
+
+  await NotificationFirebaseServices().requestPermission();
+
+
   Directory directory = await getApplicationDocumentsDirectory();
   Hive.init(directory.path);
   Hive.registerAdapter(DataModelAdapter());
   Hive.registerAdapter(DataModel1Adapter());
   await Hive.openBox<DataModel>('hive_box');
   await Hive.openBox<DataModel1>('hive_box1');
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => UserRepository.instance()),

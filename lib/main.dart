@@ -14,6 +14,7 @@ import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/pages/auth_onboarding_deciding_screen.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/provider/start_end_date_provider.dart';
+import 'package:habit_tracker/services/notification_firebase_services.dart';
 
 import 'package:provider/provider.dart';
 import 'package:logger/logger.dart';
@@ -27,6 +28,8 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await EasyLocalization.ensureInitialized();
   await pre.Firebase.initializeApp();
+
+  await NotificationFirebaseServices().requestPermission();
 
   runApp(MultiProvider(
     providers: [

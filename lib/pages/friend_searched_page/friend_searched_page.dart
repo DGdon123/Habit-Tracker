@@ -30,7 +30,7 @@ class FriendSearchedPage extends StatelessWidget {
                     .listenForFriendRequestSend(receiverID: data["uid"]),
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-                    return Icon(Icons.check);
+                    return const Icon(Icons.check);
                   }
                   return SizedBox(
                     height: 46,

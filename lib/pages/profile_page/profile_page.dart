@@ -34,7 +34,7 @@ class ProfilePageState extends State<ProfilePage>
 
   final List<Widget> _pages = [
     const ActivityPage(),
-    FriendsPageTab(),
+    const FriendsPageTab(),
   ];
 
   @override
@@ -57,23 +57,8 @@ class ProfilePageState extends State<ProfilePage>
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomePage()));
-                        },
-                        child: SizedBox(
-                          height: 28.h,
-                          width: 28.w,
-                          child: SvgPicture.asset(
-                            AppIcons.back,
-                          ),
-                        ),
-                      ),
                       Center(
                         child: Text(
                           "Profile",
@@ -83,10 +68,6 @@ class ProfilePageState extends State<ProfilePage>
                               fontWeight: FontWeight.w900,
                               color: AppColors.textBlack),
                         ),
-                      ),
-                      SizedBox(
-                        height: 28.h,
-                        width: 28.w,
                       ),
                     ],
                   ),
@@ -287,7 +268,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
 
                         if (users.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("User not found")));
+                              const SnackBar(content: Text("User not found")));
                           return;
                         }
 

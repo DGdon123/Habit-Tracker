@@ -54,23 +54,8 @@ class SleepPageState extends State<SleepPage> {
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomePage()));
-                      },
-                      child: SizedBox(
-                        height: 28.h,
-                        width: 28.w,
-                        child: SvgPicture.asset(
-                          AppIcons.back,
-                        ),
-                      ),
-                    ),
                     Center(
                       child: Text(
                         "Sleep Time",
@@ -116,7 +101,7 @@ class SleepPageState extends State<SleepPage> {
                             decoration: ShapeDecoration(
                               color: Colors.white,
                               shape: RoundedRectangleBorder(
-                                side: BorderSide(
+                                side: const BorderSide(
                                     width: 1, color: Color(0xFFEAECF0)),
                                 borderRadius: BorderRadius.circular(16.r),
                               ),
@@ -169,7 +154,7 @@ class SleepPageState extends State<SleepPage> {
               SizedBox(
                 height: 30.h,
               ),
-              SleepDetails(),
+              const SleepDetails(),
             ],
           ),
         ),

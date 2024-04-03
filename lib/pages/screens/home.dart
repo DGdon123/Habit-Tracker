@@ -118,7 +118,7 @@ class _HomeState extends State<Home> {
             width: 180.w,
             height: 100.h,
             decoration: ShapeDecoration(
-              color: const Color(0xfbd4bcdf),
+              color: AppColors.widgetColorV,
               // gradient: LinearGradient(
               //   begin: Alignment.bottomLeft,
               //   end: Alignment.topRight,
@@ -228,7 +228,7 @@ class _HomeState extends State<Home> {
           width: 180.w,
           height: 100.h,
           decoration: ShapeDecoration(
-            color: const Color(0xfbf6c9ce),
+            color: AppColors.widgetColorR,
             // gradient: LinearGradient(
             //   begin: Alignment.bottomRight,
             //    end: Alignment.topLeft,
@@ -374,7 +374,7 @@ class _HomeState extends State<Home> {
           width: 180.w,
           height: 100.h,
           decoration: ShapeDecoration(
-            color: const Color(0xfbafdcde),
+            color: AppColors.widgetColorB,
             // gradient: LinearGradient(
             //   begin: Alignment.bottomLeft,
             //   end: Alignment.topRight,
@@ -468,7 +468,7 @@ class _HomeState extends State<Home> {
           width: 180.w,
           height: 100.h,
           decoration: ShapeDecoration(
-            color: const Color(0xfbc9eeb5),
+            color: AppColors.widgetColorG,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.r),
             ),
@@ -581,13 +581,13 @@ class _HomeState extends State<Home> {
                     height: 50.h,
                     width: 50.w,
                     decoration: BoxDecoration(
-                      color: AppColors.primaryColor,
+                      color: AppColors.mainColor,
                       borderRadius: BorderRadius.all(Radius.circular(16.r)),
                     ),
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
                       AppIcons.friends,
-                      color: Colors.black,
+                      color: Colors.white,
                       height: 25.h,
                       width: 25.w,
                     )),
@@ -610,13 +610,13 @@ class _HomeState extends State<Home> {
                     height: 50.h,
                     width: 50.w,
                     decoration: BoxDecoration(
-                      color: AppColors.primaryColor,
+                      color: AppColors.mainColor,
                       borderRadius: BorderRadius.all(Radius.circular(16.r)),
                     ),
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
                       AppIcons.customize,
-                      color: Colors.black,
+                      color: Colors.white,
                       height: 35.h,
                       width: 35.w,
                     )),

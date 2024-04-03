@@ -16,4 +16,13 @@ class AppColors {
   static const Color mainBlue = Color.fromARGB(255, 0, 94, 255);
   static const Color completed = Color(0xFF3BA935);
   static const Color failed = Color(0xFFE3524F);
+
+  static const Color mainColor = Color(0xFFACD5FF);
+  static const Color highLightColor = Color(0xFF60ADFA);
+  static const Color iconFillColor = Color(0xFFFFFFFF);
+  static const Color widgetColorG = Color(0xFFAEED8B);
+  static const Color widgetColorB = Color(0xFF9ECFFF);
+  static const Color widgetColorR = Color(0xFFFF8686);
+  static const Color widgetColorV = Color(0xFFC1AFFA);
+
 }

@@ -13,10 +13,15 @@ class FriendFirestoreServices {
     return friendRequestRef.where("receiverID", isEqualTo: userID).snapshots();
   }
 
-  void sendFriendRequestNotification({required String receiverID}) {
+  void sendFriendRequestNotification(
+      {required String receiverID,
+      required String token,
+      required String name}) {
     friendRequestRef.add({
       "senderID": userID,
+      "sendername": name,
       "receiverID": receiverID,
+      "token": token,
       "timestamp": DateTime.now().millisecondsSinceEpoch
     });
   }

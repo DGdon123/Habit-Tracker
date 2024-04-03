@@ -13,6 +13,8 @@ class ReceivedFriendRequest extends StatelessWidget {
             .listenForReceivedFriendRequestNotification(),
         builder: (_, snapshot) {
           if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+            debugPrint(
+                "Friend request received: ${snapshot.data!.docs.length}");
             var docs = snapshot.data!.docs;
 
             var cards = <Widget>[];
@@ -20,7 +22,9 @@ class ReceivedFriendRequest extends StatelessWidget {
             for (var doc in docs) {
               var data = doc.data();
               cards.add(FriendRequestCard(
+                token: data["token"],
                 senderID: data["senderID"],
+                name: data['sendername'],
               ));
             }
 

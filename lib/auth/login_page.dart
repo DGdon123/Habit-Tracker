@@ -6,7 +6,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:habit_tracker/auth/repositories/facebook_auth.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
 import 'package:habit_tracker/auth/signup_page.dart';
 import 'package:habit_tracker/utils/buttons.dart';
@@ -393,8 +392,8 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         // button login with facebook
         GestureDetector(
-          onTap: () {
-            AuthFacebook().signInWithFacebook();
+          onTap: () async {
+            await context.read<UserRepository>().signInWithFacebook(context);
           },
           child: Container(
             width: 65.w,

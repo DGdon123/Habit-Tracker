@@ -11,6 +11,7 @@ import 'package:habit_tracker/location/current_location.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/pages/screens/friends.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.dart';
+import 'package:habit_tracker/pages/usage_page/usage_page.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
@@ -257,7 +258,7 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    FutureBuilder<Duration>(
+                    FutureBuilder<Map<String, dynamic>>(
                         future: DeviceScreenTimeServices().getUsageStats(),
                         builder: (_, snapshot) {
                           if (snapshot.connectionState ==
@@ -267,7 +268,7 @@ class _HomeState extends State<Home> {
                             return const Text("Error");
                           }
 
-                          var duration = snapshot.data as Duration?;
+                          var duration = snapshot.data!["usage"] as Duration;
 
                           var hours = duration!.inHours % 60;
                           var minutes = duration.inMinutes % 60;
@@ -276,7 +277,7 @@ class _HomeState extends State<Home> {
                             '$hours:$minutes h',
                             style: TextStyle(
                               color: AppColors.black,
-                              fontSize: 28.sp,
+                              fontSize: 24.sp,
                               fontFamily: 'SFProText',
                               fontWeight: FontWeight.w800,
                               height: 0,
@@ -624,11 +625,12 @@ class _HomeState extends State<Home> {
           ),
           TextButton(
               onPressed: () async {
-                final duration =
-                    await DeviceScreenTimeServices().getUsageStats();
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("Total duration: $duration"),
-                ));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const UsagePage(),
+                  ),
+                );
               },
               child: const Text("Usage")),
           Container(

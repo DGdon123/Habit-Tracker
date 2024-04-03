@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:habit_tracker/auth/signup_page.dart';
 import 'package:habit_tracker/pages/home_page.dart';
@@ -174,7 +175,6 @@ class UserRepository with ChangeNotifier {
         // If createUserWithEmailAndPassword succeeds, update status and return true
         _status = Status.Authenticated;
         notifyListeners();
-        
 
         // Navigate to the next screen
         Navigator.pushReplacement(
@@ -279,6 +279,48 @@ class UserRepository with ChangeNotifier {
         idToken: googleAuth.idToken,
       );
       final authResponse = await _auth.signInWithCredential(credential);
+
+      // adding details to the firestore
+      UserFireStoreServices().addUser(
+          latitude: 0,
+          longitude: 0,
+          dob: "",
+          uid: authResponse.user!.uid,
+          email: authResponse.user!.email.toString(),
+          name: authResponse.user!.displayName.toString(),
+          photoUrl: authResponse.user!.photoURL.toString());
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomePage(),
+        ),
+      );
+      return true;
+    } catch (e) {
+      print(e);
+      _status = Status.Unauthenticated;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> signInWithFacebook(BuildContext context) async {
+    try {
+      // Trigger the sign-in flow
+      final LoginResult loginResult = await FacebookAuth.instance
+          .login(permissions: ['email', 'public_profile']);
+
+      // Create a credential from the access token
+      final OAuthCredential facebookAuthCredential =
+          FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+      final userData = await FacebookAuth.instance.getUserData();
+
+      // Once signed in, return the UserCredential
+      final authResponse = await FirebaseAuth.instance
+          .signInWithCredential(facebookAuthCredential);
+      debugPrint("Authenticating Facebook user repo: $authResponse");
 
       // adding details to the firestore
       UserFireStoreServices().addUser(

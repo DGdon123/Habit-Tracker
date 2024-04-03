@@ -21,6 +21,7 @@ class ReceivedFriendRequest extends StatelessWidget {
 
             for (var doc in docs) {
               var data = doc.data();
+
               cards.add(FriendRequestCard(
                 token: data["token"],
                 senderID: data["senderID"],
@@ -28,10 +29,12 @@ class ReceivedFriendRequest extends StatelessWidget {
               ));
             }
 
+            debugPrint("Cards: $cards");
+
             return Column(
               children: [
                 Text("Received Friend Request ${cards.length}"),
-                ...cards
+                ...cards,
               ],
             );
           }

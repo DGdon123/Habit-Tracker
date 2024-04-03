@@ -53,7 +53,6 @@ Future<void> main() async {
 
   await NotificationFirebaseServices().requestPermission();
 
-
   Directory directory = await getApplicationDocumentsDirectory();
   Hive.init(directory.path);
   Hive.registerAdapter(DataModelAdapter());

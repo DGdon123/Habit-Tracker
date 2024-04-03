@@ -71,6 +71,7 @@ class FriendFirestoreServices {
       {required String receiverID}) {
     return friendRequestRef
         .where("receiverID", isEqualTo: receiverID)
+        .where("senderID", isEqualTo: userID)
         .snapshots();
   }
 }

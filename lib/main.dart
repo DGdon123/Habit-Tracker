@@ -6,6 +6,7 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:carp_background_location/carp_background_location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart' as pre;
@@ -21,20 +22,21 @@ import 'package:geolocator/geolocator.dart' as img;
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/provider/avg_sleep_provider.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
+import 'package:habit_tracker/services/notification_services.dart';
 import 'package:http/http.dart' as http;
 import 'package:habit_tracker/pages/auth_onboarding_deciding_screen.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/provider/location_provider.dart';
 import 'package:habit_tracker/provider/start_end_date_provider.dart';
-
 import 'package:habit_tracker/services/notification_firebase_services.dart';
-
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
+
 import 'package:provider/provider.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'auth/repositories/gymtime_model.dart';
 import 'auth/repositories/user_repository.dart';
 
@@ -47,7 +49,10 @@ Future<void> main() async {
   await EasyLocalization.ensureInitialized();
   await pre.Firebase.initializeApp();
 
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   await NotificationFirebaseServices().requestPermission();
+
 
   Directory directory = await getApplicationDocumentsDirectory();
   Hive.init(directory.path);
@@ -55,6 +60,7 @@ Future<void> main() async {
   Hive.registerAdapter(DataModel1Adapter());
   await Hive.openBox<DataModel>('hive_box');
   await Hive.openBox<DataModel1>('hive_box1');
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => UserRepository.instance()),
@@ -77,6 +83,14 @@ Future<void> main() async {
     ),
   ));
   initBackgroundFetch();
+}
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await pre.Firebase.initializeApp();
+  log(message.notification!.title.toString());
+  log(message.notification!.body.toString());
+  log(message.data.toString());
 }
 
 @pragma('vm:entry-point')
@@ -288,7 +302,8 @@ class _OnBoardingScreenState extends State<HomePage1> {
     }
   }
 
-  @pragma('vm:entry-point')
+  NotificationServices notificationServices = NotificationServices();
+
   @override
   void initState() {
     super.initState();
@@ -303,6 +318,16 @@ class _OnBoardingScreenState extends State<HomePage1> {
     start();
     _getCurrentLocation();
     fetchUsers();
+    notificationServices.requestNotificationPermission();
+    notificationServices.firebaseinit(context);
+    // notificationServices.setupInteractMeassage(context);
+    // notificationServices.isTokenRefresh();
+    notificationServices.getDeviceToken().then((value) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('device_token', value!);
+      log('device_token');
+      log(value);
+    });
   }
 
   void getCurrentLocation() async =>
@@ -335,8 +360,6 @@ class _OnBoardingScreenState extends State<HomePage1> {
     return granted;
   }
 
-  /// Start listening to location events.
-  @pragma('vm:entry-point')
   void start() async {
     // ask for location permissions, if not already granted
     if (!await isLocationAlwaysGranted()) {

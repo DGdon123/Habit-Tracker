@@ -65,7 +65,7 @@ class HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.w400,
                   height: 0,
                 ),
-                backgroundColor: const Color(0xfbf1f4ff),
+                backgroundColor: AppColors.mainColor,
                 currentIndex: context.watch<IndexProvider>().selectedIndex,
                 onTap: (index) {
                   context.read<IndexProvider>().setSelectedIndex(index);
@@ -77,19 +77,17 @@ class HomePageState extends State<HomePage> {
                       AppIcons.sleep,
                       height: 20.h,
                       color: context.watch<IndexProvider>().selectedIndex == 0
-                          ? AppColors.mainBlue
-                          : const Color.fromARGB(255, 0, 0, 0),
+                          ? AppColors.highLightColor
+                          : Colors.white,
                     ),
                     label: 'Sleep',
                   ),
                   BottomNavigationBarItem(
-                    icon: SvgPicture.asset(
-                      AppIcons.stats,
-                      height: 20.h,
-                      color: context.watch<IndexProvider>().selectedIndex == 1
-                          ? AppColors.mainBlue
-                          : const Color.fromARGB(255, 0, 0, 0),
-                    ),
+                    icon: SvgPicture.asset(AppIcons.stats,
+                        height: 20.h,
+                        color: context.watch<IndexProvider>().selectedIndex == 1
+                            ? AppColors.highLightColor
+                            : Colors.white),
                     label: 'Stats',
                   ),
                   const BottomNavigationBarItem(
@@ -100,13 +98,11 @@ class HomePageState extends State<HomePage> {
                     label: '',
                   ),
                   BottomNavigationBarItem(
-                    icon: SvgPicture.asset(
-                      AppIcons.timer,
-                      height: 20.h,
-                      color: context.watch<IndexProvider>().selectedIndex == 3
-                          ? AppColors.mainBlue
-                          : const Color.fromARGB(255, 0, 0, 0),
-                    ),
+                    icon: SvgPicture.asset(AppIcons.timer,
+                        height: 20.h,
+                        color: context.watch<IndexProvider>().selectedIndex == 3
+                            ? AppColors.highLightColor
+                            : Colors.white),
                     label: 'Timer',
                   ),
                   BottomNavigationBarItem(
@@ -114,8 +110,8 @@ class HomePageState extends State<HomePage> {
                       Icons.person_outline,
                       size: 20.h,
                       color: context.watch<IndexProvider>().selectedIndex == 4
-                          ? AppColors.mainBlue
-                          : const Color.fromARGB(255, 0, 0, 0),
+                          ? AppColors.highLightColor
+                          : Colors.white,
                     ),
                     label: 'Profile',
                   ),
@@ -130,7 +126,7 @@ class HomePageState extends State<HomePage> {
                   AppIcons.home,
                   width: 50,
                   color: context.watch<IndexProvider>().selectedIndex == 2
-                      ? AppColors.mainBlue
+                      ? AppColors.highLightColor
                       : AppColors.black.withOpacity(0.5),
                 )),
           ],

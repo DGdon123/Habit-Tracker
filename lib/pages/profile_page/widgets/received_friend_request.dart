@@ -22,12 +22,15 @@ class ReceivedFriendRequest extends StatelessWidget {
 
             for (var doc in docs) {
               var data = doc.data();
+
               cards.add(FriendRequestCard(
                 token: data["token"],
                 senderID: data["senderID"],
                 name: data['sendername'],
               ));
             }
+
+            debugPrint("Cards: $cards");
 
             return Column(
               children: [

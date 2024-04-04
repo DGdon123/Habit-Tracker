@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class UserFireStoreServices {
   final CollectionReference userCollection =
@@ -25,11 +26,13 @@ class UserFireStoreServices {
       return;
     }
 
+    debugPrint("Adding info to db: $email $uid");
+
     await userCollection.doc(uid).set({
       'email': email,
       'name': name.toLowerCase().trim(),
       'photoUrl': photoUrl,
-      'dob':dob,
+      'dob': dob,
       'latitude': latitude,
       'longitude': longitude,
       "uid": uid,

@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
+import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -20,11 +21,12 @@ import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:quickalert/quickalert.dart';
 
 class FocusMainScreen extends StatefulWidget {
-  int? hour;
-  int? minute;
+  int hour;
+  int minute;
   String? label;
-  int? second;
-  FocusMainScreen({this.hour, this.label, this.minute, this.second, super.key});
+  int second;
+  FocusMainScreen(
+      {this.hour = 0, this.label, this.minute = 0, this.second = 0, super.key});
 
   @override
   State<FocusMainScreen> createState() => _FocusMainScreenState();
@@ -57,6 +59,12 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
           playMusic(de.AssetSource('tingtong.mp3'));
           QuickAlert.show(
             onConfirmBtnTap: () {
+              // adding xp only when timer is greater than or equal to 1 minute
+              if (widget.hour != 0 || widget.minute != 0) {
+                var xp = widget.hour * 60 + widget.minute;
+                XpFirestoreServices().addXp(xp);
+              }
+
               audioPlayer.stop();
               Navigator.pushAndRemoveUntil(
                   context,

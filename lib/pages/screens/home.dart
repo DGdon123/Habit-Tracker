@@ -16,6 +16,7 @@ import 'package:habit_tracker/pages/usage_page/usage_page.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
+import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -146,6 +147,8 @@ class _HomeState extends State<Home> {
                         snapshot.connectionState == ConnectionState.active &&
                         snapshotLength != 0) {
                       var doc = snapshot.data!.docs[0];
+
+                      debugPrint("Document wheredocs: ${doc.data()}");
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -198,10 +201,10 @@ class _HomeState extends State<Home> {
                         ],
                       );
                     } else if (snapshotLength == 0) {
-                      return  Center(
+                      return Center(
                           child: Text("Add your sleep and wake time.".tr()));
                     } else if (snapshot.hasError) {
-                      return  Text('Something went wrong'.tr());
+                      return Text('Something went wrong'.tr());
                     }
                     return const SizedBox();
                   }),
@@ -266,7 +269,7 @@ class _HomeState extends State<Home> {
                               ConnectionState.waiting) {
                             return const SizedBox();
                           } else if (snapshot.hasError) {
-                            return  Text("Error".tr());
+                            return Text("Error".tr());
                           }
 
                           var duration = snapshot.data!["usage"] as Duration;
@@ -633,7 +636,7 @@ class _HomeState extends State<Home> {
                   ),
                 );
               },
-              child:  Text("Usage".tr())),
+              child: Text("Usage".tr())),
           Container(
             margin: const EdgeInsets.only(top: 10),
             child: Stack(

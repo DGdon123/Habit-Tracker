@@ -12,6 +12,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
+import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/provider/location_provider.dart';
 import 'package:habit_tracker/utils/colors.dart';
@@ -106,6 +107,7 @@ class _AccountSetupState extends State<AccountSetup> {
               children: const [
                 AccountSetupBirthdate(),
                 AccountSetupSetName(),
+                PickCharacterPage()
               ],
             ),
           ),
@@ -119,7 +121,7 @@ class _AccountSetupState extends State<AccountSetup> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        2, // Replace with the total number of pages
+                        3, // Replace with the total number of pages
                         (index) => Container(
                           margin: EdgeInsets.symmetric(horizontal: 4.0.w),
                           width: currentPage == index
@@ -157,7 +159,7 @@ class _AccountSetupState extends State<AccountSetup> {
                           curve: Curves.easeInOut,
                         );
                       } else {
-                        if (currentPage == 1) {
+                        if (currentPage == 2) {
                           await user.signUp(
                               context,
                               widget.username.toString(),

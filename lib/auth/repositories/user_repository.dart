@@ -44,12 +44,23 @@ class UserRepository with ChangeNotifier {
   Future<bool> signIn(
       BuildContext context, String email, String password) async {
     try {
-      debugPrint("Hello worl");
       _status = Status.Authenticating;
       notifyListeners();
 
       // Sign in with email and password
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final authResponse = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+
+      // adding details to the firestore
+      await UserFireStoreServices().addUser(
+          latitude: 0,
+          longitude: 0,
+          dob: "",
+          uid: authResponse.user!.uid,
+          email: authResponse.user!.email.toString(),
+          name: authResponse.user!.displayName.toString(),
+          photoUrl: authResponse.user!.photoURL.toString());
+
       // If signInWithEmailAndPassword succeeds, update status and return true
       _status = Status.Authenticated;
       notifyListeners();
@@ -281,7 +292,7 @@ class UserRepository with ChangeNotifier {
       final authResponse = await _auth.signInWithCredential(credential);
 
       // adding details to the firestore
-      UserFireStoreServices().addUser(
+      await UserFireStoreServices().addUser(
           latitude: 0,
           longitude: 0,
           dob: "",

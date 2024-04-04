@@ -38,7 +38,6 @@ class _AccountSetupSetNameState extends State<FriendRequestCard> {
   @override
   Widget build(BuildContext context) {
     NotificationServices notificationServices = NotificationServices();
-    logger.d(widget.token);
 
     return Card(
       child: FutureBuilder<QueryDocumentSnapshot>(
@@ -47,7 +46,7 @@ class _AccountSetupSetNameState extends State<FriendRequestCard> {
             debugPrint("Snapshot: ${snapshot.data?.data()}");
             if (snapshot.hasData) {
               var data = snapshot.data!.data() as Map<String, dynamic>;
-              logger.d(data['name']);
+              debugPrint("name: ${data['name']}");
               return ListTile(
                   leading: data["photoUrl"].isEmpty
                       ? CircleAvatar(

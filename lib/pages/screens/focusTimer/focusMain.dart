@@ -58,8 +58,10 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
           QuickAlert.show(
             onConfirmBtnTap: () {
               audioPlayer.stop();
-
-              context.read<IndexProvider>().setSelectedIndex(3);
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => HomePage()),
+                  (route) => false);
             },
             context: context,
             confirmBtnText: 'Exit'.tr(),

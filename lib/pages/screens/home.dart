@@ -639,19 +639,37 @@ class _HomeState extends State<Home> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                SvgPicture.asset(
-                  AppIcons.mainxp,
-                  height: 34,
+                Container(
+                  height: 100,
+                  width: 100,
+                  child: Image.asset(AppIcons.xpbar),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 38),
+                  padding: const EdgeInsets.only(left: 45),
+                  child: Container(
+                    padding: EdgeInsets.all(2),
+                    width: 60,
+                    child: Text(
+                      '99000',
+                      style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        fontFamily: 'SFProText',
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.black,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 57),
                   child: Text(
-                    '1450',
+                    'XP',
                     style: TextStyle(
                       fontFamily: 'SFProText',
                       fontSize: 18.sp,
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.white,
+                      fontWeight: FontWeight.normal,
+                      color: AppColors.black,
                     ),
                   ),
                 )

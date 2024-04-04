@@ -50,17 +50,17 @@ class HomePageState extends State<HomePage> {
                 type: BottomNavigationBarType.fixed,
                 showSelectedLabels: true,
                 showUnselectedLabels: true,
-                selectedItemColor: AppColors.mainBlue,
+                selectedItemColor: AppColors.highLightColor,
                 selectedLabelStyle: TextStyle(
-                  color: AppColors.mainBlue,
+                  color: AppColors.mainColor,
                   fontSize: 12.sp,
                   fontFamily: 'SF Pro Text',
                   fontWeight: FontWeight.w400,
                   height: 0,
                 ),
-                unselectedItemColor: Colors.black,
+                unselectedItemColor: Colors.white,
                 unselectedLabelStyle: TextStyle(
-                  color: Colors.black,
+                  color: Colors.white,
                   fontSize: 12.sp,
                   fontFamily: 'SF Pro Text',
                   fontWeight: FontWeight.w400,
@@ -74,9 +74,9 @@ class HomePageState extends State<HomePage> {
                 },
                 items: [
                   BottomNavigationBarItem(
-                    icon: SvgPicture.asset(
-                      AppIcons.sleep,
-                      height: 20.h,
+                    icon: Image.asset(
+                      AppIcons.night,
+                      height: 35.h,
                       color: context.watch<IndexProvider>().selectedIndex == 0
                           ? AppColors.highLightColor
                           : Colors.white,
@@ -85,8 +85,9 @@ class HomePageState extends State<HomePage> {
                   ),
                   BottomNavigationBarItem(
 
-                    icon: SvgPicture.asset(AppIcons.stats,
-                        height: 20.h,
+                    icon: Image.asset(AppIcons.statistics,
+                        height: 35.h,
+
                         color: context.watch<IndexProvider>().selectedIndex == 1
                             ? AppColors.highLightColor
                             : Colors.white),
@@ -98,12 +99,13 @@ class HomePageState extends State<HomePage> {
                       Icons.home,
                       color: Colors.transparent,
                     ),
-                    label: '',
+                    label: 'Home',
                   ),
                   BottomNavigationBarItem(
 
-                    icon: SvgPicture.asset(AppIcons.timer,
-                        height: 20.h,
+                    icon: Image.asset(AppIcons.time,
+                        height: 35.h,
+
                         color: context.watch<IndexProvider>().selectedIndex == 3
                             ? AppColors.highLightColor
                             : Colors.white),
@@ -112,8 +114,8 @@ class HomePageState extends State<HomePage> {
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(
-                      Icons.person_outline,
-                      size: 20.h,
+                      Icons.person,
+                      size: 35.h,
                       color: context.watch<IndexProvider>().selectedIndex == 4
                           ? AppColors.highLightColor
                           : Colors.white,
@@ -132,7 +134,7 @@ class HomePageState extends State<HomePage> {
                   width: 50,
                   color: context.watch<IndexProvider>().selectedIndex == 2
                       ? AppColors.highLightColor
-                      : AppColors.black.withOpacity(0.5),
+                      : AppColors.white,
                 )),
           ],
         ),

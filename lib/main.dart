@@ -49,9 +49,7 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await EasyLocalization.ensureInitialized();
   await pre.Firebase.initializeApp();
-
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
   Directory directory = await getApplicationDocumentsDirectory();
   Hive.init(directory.path);
   Hive.registerAdapter(DataModelAdapter());

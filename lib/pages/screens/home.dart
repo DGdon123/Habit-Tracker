@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -104,7 +105,7 @@ class _HomeState extends State<Home> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Wake up      Sleep   ',
+          'Wake up      Sleep   '.tr(),
           style: headingStyle,
         ),
         SizedBox(
@@ -118,7 +119,7 @@ class _HomeState extends State<Home> {
             width: 180.w,
             height: 100.h,
             decoration: ShapeDecoration(
-              color: const Color(0xfbd4bcdf),
+              color: AppColors.widgetColorV,
               // gradient: LinearGradient(
               //   begin: Alignment.bottomLeft,
               //   end: Alignment.topRight,
@@ -197,10 +198,10 @@ class _HomeState extends State<Home> {
                         ],
                       );
                     } else if (snapshotLength == 0) {
-                      return const Center(
-                          child: Text("Add your sleep and wake time."));
+                      return  Center(
+                          child: Text("Add your sleep and wake time.".tr()));
                     } else if (snapshot.hasError) {
-                      return const Text('Something went wrong');
+                      return  Text('Something went wrong'.tr());
                     }
                     return const SizedBox();
                   }),
@@ -218,7 +219,7 @@ class _HomeState extends State<Home> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Screen Time',
+          'Screen Time'.tr(),
           style: headingStyle,
         ),
         SizedBox(
@@ -228,7 +229,7 @@ class _HomeState extends State<Home> {
           width: 180.w,
           height: 100.h,
           decoration: ShapeDecoration(
-            color: const Color(0xfbf6c9ce),
+            color: AppColors.widgetColorR,
             // gradient: LinearGradient(
             //   begin: Alignment.bottomRight,
             //    end: Alignment.topLeft,
@@ -265,7 +266,7 @@ class _HomeState extends State<Home> {
                               ConnectionState.waiting) {
                             return const SizedBox();
                           } else if (snapshot.hasError) {
-                            return const Text("Error");
+                            return  Text("Error".tr());
                           }
 
                           var duration = snapshot.data!["usage"] as Duration;
@@ -374,7 +375,7 @@ class _HomeState extends State<Home> {
           width: 180.w,
           height: 100.h,
           decoration: ShapeDecoration(
-            color: const Color(0xfbafdcde),
+            color: AppColors.widgetColorB,
             // gradient: LinearGradient(
             //   begin: Alignment.bottomLeft,
             //   end: Alignment.topRight,
@@ -410,7 +411,7 @@ class _HomeState extends State<Home> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          timeString.toString() ?? "00:00:00",
+                          timeString.toString() ?? "00:00:00".tr(),
                           style: TextStyle(
                             color: AppColors.black,
                             fontSize: 19.sp,
@@ -420,7 +421,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         Text(
-                          'to',
+                          'to'.tr(),
                           style: TextStyle(
                             color: AppColors.black.withOpacity(0.7),
                             fontSize: 16.sp,
@@ -430,7 +431,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         Text(
-                          timeString1.toString() ?? "00:00:00",
+                          timeString1.toString() ?? "00:00:00".tr(),
                           style: TextStyle(
                             color: AppColors.black,
                             fontSize: 19.sp,
@@ -458,7 +459,7 @@ class _HomeState extends State<Home> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Focused Time',
+          'Focused Time'.tr(),
           style: headingStyle,
         ),
         SizedBox(
@@ -468,7 +469,7 @@ class _HomeState extends State<Home> {
           width: 180.w,
           height: 100.h,
           decoration: ShapeDecoration(
-            color: const Color(0xfbc9eeb5),
+            color: AppColors.widgetColorG,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.r),
             ),
@@ -534,7 +535,7 @@ class _HomeState extends State<Home> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Start Now',
+                                    'Start Now'.tr(),
                                     style: TextStyle(
                                       color: AppColors.black,
                                       fontSize: 10.sp,
@@ -581,13 +582,13 @@ class _HomeState extends State<Home> {
                     height: 50.h,
                     width: 50.w,
                     decoration: BoxDecoration(
-                      color: AppColors.primaryColor,
+                      color: AppColors.mainColor,
                       borderRadius: BorderRadius.all(Radius.circular(16.r)),
                     ),
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
                       AppIcons.friends,
-                      color: Colors.black,
+                      color: Colors.white,
                       height: 25.h,
                       width: 25.w,
                     )),
@@ -610,13 +611,13 @@ class _HomeState extends State<Home> {
                     height: 50.h,
                     width: 50.w,
                     decoration: BoxDecoration(
-                      color: AppColors.primaryColor,
+                      color: AppColors.mainColor,
                       borderRadius: BorderRadius.all(Radius.circular(16.r)),
                     ),
                     alignment: Alignment.center,
                     child: SvgPicture.asset(
                       AppIcons.customize,
-                      color: Colors.black,
+                      color: Colors.white,
                       height: 35.h,
                       width: 35.w,
                     )),
@@ -632,7 +633,7 @@ class _HomeState extends State<Home> {
                   ),
                 );
               },
-              child: const Text("Usage")),
+              child:  Text("Usage".tr())),
           Container(
             margin: const EdgeInsets.only(top: 10),
             child: Stack(

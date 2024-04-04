@@ -8,10 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
+import 'package:habit_tracker/pages/screens/language/language.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
 import 'package:provider/provider.dart';
+
+import '../../../provider/index_provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -58,7 +61,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
+                        context.read<IndexProvider>().setSelectedIndex(4);
                       },
                       child: SizedBox(
                         height: 28.h,
@@ -70,7 +73,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     Center(
                       child: Text(
-                        "Settings",
+                        "Settings".tr(),
                         style: TextStyle(
                             fontFamily: 'SFProText',
                             fontSize: 24.sp,
@@ -117,7 +120,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   width: 70.w,
                                 ),
                                 Text(
-                                  getUsername() ?? 'User Name',
+                                  getUsername() ?? 'User Name'.tr(),
                                   style: TextStyle(
                                     color: AppColors.textBlack,
                                     fontSize: 20.sp,
@@ -175,35 +178,44 @@ class _SettingsPageState extends State<SettingsPage> {
                         height: 10.h,
                       ),
                       seperator(),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 20.h, horizontal: 10.w),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  AppIcons.language,
-                                  height: 24.h,
-                                ),
-                                SizedBox(
-                                  width: 8.w,
-                                ),
-                                Text(
-                                  'Language',
-                                  style: settingsTextStyle,
-                                )
-                              ],
-                            ),
-                            Icon(
-                              Icons.chevron_right,
-                              size: 24.h,
-                              color: const Color.fromARGB(255, 104, 104, 115),
-                            )
-                          ],
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const LanguageSelection()));
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20.h, horizontal: 10.w),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    AppIcons.language,
+                                    height: 24.h,
+                                  ),
+                                  SizedBox(
+                                    width: 8.w,
+                                  ),
+                                  Text(
+                                    'Language'.tr(),
+                                    style: settingsTextStyle,
+                                  )
+                                ],
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                size: 24.h,
+                                color: const Color.fromARGB(255, 104, 104, 115),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                       seperator(),
@@ -225,7 +237,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   width: 8.w,
                                 ),
                                 Text(
-                                  'Security',
+                                  'Security'.tr(),
                                   style: settingsTextStyle,
                                 )
                               ],
@@ -257,7 +269,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   width: 8.w,
                                 ),
                                 Text(
-                                  'Notifications',
+                                  'Notifications'.tr(),
                                   style: settingsTextStyle,
                                 )
                               ],
@@ -289,7 +301,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   width: 8.w,
                                 ),
                                 Text(
-                                  'Sounds',
+                                  'Sounds'.tr(),
                                   style: settingsTextStyle,
                                 )
                               ],
@@ -371,7 +383,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   width: 8.w,
                                 ),
                                 Text(
-                                  'Rate App',
+                                  'Rate App'.tr(),
                                   style: settingsTextStyle,
                                 )
                               ],
@@ -403,7 +415,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   width: 8.w,
                                 ),
                                 Text(
-                                  'Share with Friends',
+                                  'Share with Friends'.tr(),
                                   style: settingsTextStyle,
                                 )
                               ],
@@ -435,7 +447,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   width: 8.w,
                                 ),
                                 Text(
-                                  'About Us',
+                                  'About Us'.tr(),
                                   style: settingsTextStyle,
                                 )
                               ],
@@ -467,7 +479,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   width: 8.w,
                                 ),
                                 Text(
-                                  'Support',
+                                  'Support'.tr(),
                                   style: settingsTextStyle,
                                 )
                               ],
@@ -544,7 +556,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     width: 8.w,
                                   ),
                                   Text(
-                                    'Sign Out',
+                                    'Sign Out'.tr(),
                                     style: settingsTextStyle,
                                   )
                                 ],

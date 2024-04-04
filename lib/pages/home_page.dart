@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -65,7 +66,7 @@ class HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.w400,
                   height: 0,
                 ),
-                backgroundColor: const Color(0xfbf1f4ff),
+                backgroundColor: AppColors.mainColor,
                 currentIndex: context.watch<IndexProvider>().selectedIndex,
                 onTap: (index) {
                   context.read<IndexProvider>().setSelectedIndex(index);
@@ -77,10 +78,10 @@ class HomePageState extends State<HomePage> {
                       AppIcons.sleep,
                       height: 20.h,
                       color: context.watch<IndexProvider>().selectedIndex == 0
-                          ? AppColors.mainBlue
-                          : const Color.fromARGB(255, 0, 0, 0),
+                          ? AppColors.highLightColor
+                          : Colors.white,
                     ),
-                    label: 'Sleep',
+                    label: 'Sleep'.tr(),
                   ),
                   BottomNavigationBarItem(
                     icon: SvgPicture.asset(
@@ -90,7 +91,7 @@ class HomePageState extends State<HomePage> {
                           ? AppColors.mainBlue
                           : const Color.fromARGB(255, 0, 0, 0),
                     ),
-                    label: 'Stats',
+                    label: 'Stats'.tr(),
                   ),
                   const BottomNavigationBarItem(
                     icon: Icon(
@@ -107,17 +108,17 @@ class HomePageState extends State<HomePage> {
                           ? AppColors.mainBlue
                           : const Color.fromARGB(255, 0, 0, 0),
                     ),
-                    label: 'Timer',
+                    label: 'Timer'.tr(),
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(
                       Icons.person_outline,
                       size: 20.h,
                       color: context.watch<IndexProvider>().selectedIndex == 4
-                          ? AppColors.mainBlue
-                          : const Color.fromARGB(255, 0, 0, 0),
+                          ? AppColors.highLightColor
+                          : Colors.white,
                     ),
-                    label: 'Profile',
+                    label: 'Profile'.tr(),
                   ),
                 ],
               ),
@@ -130,7 +131,7 @@ class HomePageState extends State<HomePage> {
                   AppIcons.home,
                   width: 50,
                   color: context.watch<IndexProvider>().selectedIndex == 2
-                      ? AppColors.mainBlue
+                      ? AppColors.highLightColor
                       : AppColors.black.withOpacity(0.5),
                 )),
           ],
@@ -152,7 +153,7 @@ class HomePageState extends State<HomePage> {
       case 4:
         return const ProfilePage();
       default:
-        return const Center(child: Text('Unknown Page'));
+        return Center(child: Text('Unknown Page'.tr()));
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -130,25 +131,25 @@ Widget getTitles(double value, TitleMeta meta) {
   String text;
   switch (value.toInt()) {
     case 0:
-      text = 'Sun';
+      text = 'Sun'.tr();
       break;
     case 1:
-      text = 'Mon';
+      text = 'Mon'.tr();
       break;
     case 2:
-      text = 'Tue';
+      text = 'Tue'.tr();
       break;
     case 3:
-      text = 'Wed';
+      text = 'Wed'.tr();
       break;
     case 4:
-      text = 'Thu';
+      text = 'Thu'.tr();
       break;
     case 5:
-      text = 'Fri';
+      text = 'Fri'.tr();
       break;
     case 6:
-      text = 'Sat';
+      text = 'Sat'.tr();
       break;
     default:
       text = '';

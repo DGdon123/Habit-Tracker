@@ -1,4 +1,5 @@
 import 'package:day_night_time_picker/day_night_time_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -44,7 +45,7 @@ class _SleepTimeState extends State<SleepTime> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Sleep Time',
+                    'Sleep Time'.tr(),
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 24.sp,
@@ -76,8 +77,8 @@ class _SleepTimeState extends State<SleepTime> {
                 dialogInsetPadding:
                     EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.h),
                 unselectedColor: const Color.fromRGBO(0, 0, 0, 0.75),
-                hourLabel: 'Hour',
-                minuteLabel: 'Minutes',
+                hourLabel: 'Hour'.tr(),
+                minuteLabel: 'Minutes'.tr(),
                 // wheelHeight: 300.h,
                 hideButtons: false,
                 cancelStyle: TextStyle(
@@ -87,7 +88,7 @@ class _SleepTimeState extends State<SleepTime> {
                   fontWeight: FontWeight.w500,
                 ),
 
-                okText: 'Save',
+                okText: 'Save'.tr(),
                 isInlinePicker: true,
                 elevation: 0,
                 value: _time,

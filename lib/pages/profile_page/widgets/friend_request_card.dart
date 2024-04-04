@@ -38,6 +38,7 @@ class _AccountSetupSetNameState extends State<FriendRequestCard> {
   @override
   Widget build(BuildContext context) {
     NotificationServices notificationServices = NotificationServices();
+
     return Card(
       child: FutureBuilder<QueryDocumentSnapshot>(
           future: UserFireStoreServices().searchUserByUid(widget.senderID),

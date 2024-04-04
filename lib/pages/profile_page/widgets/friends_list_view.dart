@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/pages/profile_page/widgets/friend_container.dart';
@@ -15,7 +16,7 @@ class FriendsListView extends StatelessWidget {
           if (snapshot.hasData) {
             debugPrint("Snapshot: ${snapshot.data}");
             if (snapshot.data!.docs.isEmpty) {
-              return const Text("Add friends to see them here");
+              return Text("Add friends to see them here".tr());
             }
             var data = snapshot.data!.docs.first;
             var friends = data["friends"] as List<dynamic>;
@@ -24,7 +25,7 @@ class FriendsListView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${friends.length} Friends',
+                  '${friends.length} ${"Friends".tr()}',
                   style: TextStyle(
                     color: const Color(0xFF040415),
                     fontSize: 16.sp,

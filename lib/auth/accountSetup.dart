@@ -85,7 +85,7 @@ class _AccountSetupState extends State<AccountSetup> {
           },
         ),
         title: Text(
-          "Create Account",
+          "Create Account".tr(),
           style: TextStyle(
               fontFamily: 'SFProText',
               fontSize: 22.sp,
@@ -173,7 +173,7 @@ class _AccountSetupState extends State<AccountSetup> {
                   child: Row(
                     children: [
                       Text(
-                        currentPage == 1 ? 'Finish' : 'Next',
+                        currentPage == 1 ? 'Finish'.tr() : 'Next'.tr(),
                         style: TextStyle(
                           color: AppColors.buttonYellow,
                           fontFamily: 'SFProText',
@@ -282,11 +282,11 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
         body: Stack(
       children: [
         FlutterLocationPicker(
-            selectLocationButtonText: "Confirm Destination",
+            selectLocationButtonText: "Confirm Destination".tr(),
             searchbarInputFocusBorderp: OutlineInputBorder(
               borderSide: BorderSide(color: AppColors.mainBlue, width: 0.164.w),
             ),
-            searchBarHintText: "Loading Location",
+            searchBarHintText: "Loading Location".tr(),
             loadingWidget: SizedBox(
               height: 2.4.h,
               width: 4.6.w,
@@ -425,7 +425,7 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
                   border: InputBorder.none,
                   fillColor: const Color(0xffF9F9FC),
                   filled: true,
-                  hintText: "Search Your Gym Location",
+                  hintText: "Search Your Gym Location".tr(),
                   hintStyle: const TextStyle(fontSize: 12, letterSpacing: 0.35),
                 ),
               ),
@@ -593,8 +593,8 @@ class _AccountSetupSleeptimeState extends State<AccountSetupSleeptime> {
         // Render inline widget
         showPicker(
           unselectedColor: const Color.fromRGBO(0, 0, 0, 0.75),
-          hourLabel: 'Hour',
-          minuteLabel: 'Minutes',
+          hourLabel: 'Hour'.tr(),
+          minuteLabel: 'Minutes'.tr(),
           wheelHeight: 200.h,
           hideButtons: true,
           dialogInsetPadding: const EdgeInsets.all(0),
@@ -655,8 +655,8 @@ class _AccountSetupWaketimeState extends State<AccountSetupWaketime> {
         // Render inline widget
         showPicker(
           unselectedColor: const Color.fromRGBO(0, 0, 0, 0.75),
-          hourLabel: 'Hour',
-          minuteLabel: 'Minutes',
+          hourLabel: 'Hour'.tr(),
+          minuteLabel: 'Minutes'.tr(),
           wheelHeight: 200.h,
           hideButtons: true,
           dialogInsetPadding: const EdgeInsets.all(0),

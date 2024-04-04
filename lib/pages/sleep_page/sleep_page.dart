@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_date_range_picker/custom_date_range_picker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -58,7 +59,7 @@ class SleepPageState extends State<SleepPage> {
                   children: [
                     Center(
                       child: Text(
-                        "Sleep Time",
+                        "Sleep Time".tr(),
                         style: TextStyle(
                             fontFamily: 'SFProText',
                             fontSize: 24.sp,
@@ -82,7 +83,7 @@ class SleepPageState extends State<SleepPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Sleep Time',
+                        'Sleep Time'.tr(),
                         style: TextStyles().titleStyle,
                       ),
                       GestureDetector(
@@ -134,20 +135,20 @@ class SleepPageState extends State<SleepPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             SleepWakeDisplayCard(
-                                title: 'Sleep Time',
+                                title: 'Sleep Time'.tr(),
                                 bgColor: const Color(0xFF000C7C),
                                 time: doc.get("sleepTime")),
                             SleepWakeDisplayCard(
-                                title: 'Wake Time',
+                                title: 'Wake Time'.tr(),
                                 bgColor: const Color(0xFF7C0068),
                                 time: doc.get("wakeTime")),
                           ],
                         ),
                       );
                     } else if (snapshotLength == 0) {
-                      return const Text("Add your sleep time");
+                      return  Text("Add your sleep time".tr());
                     } else if (snapshot.hasError) {
-                      return const Text('Something went wrong');
+                      return  Text('Something went wrong'.tr());
                     }
                     return const CircularProgressIndicator();
                   }),

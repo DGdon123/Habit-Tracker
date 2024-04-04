@@ -167,7 +167,7 @@ class _SignUpState extends State<SignUp> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Sign Up',
+                            'Sign Up'.tr(),
                             style: AppTextStyles.loginSignupText,
                           ),
                         ],
@@ -185,8 +185,8 @@ class _SignUpState extends State<SignUp> {
                               : null,
                           decoration:
                               AppTextFieldStyles.standardInputDecoration(
-                            hintText: 'Enter your name',
-                            labelText: 'Name',
+                            hintText: 'Enter your name'.tr(),
+                            labelText: 'Name'.tr(),
                             keyboardType: TextInputType.name,
                           ),
                         ),
@@ -203,8 +203,8 @@ class _SignUpState extends State<SignUp> {
                               : null,
                           decoration:
                               AppTextFieldStyles.standardInputDecoration(
-                            hintText: 'Enter your email',
-                            labelText: 'Email',
+                            hintText: 'Enter your email'.tr(),
+                            labelText: 'Email'.tr(),
                             keyboardType: TextInputType.emailAddress,
                           ),
                         ),
@@ -238,8 +238,8 @@ class _SignUpState extends State<SignUp> {
                                     color: AppColors
                                         .seperatorColor), // Adjust the color as needed
                               ),
-                              hintText: 'Enter your password',
-                              labelText: 'Password',
+                              hintText: 'Enter your password'.tr(),
+                              labelText: 'Password'.tr(),
                               labelStyle: TextStyle(
                                   color: AppColors.black,
                                   fontFamily: 'SFProText',
@@ -298,8 +298,8 @@ class _SignUpState extends State<SignUp> {
                                     color: AppColors
                                         .seperatorColor), // Adjust the color as needed
                               ),
-                              hintText: 'Re-Enter your password',
-                              labelText: 'Confirm Password',
+                              hintText: 'Re-Enter your password'.tr(),
+                              labelText: 'Confirm Password'.tr(),
                               labelStyle: TextStyle(
                                   color: AppColors.black,
                                   fontFamily: 'SFProText',
@@ -339,8 +339,8 @@ class _SignUpState extends State<SignUp> {
                             if (passwordController.text !=
                                 confirmpasswordController.text) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Passwords do not match"),
+                                 SnackBar(
+                                  content: Text("Passwords do not match".tr()),
                                 ),
                               );
                             } else {
@@ -361,7 +361,7 @@ class _SignUpState extends State<SignUp> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20.w),
                           child: CustomButton(
-                            text: 'CONTINUE',
+                            text: 'CONTINUE'.tr(),
                             onPressed: () {},
                           ),
                         ),
@@ -401,7 +401,7 @@ class _SignUpState extends State<SignUp> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Have an account?',
+                              'Have an account?'.tr(),
                               style: Theme.of(context)
                                   .textTheme
                                   .displayMedium!
@@ -431,7 +431,7 @@ class _SignUpState extends State<SignUp> {
                                 );
                               },
                               child: Text(
-                                ' Log In',
+                                'Log In'.tr(),
                                 style: Theme.of(context)
                                     .textTheme
                                     .displayMedium!

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -62,7 +63,7 @@ class ProfilePageState extends State<ProfilePage>
                     children: [
                       Center(
                         child: Text(
-                          "Profile",
+                          "Profile".tr(),
                           style: TextStyle(
                               fontFamily: 'SFProText',
                               fontSize: 24.sp,
@@ -135,9 +136,9 @@ class ProfilePageState extends State<ProfilePage>
             fontFamily: 'SFProText',
             fontWeight: FontWeight.w600,
           ),
-          tabs: const [
-            Tab(text: 'Activity'),
-            Tab(text: 'Friends'),
+          tabs:  [
+            Tab(text: 'Activity'.tr()),
+            Tab(text: 'Friends'.tr()),
           ],
         ),
       ),
@@ -167,7 +168,7 @@ class ProfilePageState extends State<ProfilePage>
               ),
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(
-                  getUsername() ?? 'User Name',
+                  getUsername() ?? 'User Name'.tr(),
                   style: TextStyle(
                     color: AppColors.textBlack,
                     fontSize: 20.sp,
@@ -295,6 +296,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                           final users = await UserFireStoreServices()
                               .searchUserByUserName(searchText);
 
+
                           if (users.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -330,6 +332,8 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                 ),
               ],
             ),
+
+                       
           ),
           SizedBox(
             height: 5.h,
@@ -363,7 +367,7 @@ class ActivityPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Activity of this week',
+                  'Activity of this week'.tr(),
                   style: TextStyle(
                     color: const Color(0xFF040415),
                     fontSize: 16.sp,

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -80,15 +81,18 @@ class HomePageState extends State<HomePage> {
                           ? AppColors.highLightColor
                           : Colors.white,
                     ),
-                    label: 'Sleep',
+                    label: 'Sleep'.tr(),
                   ),
                   BottomNavigationBarItem(
+
                     icon: Image.asset(AppIcons.statistics,
                         height: 35.h,
+
                         color: context.watch<IndexProvider>().selectedIndex == 1
                             ? AppColors.highLightColor
                             : Colors.white),
-                    label: 'Stats',
+
+                    label: 'Stats'.tr(),
                   ),
                   const BottomNavigationBarItem(
                     icon: Icon(
@@ -98,12 +102,15 @@ class HomePageState extends State<HomePage> {
                     label: 'Home',
                   ),
                   BottomNavigationBarItem(
+
                     icon: Image.asset(AppIcons.time,
                         height: 35.h,
+
                         color: context.watch<IndexProvider>().selectedIndex == 3
                             ? AppColors.highLightColor
                             : Colors.white),
-                    label: 'Timer',
+
+                    label: 'Timer'.tr(),
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(
@@ -113,7 +120,7 @@ class HomePageState extends State<HomePage> {
                           ? AppColors.highLightColor
                           : Colors.white,
                     ),
-                    label: 'Profile',
+                    label: 'Profile'.tr(),
                   ),
                 ],
               ),
@@ -148,7 +155,7 @@ class HomePageState extends State<HomePage> {
       case 4:
         return const ProfilePage();
       default:
-        return const Center(child: Text('Unknown Page'));
+        return Center(child: Text('Unknown Page'.tr()));
     }
   }
 }

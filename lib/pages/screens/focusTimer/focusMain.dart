@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart' as de;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -61,10 +62,10 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
               context.read<IndexProvider>().setSelectedIndex(3);
             },
             context: context,
-            confirmBtnText: 'Exit',
+            confirmBtnText: 'Exit'.tr(),
             type: QuickAlertType.info,
             confirmBtnColor: AppColors.mainBlue,
-            text: 'Your focus timer has been completed!',
+            text: 'Your focus timer has been completed!'.tr(),
           );
         }
       },
@@ -183,7 +184,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                                   context: context,
                                   confirmBtnColor: AppColors.mainBlue,
                                   type: QuickAlertType.error,
-                                  title: 'Error...',
+                                  title: 'Error...'.tr(),
                                   text: 'Please stop the timer!',
                                 );
                               }
@@ -381,8 +382,8 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                                       context: context,
                                       confirmBtnColor: AppColors.mainBlue,
                                       type: QuickAlertType.error,
-                                      title: 'Error...',
-                                      text: 'Please stop the timer!',
+                                      title: 'Error...'.tr(),
+                                      text: 'Please stop the timer!'.tr(),
                                     );
                                   }
                                 },
@@ -416,8 +417,8 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                                         },
                                         confirmBtnColor: AppColors.mainBlue,
                                         type: QuickAlertType.error,
-                                        title: 'Oops...',
-                                        text: 'Sorry, timer cannot be 0.',
+                                        title: 'Oops...'.tr(),
+                                        text: 'Sorry, timer cannot be 0.'.tr(),
                                       );
                                     }
                                     _stopWatchTimer.onStartTimer();
@@ -453,7 +454,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                   options: [
                     TooltipOption(
                         icon: AppIcons.lofi,
-                        label: 'Lofi',
+                        label: 'Lofi'.tr(),
                         onPressed: () {
                           playMusic(de.AssetSource('lofi.mp3'));
                         }),

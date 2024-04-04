@@ -11,6 +11,9 @@ class AppImages {
   static const String meditate = 'assets/images/meditate.png';
   static const String fitbit = 'assets/images/fitbit.png';
   static const String add = 'assets/images/add.png';
+  static const String usa = 'assets/flags/english.png';
+  static const String china = 'assets/flags/china.png';
+  static const String germany = 'assets/flags/germany.png';
   static const String googlefit = 'assets/images/googlefit.png';
   static const String female = 'assets/images/female.png';
   

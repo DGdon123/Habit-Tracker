@@ -1,4 +1,5 @@
 import 'package:app_usage/app_usage.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
 
@@ -16,19 +17,19 @@ class UsagePage extends StatelessWidget {
               Map<String, dynamic> data = snapshot.data!;
 
               if (data.isEmpty) {
-                return const Text("No data");
+                return Text("No data".tr());
               }
 
               List<AppUsageInfo> usageList =
                   data["usageList"] as List<AppUsageInfo>;
 
               if (usageList.isEmpty) {
-                return const Text("No data");
+                return Text("No data".tr());
               } else {
                 return Column(
                   children: [
-                    Text("Start Date: ${data["startDate"]}"),
-                    Text("End Date: ${data["endDate"]}"),
+                    Text("${"Start Date:".tr()} ${data["startDate"]}"),
+                    Text("${"End Date:".tr()} ${data["endDate"]}"),
                     Expanded(
                       child: ListView.builder(
                           itemCount: usageList.length,
@@ -38,9 +39,9 @@ class UsagePage extends StatelessWidget {
                               title: Text(info.appName),
                               subtitle: Column(
                                 children: [
-                                  Text("Duration: ${info.usage}"),
-                                  Text("Start Date: ${info.startDate}"),
-                                  Text("End Date: ${info.endDate}"),
+                                  Text("${"Duration".tr()}: ${info.usage}"),
+                                  Text("${"Start Date:".tr()} ${info.startDate}"),
+                                  Text("${"End Date:".tr()} ${info.endDate}"),
                                 ],
                               ),
                             );

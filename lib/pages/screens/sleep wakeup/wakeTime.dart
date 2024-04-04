@@ -1,4 +1,5 @@
 import 'package:day_night_time_picker/day_night_time_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,7 +42,7 @@ class _WakeTimeState extends State<WakeTime> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("Wake time: ${widget.sleepTime}");
+    debugPrint("${"Wake time:".tr()} ${widget.sleepTime}");
     return AlertDialog(
       alignment: Alignment.center,
       elevation: 0,
@@ -64,7 +65,7 @@ class _WakeTimeState extends State<WakeTime> {
                   width: 5.w,
                 ),
                 Text(
-                  'Wake Time',
+                  'Wake Time'.tr(),
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 24.sp,
@@ -85,8 +86,8 @@ class _WakeTimeState extends State<WakeTime> {
                 dialogInsetPadding:
                     EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.h),
                 unselectedColor: Color.fromRGBO(0, 0, 0, 0.75),
-                hourLabel: 'Hour',
-                minuteLabel: 'Minutes',
+                hourLabel: 'Hour'.tr(),
+                minuteLabel: 'Minutes'.tr(),
                 // width: 350.w,
                 // height: 470.h,
                 // wheelHeight: 300.h,
@@ -97,7 +98,7 @@ class _WakeTimeState extends State<WakeTime> {
                   fontFamily: 'SFProText',
                   fontWeight: FontWeight.w500,
                 ),
-                okText: 'Save',
+                okText: 'Save'.tr(),
                 okStyle: TextStyle(
                   color: AppColors.mainBlue,
                   fontSize: 16.sp,

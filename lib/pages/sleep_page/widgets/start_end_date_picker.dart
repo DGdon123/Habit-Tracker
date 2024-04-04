@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class StartEndDatePicker extends StatefulWidget {
@@ -12,8 +13,8 @@ class StartEndDatePicker extends StatefulWidget {
 }
 
 class _StartEndDatePickerState extends State<StartEndDatePicker> {
-  var startText = "Start Date";
-  var endText = "End Date";
+  var startText = "Start Date".tr();
+  var endText = "End Date".tr();
 
   Map<String, DateTime> startEndTimes = {};
 
@@ -61,21 +62,21 @@ class _StartEndDatePickerState extends State<StartEndDatePicker> {
             backgroundColor: Colors.red.shade600,
           ),
           onPressed: () => Navigator.pop<Map>(context, {}),
-          child: const Text('Cancel'),
+          child:  Text('Cancel'.tr()),
         ),
         TextButton(
           style: TextButton.styleFrom(
             backgroundColor: Colors.blue,
             disabledBackgroundColor: Colors.grey,
           ),
-          onPressed: (startText.contains("Date") || endText.contains("Date"))
+          onPressed: (startText.contains("Date".tr()) || endText.contains("Date".tr()))
               ? null
               : () {
                   if (startText == endText) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
+                       SnackBar(
                         content:
-                            Text("Start date and end date cannot be the same."),
+                            Text("Start date and end date cannot be the same.".tr()),
                       ),
                     );
                   } else {
@@ -83,7 +84,7 @@ class _StartEndDatePickerState extends State<StartEndDatePicker> {
                         context, startEndTimes);
                   }
                 },
-          child: const Text('OK'),
+          child:  Text('OK'.tr()),
         ),
       ],
     );

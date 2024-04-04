@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -171,41 +172,41 @@ class FocusPageState extends State<FocusPage> {
     List<Widget> initialPages = [
       ActivityBox(
         img: AppImages.read,
-        title: "Read",
+        title: "Read".tr(),
         initiallySelected: false,
         onPressed: (isSelected) {
           setState(() {
-            labelText = isSelected ? "Read" : "Unknown";
+            labelText = isSelected ? "Read".tr() : "Unknown".tr();
           });
         },
       ),
       ActivityBox(
         img: AppImages.walk,
-        title: "Walk",
+        title: "Walk".tr(),
         initiallySelected: false,
         onPressed: (isSelected) {
           setState(() {
-            labelText = isSelected ? "Walk" : "Unknown";
+            labelText = isSelected ? "Walk".tr() : "Unknown".tr();
           });
         },
       ),
       ActivityBox(
         img: AppImages.meditate,
-        title: "Meditate",
+        title: "Meditate".tr(),
         initiallySelected: false,
         onPressed: (isSelected) {
           setState(() {
-            labelText = isSelected ? "Meditate" : "Unknown";
+            labelText = isSelected ? "Meditate".tr() : "Unknown".tr();
           });
         },
       ),
       ActivityBox(
         img: AppImages.add,
-        title: "Add New",
+        title: "Add New".tr(),
         initiallySelected: false,
         onPressed: (isSelected) {
           setState(() {
-            labelText = isSelected ? "Add New" : "Unknown";
+            labelText = isSelected ? "Add New".tr() : "Unknown".tr();
           });
           if (isSelected) {
             _showAddNewDialog(context);
@@ -218,7 +219,7 @@ class FocusPageState extends State<FocusPage> {
     pages.insertAll(0, initialPages);
   }
 
-  String labelText = "No Label";
+  String labelText = "No Label".tr();
 
   String? getUserName() {
     User? user = _auth.currentUser;
@@ -265,7 +266,7 @@ class FocusPageState extends State<FocusPage> {
               initiallySelected: false,
               onPressed: (isSelected) {
                 setState(() {
-                  labelText = isSelected ? label : "Unknown";
+                  labelText = isSelected ? label : "Unknown".tr();
                 });
               },
             );
@@ -323,7 +324,7 @@ class FocusPageState extends State<FocusPage> {
         return AlertDialog(
           backgroundColor: Colors.white,
           title: Text(
-            'Add New Timer',
+            'Add New Timer'.tr(),
             style: TextStyle(
               color: const Color(0xFF040415),
               fontSize: 18.sp,
@@ -341,7 +342,7 @@ class FocusPageState extends State<FocusPage> {
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: 'Label',
+                  hintText: 'Label'.tr(),
                   hintStyle: TextStyle(
                     color: Colors.black.withOpacity(0.75),
                     fontSize: 18.sp,
@@ -361,7 +362,7 @@ class FocusPageState extends State<FocusPage> {
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: 'Hours',
+                  hintText: 'Hours'.tr(),
                   hintStyle: TextStyle(
                     color: Colors.black.withOpacity(0.75),
                     fontSize: 18.sp,
@@ -381,7 +382,7 @@ class FocusPageState extends State<FocusPage> {
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: 'Minutes',
+                  hintText: 'Minutes'.tr(),
                   hintStyle: TextStyle(
                     color: Colors.black.withOpacity(0.75),
                     fontSize: 18.sp,
@@ -401,7 +402,7 @@ class FocusPageState extends State<FocusPage> {
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: 'Seconds',
+                  hintText: 'Seconds'.tr(),
                   hintStyle: TextStyle(
                     color: Colors.black.withOpacity(0.75),
                     fontSize: 18.sp,
@@ -429,8 +430,8 @@ class FocusPageState extends State<FocusPage> {
                     context: context,
                     type: QuickAlertType.error,
                     confirmBtnColor: AppColors.mainBlue,
-                    title: 'Error...',
-                    text: 'Please, fill up all the fields!',
+                    title: 'Error...'.tr(),
+                    text: 'Please, fill up all the fields!'.tr(),
                   );
                 } else {
                   addUser(label, hours3, minutes3, seconds3);
@@ -438,9 +439,9 @@ class FocusPageState extends State<FocusPage> {
                   context.read<IndexProvider>().setSelectedIndex(3);
                 }
               },
-              child: const Text(
-                'Save',
-                style: TextStyle(
+              child: Text(
+                'Save'.tr(),
+                style: const TextStyle(
                   color: AppColors.mainBlue,
                 ),
               ),
@@ -501,7 +502,7 @@ class FocusPageState extends State<FocusPage> {
                   children: [
                     Center(
                       child: Text(
-                        "Focus Timer",
+                        "Focus Timer".tr(),
                         style: TextStyle(
                             fontFamily: 'SFProText',
                             fontSize: 24.sp,
@@ -656,12 +657,12 @@ class FocusPageState extends State<FocusPage> {
                   ],
                 ),
               if (selectionType == 1)
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      "00",
+                      "00".tr(),
                       style: TextStyle(fontSize: 50, letterSpacing: -0.5),
                     ),
                     SizedBox(
@@ -675,7 +676,7 @@ class FocusPageState extends State<FocusPage> {
                       width: 22,
                     ),
                     Text(
-                      "00",
+                      "00".tr(),
                       style: TextStyle(fontSize: 50, letterSpacing: -0.5),
                     ),
                     SizedBox(
@@ -689,7 +690,7 @@ class FocusPageState extends State<FocusPage> {
                       width: 23,
                     ),
                     Text(
-                      "00",
+                      "00".tr(),
                       style: TextStyle(fontSize: 50, letterSpacing: -0.5),
                     ),
                   ],
@@ -699,13 +700,13 @@ class FocusPageState extends State<FocusPage> {
               ),
               InkWell(
                 onTap: () {
-                  if (labelText == "No Label") {
+                  if (labelText == "No Label".tr()) {
                     QuickAlert.show(
                       context: context,
                       confirmBtnColor: AppColors.mainBlue,
                       type: QuickAlertType.error,
-                      title: 'Error...',
-                      text: 'Please, select your timer box!',
+                      title: 'Error...'.tr(),
+                      text: 'Please, select your timer box!'.tr(),
                     );
                   } else {
                     selectionType == 0
@@ -743,7 +744,7 @@ class FocusPageState extends State<FocusPage> {
                     borderRadius: BorderRadius.circular(20.0), // Rounded border
                   ),
                   child: Text(
-                    "Start ${selectionType == 0 ? 'Timer' : 'Stopwatch'}",
+                    "${"Start".tr()} ${selectionType == 0 ? 'Timer'.tr() : 'Stopwatch'.tr()}",
                     style: const TextStyle(
                       fontStyle: FontStyle.italic,
                       color: AppColors.lightBlack,
@@ -819,7 +820,7 @@ class FocusPageState extends State<FocusPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Label',
+                    'Label'.tr(),
                     style: labelStyle,
                   ),
                   GestureDetector(
@@ -854,13 +855,13 @@ class FocusPageState extends State<FocusPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'When Timer Ends',
+                    'When Timer Ends'.tr(),
                     style: labelStyle,
                   ),
                   Row(
                     children: [
                       Text(
-                        'Ting Tong',
+                        'Ting Tong'.tr(),
                         style: labelStyle2,
                       ),
                     ],
@@ -883,7 +884,7 @@ class FocusPageState extends State<FocusPage> {
         return AlertDialog(
           backgroundColor: Colors.white,
           title: Text(
-            'Enter Label',
+            'Enter Label'.tr(),
             style: TextStyle(
               color: const Color(0xFF040415),
               fontSize: 18.sp,
@@ -897,7 +898,7 @@ class FocusPageState extends State<FocusPage> {
               // You can add any additional logic here
             },
             decoration: InputDecoration(
-              hintText: 'Label',
+              hintText: 'Label'.tr(),
               hintStyle: TextStyle(
                 color: Colors.black.withOpacity(0.75),
                 fontSize: 18.sp,
@@ -911,14 +912,14 @@ class FocusPageState extends State<FocusPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child:  Text('Cancel'.tr()),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(textController.text);
               },
-              child: const Text(
-                'OK',
+              child:  Text(
+                'OK'.tr(),
                 style: TextStyle(
                   color: AppColors.mainBlue,
                 ),

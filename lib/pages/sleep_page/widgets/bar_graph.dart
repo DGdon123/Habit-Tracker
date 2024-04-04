@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/pages/sleep_page/utils.dart';
+import 'package:habit_tracker/provider/avg_sleep_provider.dart';
 import 'package:habit_tracker/provider/start_end_date_provider.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/utils/text_styles.dart';
@@ -13,6 +14,7 @@ class BarGraph extends StatelessWidget {
   BarGraph({super.key});
 
   double highestDifference = 0.0;
+  double sleepSum = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +29,22 @@ class BarGraph extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return  Center(child: Text("Something went wrong".tr()));
+              return Center(child: Text("Something went wrong".tr()));
             } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-              return  Center(child: Text("No data found".tr()));
+              return Center(child: Text("No data found".tr()));
             }
 
             for (var doc in snapshot.data!.docs) {
               if (double.parse(doc['difference']) > highestDifference) {
                 highestDifference = double.parse(doc['difference']);
+                sleepSum += double.parse(doc['difference']);
               }
             }
+
+            Future.delayed(Duration.zero, () {
+              Provider.of<AvgSleepProvider>(context, listen: false)
+                  .setAvgTime(sleepSum);
+            });
 
             return SizedBox(
               height: 300,

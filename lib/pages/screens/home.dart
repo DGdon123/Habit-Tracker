@@ -147,6 +147,8 @@ class _HomeState extends State<Home> {
                         snapshot.connectionState == ConnectionState.active &&
                         snapshotLength != 0) {
                       var doc = snapshot.data!.docs[0];
+
+                      debugPrint("Document wheredocs: ${doc.data()}");
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

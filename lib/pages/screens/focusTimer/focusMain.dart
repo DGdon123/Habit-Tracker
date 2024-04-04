@@ -52,6 +52,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
       presetMillisecond: milli,
       onChange: (value) {
         int remainingMilliseconds = value;
+
         // Calculate remaining progress value
         _progressValue = remainingMilliseconds / milli;
         setState(() {});

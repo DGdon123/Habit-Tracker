@@ -32,11 +32,12 @@ class _WakeTimeState extends State<WakeTime> {
     // }
 
     var difference = endTime.difference(startTime);
-    debugPrint("Difference: $difference, ${widget.sleepTime}, $_timeWake");
 
     await SleepFireStoreServices().addNewSleepTime(
-      sleepTime: widget.sleepTime.format(context),
-      wakeTime: _timeWake.format(context),
+      sleepTime:
+          '${widget.sleepTime.hour}:${widget.sleepTime.minute.toString().padLeft(2, '0')}',
+      wakeTime:
+          '${_timeWake.hour}:${_timeWake.minute.toString().padLeft(2, '0')}',
       difference: SleepPageUtils().roundHourAndMinute(difference.inMinutes),
     );
 
@@ -45,7 +46,6 @@ class _WakeTimeState extends State<WakeTime> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("${"Wake time:".tr()} ${widget.sleepTime}");
     return AlertDialog(
       alignment: Alignment.center,
       elevation: 0,

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,6 +13,7 @@ import 'package:habit_tracker/pages/profile_page/widgets/friends_list_view.dart'
 import 'package:habit_tracker/pages/profile_page/widgets/received_friend_request.dart';
 import 'package:habit_tracker/pages/screens/settings/settings.dart';
 import 'package:habit_tracker/services/user_firestore_services.dart';
+import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -135,7 +137,7 @@ class ProfilePageState extends State<ProfilePage>
             fontFamily: 'SFProText',
             fontWeight: FontWeight.w600,
           ),
-          tabs:  [
+          tabs: [
             Tab(text: 'Activity'.tr()),
             Tab(text: 'Friends'.tr()),
           ],
@@ -269,7 +271,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
 
                         if (users.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                               SnackBar(content: Text("User not found".tr())));
+                              SnackBar(content: Text("User not found".tr())));
                           return;
                         }
 
@@ -278,7 +280,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                                   searchResults: users,
                                 )));
                       },
-                child:  Text("Search".tr()),
+                child: Text("Search".tr()),
               ),
             ],
           ),
@@ -332,21 +334,61 @@ class ActivityPage extends StatelessWidget {
             height: 5.h,
           ),
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              itemCount: 15, // Number of items you want to repeat
-              itemBuilder: (BuildContext context, int index) {
-                return AchievmentsContainer(); // Your container widget
-              },
-            ),
-          ),
+              child: StreamBuilder<QuerySnapshot>(
+                  stream: XpFirestoreServices().listenForXpAdded(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return const Center(
+                        child: Text('Something went wrong'),
+                      );
+                    } else if (snapshot.hasData &&
+                        snapshot.data!.docs.isEmpty) {
+                      return const Center(
+                        child: Text('No data found'),
+                      );
+                    }
+
+                    final xpDocs = snapshot.data!.docs;
+
+                    debugPrint('xpDocs: ${xpDocs.length}');
+                    return ListView.builder(
+                      itemCount: xpDocs.length,
+                      itemBuilder: (context, index) {
+                        final xp = xpDocs[index];
+
+                        var date = DateTime.fromMillisecondsSinceEpoch(
+                            xp.get("timestamp").millisecondsSinceEpoch);
+
+                        return AchievmentsContainer(
+                            xp: xp.get("xp").toString(), uploadedDate: date);
+                      },
+                    );
+                  })),
         ],
       ),
     );
   }
 }
 
-Widget AchievmentsContainer() {
+Widget AchievmentsContainer({
+  required String xp,
+  required DateTime uploadedDate,
+}) {
+  var now = DateTime.now();
+  var todayDate = DateTime(now.year, now.month, now.day);
+
+  debugPrint('todayDate: $todayDate, uploadedDate: $uploadedDate');
+
+  var dateRemark = uploadedDate == todayDate
+      ? 'Today'
+      : '${uploadedDate.year}-${uploadedDate.month}-${uploadedDate.day}';
+
+  var uploadedTime = "${uploadedDate.hour}:${uploadedDate.minute}";
+
   return Container(
     margin: EdgeInsets.only(bottom: 10.h),
     padding: const EdgeInsets.all(16),
@@ -375,7 +417,7 @@ Widget AchievmentsContainer() {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '129 XP Earned',
+                  '$xp XP Earned',
                   style: TextStyle(
                     color: const Color(0xFF040415),
                     fontSize: 16.sp,
@@ -384,7 +426,7 @@ Widget AchievmentsContainer() {
                   ),
                 ),
                 Text(
-                  'Today, 12:30',
+                  '$dateRemark, $uploadedTime',
                   style: TextStyle(
                     color: const Color(0xFF9B9BA1),
                     fontSize: 14.sp,

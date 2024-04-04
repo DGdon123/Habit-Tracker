@@ -18,7 +18,22 @@ class XpFirestoreServices {
     await xpRef.add({
       'xp': xp,
       'userID': userID,
-      'timestamp': FieldValue.serverTimestamp(),
+      'timestamp': DateTime.now(),
     });
+  }
+
+  Stream<QuerySnapshot> listenForXpAdded() {
+    // seven days ago, with time being 00:00:00
+    DateTime sevenDaysAgo = DateTime.now().subtract(Duration(days: 7));
+    DateTime sevenDaysAgoMidnight = DateTime(
+      sevenDaysAgo.year,
+      sevenDaysAgo.month,
+      sevenDaysAgo.day,
+    );
+
+    return xpRef
+        .where('userID', isEqualTo: userID)
+        .where("timestamp", isGreaterThanOrEqualTo: sevenDaysAgoMidnight)
+        .snapshots();
   }
 }

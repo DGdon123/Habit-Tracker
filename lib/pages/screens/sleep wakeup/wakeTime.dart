@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/pages/sleep_page/utils.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
+import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/styles.dart';
 
@@ -19,7 +20,7 @@ class _WakeTimeState extends State<WakeTime> {
   Time _timeWake = Time(hour: 06, minute: 30, second: 20);
   bool iosStyle = true;
 
-  void sleepTimeSet(Time newTime) {
+  void sleepTimeSet(Time newTime) async {
     _timeWake = newTime;
 
     var startTime =
@@ -33,11 +34,13 @@ class _WakeTimeState extends State<WakeTime> {
     var difference = endTime.difference(startTime);
     debugPrint("Difference: $difference, ${widget.sleepTime}, $_timeWake");
 
-    SleepFireStoreServices().addNewSleepTime(
+    await SleepFireStoreServices().addNewSleepTime(
       sleepTime: widget.sleepTime.format(context),
       wakeTime: _timeWake.format(context),
       difference: SleepPageUtils().roundHourAndMinute(difference.inMinutes),
     );
+
+    await XpFirestoreServices().addXp(difference.inHours);
   }
 
   @override

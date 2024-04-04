@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -80,15 +81,26 @@ class HomePageState extends State<HomePage> {
                           ? AppColors.highLightColor
                           : Colors.white,
                     ),
-                    label: 'Sleep',
+                    label: 'Sleep'.tr(),
                   ),
                   BottomNavigationBarItem(
+
+                    icon: SvgPicture.asset(
+                      AppIcons.stats,
+                      height: 20.h,
+                      color: context.watch<IndexProvider>().selectedIndex == 1
+                          ? AppColors.mainBlue
+                          : const Color.fromARGB(255, 0, 0, 0),
+                    ),
+                    label: 'Stats'.tr(),
+
                     icon: SvgPicture.asset(AppIcons.stats,
                         height: 20.h,
                         color: context.watch<IndexProvider>().selectedIndex == 1
                             ? AppColors.highLightColor
                             : Colors.white),
                     label: 'Stats',
+
                   ),
                   const BottomNavigationBarItem(
                     icon: Icon(
@@ -98,12 +110,22 @@ class HomePageState extends State<HomePage> {
                     label: '',
                   ),
                   BottomNavigationBarItem(
+
+                    icon: SvgPicture.asset(
+                      AppIcons.timer,
+                      height: 20.h,
+                      color: context.watch<IndexProvider>().selectedIndex == 3
+                          ? AppColors.mainBlue
+                          : const Color.fromARGB(255, 0, 0, 0),
+                    ),
+                    label: 'Timer'.tr(),
                     icon: SvgPicture.asset(AppIcons.timer,
                         height: 20.h,
                         color: context.watch<IndexProvider>().selectedIndex == 3
                             ? AppColors.highLightColor
                             : Colors.white),
                     label: 'Timer',
+
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(
@@ -113,7 +135,7 @@ class HomePageState extends State<HomePage> {
                           ? AppColors.highLightColor
                           : Colors.white,
                     ),
-                    label: 'Profile',
+                    label: 'Profile'.tr(),
                   ),
                 ],
               ),
@@ -148,7 +170,7 @@ class HomePageState extends State<HomePage> {
       case 4:
         return const ProfilePage();
       default:
-        return const Center(child: Text('Unknown Page'));
+        return Center(child: Text('Unknown Page'.tr()));
     }
   }
 }

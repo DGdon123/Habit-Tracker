@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,9 +27,9 @@ class BarGraph extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return const Center(child: Text("Something went wrong"));
+              return  Center(child: Text("Something went wrong".tr()));
             } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-              return const Center(child: Text("No data found"));
+              return  Center(child: Text("No data found".tr()));
             }
 
             for (var doc in snapshot.data!.docs) {

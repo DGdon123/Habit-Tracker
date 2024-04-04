@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +58,7 @@ class FriendsPageState extends State<FriendsPage> {
                     ),
                     Center(
                       child: Text(
-                        "Friends",
+                        "Friends".tr(),
                         style: TextStyle(
                             fontFamily: 'SFProText',
                             fontSize: 24.sp,
@@ -151,7 +152,7 @@ class FriendsPageState extends State<FriendsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'User Name',
+                    'User Name'.tr(),
                     style: TextStyle(
                       color: Color(0xFF040415),
                       fontSize: 16.sp,

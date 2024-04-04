@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/home_page.dart';
@@ -249,37 +250,86 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
       backgroundColor: AppColors.primaryColor.withOpacity(0.15),
       body: Column(
         children: [
-          Row(
-            children: [
-              // searching friends based on their name
-              Expanded(child: TextField(
-                onChanged: (value) {
-                  setState(() {
-                    searchText = value;
-                  });
-                },
-              )),
-              TextButton(
-                onPressed: searchText.isEmpty
-                    ? null
-                    : () async {
-                        final users = await UserFireStoreServices()
-                            .searchUserByUserName(searchText);
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
+            child: Row(
+              children: [
+                // searching friends based on their name
+                Expanded(
+                    child: TextField(
+                  cursorColor: AppColors.mainColor,
+                  decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      focusColor: Colors.white,
+                      contentPadding: EdgeInsets.symmetric(vertical: 10),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: CupertinoColors.systemGrey,
+                      ),
+                      hintStyle: TextStyle(
+                        color: CupertinoColors.systemGrey,
+                      ),
+                      hintText: 'Search Friends',
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide:
+                              BorderSide(color: AppColors.blue, width: 1)),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide(
+                              color: AppColors.widgetColorB, width: 0.4))),
+                  onChanged: (value) {
+                    setState(() {
+                      searchText = value;
+                    });
+                  },
+                )),
+                SizedBox(
+                  width: 20.w,
+                ),
+                GestureDetector(
+                  onTap: searchText.isEmpty
+                      ? null
+                      : () async {
+                          final users = await UserFireStoreServices()
+                              .searchUserByUserName(searchText);
 
-                        if (users.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("User not found")));
-                          return;
-                        }
+                          if (users.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("User not found")));
+                            return;
+                          }
 
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => FriendSearchedPage(
-                                  searchResults: users,
-                                )));
-                      },
-                child: const Text("Search"),
-              ),
-            ],
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => FriendSearchedPage(
+                                    searchResults: users,
+                                  )));
+                        },
+                  child: Container(
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                              blurRadius: .2,
+                              offset: Offset(0.0, 0.5),
+                              color: Colors.black.withOpacity(0.5))
+                        ],
+                        color: AppColors.mainColor,
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Center(
+                        child: Text(
+                      'Search',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.sp,
+                          fontFamily: 'SFProText'),
+                    )),
+                  ),
+                ),
+              ],
+            ),
           ),
           SizedBox(
             height: 5.h,

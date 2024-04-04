@@ -739,12 +739,13 @@ class FocusPageState extends State<FocusPage> {
                       color: Colors.black, // Border color
                       width: 0.5, // Border width
                     ),
-                    color: Colors.white, // Button color
+                    color: Colors.transparent, // Button color
                     borderRadius: BorderRadius.circular(20.0), // Rounded border
                   ),
                   child: Text(
                     "Start ${selectionType == 0 ? 'Timer' : 'Stopwatch'}",
                     style: const TextStyle(
+                      fontStyle: FontStyle.italic,
                       color: AppColors.lightBlack,
                       fontSize: 20.0,
                     ),

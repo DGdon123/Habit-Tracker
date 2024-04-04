@@ -13,4 +13,5 @@ class AppImages {
   static const String add = 'assets/images/add.png';
   static const String googlefit = 'assets/images/googlefit.png';
   static const String female = 'assets/images/female.png';
+  
 }

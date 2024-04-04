@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Log In',
+                            'Log In'.tr(),
                             style: AppTextStyles.loginSignupText,
                           ),
                         ],
@@ -146,8 +146,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               : null,
                           decoration:
                               AppTextFieldStyles.standardInputDecoration(
-                            hintText: 'Enter your email',
-                            labelText: 'Email',
+                            hintText: 'Enter your email'.tr(),
+                            labelText: 'Email'.tr(),
                             keyboardType: TextInputType.emailAddress,
                             textStyle: TextStyle(
                                 color: AppColors.hintColor,
@@ -183,8 +183,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: AppColors
                                         .seperatorColor), // Adjust the color as needed
                               ),
-                              hintText: 'Enter your password',
-                              labelText: 'Password',
+                              hintText: 'Enter your password'.tr(),
+                              labelText: 'Password'.tr(),
                               labelStyle: TextStyle(
                                   color: AppColors.black,
                                   fontFamily: 'SFProText',
@@ -227,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              'Forgot Pasword?',
+                              'Forgot Pasword?'.tr(),
                               style: AppTextStyles.secondaryLogin,
                             ),
                           ],
@@ -255,7 +255,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   }
                                 },
                                 child: CustomButton(
-                                  text: 'CONTINUE',
+                                  text: 'CONTINUE'.tr(),
                                   onPressed: () {
                                     // Add your button click logic here
                                     print('Button clicked!');
@@ -273,7 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Or Sign In With',
+                              'Or Sign In With'.tr(),
                               style: AppTextStyles.secondaryLogin,
                             ),
                           ],
@@ -297,7 +297,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'New Here? ',
+                              'New Here?'.tr(),
                               style: Theme.of(context)
                                   .textTheme
                                   .displayMedium!
@@ -327,7 +327,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 );
                               },
                               child: Text(
-                                'Create Account',
+                                'Create Account'.tr(),
                                 style: Theme.of(context)
                                     .textTheme
                                     .displayMedium!

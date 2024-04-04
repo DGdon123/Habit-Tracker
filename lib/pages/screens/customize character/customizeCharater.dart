@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -431,7 +432,7 @@ class _CustomizeCharacterState extends State<CustomizeCharacter> {
               ),
             ),
             child: Text(
-              'Save',
+              'Save'.tr(),
               style: TextStyle(
                 color: AppColors.textBlack,
                 fontSize: 18.sp,

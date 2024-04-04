@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:custom_date_range_picker/custom_date_range_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -109,7 +110,7 @@ class SleepPageState extends State<SleepPage> {
                     ),
                     Center(
                       child: Text(
-                        "Sleep Time",
+                        "Sleep Time".tr(),
                         style: TextStyle(
                             fontFamily: 'SFProText',
                             fontSize: 24.sp,
@@ -133,7 +134,7 @@ class SleepPageState extends State<SleepPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Sleep Time',
+                        'Sleep Time'.tr(),
                         style: titleStyle,
                       ),
                       GestureDetector(
@@ -184,7 +185,7 @@ class SleepPageState extends State<SleepPage> {
                       child: Column(
                         children: [
                           Text(
-                            'Sleep Time',
+                            'Sleep Time'.tr(),
                             style: sleepTimeSmallStyle,
                           ),
                           SizedBox(
@@ -209,7 +210,7 @@ class SleepPageState extends State<SleepPage> {
                       child: Column(
                         children: [
                           Text(
-                            'Waketime',
+                            'Waketime'.tr(),
                             style: sleepTimeSmallStyle,
                           ),
                           SizedBox(
@@ -292,7 +293,7 @@ class SleepPageState extends State<SleepPage> {
                           style: subtitleStyle,
                         ),
                         Text(
-                          'Avg sleep time',
+                          'Avg sleep time'.tr(),
                           style: secondaryTextStyle(14.sp, FontWeight.w400),
                         )
                       ],
@@ -431,25 +432,25 @@ Widget getTitles(double value, TitleMeta meta) {
   String text;
   switch (value.toInt()) {
     case 0:
-      text = 'Sun';
+      text = 'Sun'.tr();
       break;
     case 1:
-      text = 'Mon';
+      text = 'Mon'.tr();
       break;
     case 2:
-      text = 'Tue';
+      text = 'Tue'.tr();
       break;
     case 3:
-      text = 'Wed';
+      text = 'Wed'.tr();
       break;
     case 4:
-      text = 'Thu';
+      text = 'Thu'.tr();
       break;
     case 5:
-      text = 'Fri';
+      text = 'Fri'.tr();
       break;
     case 6:
-      text = 'Sat';
+      text = 'Sat'.tr();
       break;
     default:
       text = '';

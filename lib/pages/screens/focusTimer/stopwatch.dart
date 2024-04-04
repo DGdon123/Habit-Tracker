@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart' as de;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -161,8 +162,8 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                                   context: context,
                                   confirmBtnColor: AppColors.mainBlue,
                                   type: QuickAlertType.error,
-                                  title: 'Error...',
-                                  text: 'Please stop the timer!',
+                                  title: 'Error...'.tr(),
+                                  text: 'Please stop the timer!'.tr(),
                                 );
                               }
                             },
@@ -176,7 +177,7 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                           ),
                           Center(
                             child: Text(
-                              "Stopwatch",
+                              "Stopwatch".tr(),
                               style: TextStyle(
                                   fontFamily: 'SFProText',
                                   fontSize: 24.sp,
@@ -247,7 +248,7 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                                           MainAxisAlignment.spaceAround,
                                       children: [
                                         Text(
-                                          'HOURS',
+                                          'HOURS'.tr(),
                                           style: TextStyle(
                                             color:
                                                 Colors.black.withOpacity(0.5),
@@ -258,7 +259,7 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                                           ),
                                         ),
                                         Text(
-                                          'MINUTES',
+                                          'MINUTES'.tr(),
                                           style: TextStyle(
                                             color:
                                                 Colors.black.withOpacity(0.5),
@@ -269,7 +270,7 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                                           ),
                                         ),
                                         Text(
-                                          'SECONDS',
+                                          'SECONDS'.tr(),
                                           style: TextStyle(
                                             color:
                                                 Colors.black.withOpacity(0.5),
@@ -315,8 +316,8 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                                       context: context,
                                       confirmBtnColor: AppColors.mainBlue,
                                       type: QuickAlertType.error,
-                                      title: 'Error...',
-                                      text: 'Please stop the timer!',
+                                      title: 'Error...'.tr(),
+                                      text: 'Please stop the timer!'.tr(),
                                     );
                                   }
                                 },
@@ -367,25 +368,25 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                   options: [
                     TooltipOption(
                         icon: AppIcons.lofi,
-                        label: 'Lofi',
+                        label: 'Lofi'.tr(),
                         onPressed: () {
                           playMusic(de.AssetSource('lofi.mp3'));
                         }),
                     TooltipOption(
                         icon: AppIcons.paino,
-                        label: 'Piano',
+                        label: 'Piano'.tr(),
                         onPressed: () {
                           playMusic(de.AssetSource('piano.mp3'));
                         }),
                     TooltipOption(
                         icon: AppIcons.jazz,
-                        label: 'Jazz',
+                        label: 'Jazz'.tr(),
                         onPressed: () {
                           playMusic(de.AssetSource('jazz.mp3'));
                         }),
                     TooltipOption(
                         icon: AppIcons.zen,
-                        label: 'Zen',
+                        label: 'Zen'.tr(),
                         onPressed: () {
                           playMusic(de.AssetSource('zen.mp3'));
                         }),

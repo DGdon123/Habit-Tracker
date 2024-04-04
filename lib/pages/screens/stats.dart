@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
@@ -310,7 +311,7 @@ class StatsPageState extends State<StatsPage> {
                   children: [
                     Center(
                       child: Text(
-                        "Statistics",
+                        "Statistics".tr(),
                         style: TextStyle(
                             fontFamily: 'SFProText',
                             fontSize: 24.sp,
@@ -378,7 +379,7 @@ class StatsPageState extends State<StatsPage> {
                               child: Row(
                                 children: [
                                   Text(
-                                    'hours',
+                                    'hours'.tr(),
                                     style: TextStyle(
                                       color: const Color(0xFF686873),
                                       fontSize: 16.sp,
@@ -534,7 +535,7 @@ class StatsPageState extends State<StatsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Completion rate',
+                'Completion rate'.tr(),
                 style: subtitleStyle,
               ),
               SizedBox(
@@ -546,7 +547,7 @@ class StatsPageState extends State<StatsPage> {
               ),
               SizedBox(height: 15.h),
               Text(
-                'Points Earned',
+                'Points Earned'.tr(),
                 style: subtitleStyle,
               ),
               SizedBox(
@@ -558,7 +559,7 @@ class StatsPageState extends State<StatsPage> {
               ),
               SizedBox(height: 15.h),
               Text(
-                'Skipped',
+                'Skipped'.tr(),
                 style: subtitleStyle,
               ),
               SizedBox(
@@ -575,7 +576,7 @@ class StatsPageState extends State<StatsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Completed',
+                'Completed'.tr(),
                 style: subtitleStyle,
               ),
               SizedBox(
@@ -587,7 +588,7 @@ class StatsPageState extends State<StatsPage> {
               ),
               SizedBox(height: 15.h),
               Text(
-                'Best Streak',
+                'Best Streak'.tr(),
                 style: subtitleStyle,
               ),
               SizedBox(
@@ -599,7 +600,7 @@ class StatsPageState extends State<StatsPage> {
               ),
               SizedBox(height: 15.h),
               Text(
-                'Failed',
+                'Failed'.tr(),
                 style: subtitleStyle,
               ),
               SizedBox(
@@ -644,7 +645,7 @@ class StatsPageState extends State<StatsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'All Habits',
+              'All Habits'.tr(),
               style: TextStyle(
                 color: AppColors.black,
                 fontSize: 20.sp,
@@ -654,7 +655,7 @@ class StatsPageState extends State<StatsPage> {
               ),
             ),
             Text(
-              'Summary',
+              'Summary'.tr(),
               style: TextStyle(
                 color: const Color(0xFF9B9BA1),
                 fontSize: 14.sp,

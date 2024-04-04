@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/pages/profile_page/widgets/friend_request_card.dart';
 import 'package:habit_tracker/services/friend_firestore_services.dart';
@@ -30,7 +31,7 @@ class ReceivedFriendRequest extends StatelessWidget {
 
             return Column(
               children: [
-                Text("Received Friend Request ${cards.length}"),
+                Text("${"Received Friend Request".tr()} ${cards.length}"),
                 ...cards
               ],
             );

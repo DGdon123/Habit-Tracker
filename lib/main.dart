@@ -22,13 +22,14 @@ import 'package:geolocator/geolocator.dart' as img;
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/provider/avg_sleep_provider.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
+import 'package:habit_tracker/provider/flag_provider.dart';
 import 'package:habit_tracker/services/notification_services.dart';
 import 'package:http/http.dart' as http;
 import 'package:habit_tracker/pages/auth_onboarding_deciding_screen.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/provider/location_provider.dart';
 import 'package:habit_tracker/provider/start_end_date_provider.dart';
-import 'package:habit_tracker/services/notification_firebase_services.dart';
+
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -51,9 +52,6 @@ Future<void> main() async {
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  await NotificationFirebaseServices().requestPermission();
-
-
   Directory directory = await getApplicationDocumentsDirectory();
   Hive.init(directory.path);
   Hive.registerAdapter(DataModelAdapter());
@@ -65,6 +63,7 @@ Future<void> main() async {
     providers: [
       ChangeNotifierProvider(create: (_) => UserRepository.instance()),
       ChangeNotifierProvider(create: (_) => SelectedDateProvider()),
+      ChangeNotifierProvider(create: (_) => FlagImageProvider()),
       ChangeNotifierProvider(create: (_) => StartEndDateProvider()),
       ChangeNotifierProvider(create: (_) => LocationProvider()),
       ChangeNotifierProvider(create: (_) => StartEndDateProvider()),
@@ -75,7 +74,7 @@ Future<void> main() async {
       supportedLocales: const [
         Locale('en', 'US'),
         Locale('de', 'DE'),
-        Locale('es', 'ES')
+        Locale('zh', 'CN')
       ],
       path: 'assets/translations', // Path to your translation files
       fallbackLocale: const Locale('en', 'US'), // Default language
@@ -144,8 +143,6 @@ Future<void> uploadDataModelFromBox(String boxName) async {
       }
     }
   }
-
-  await boxDataModel.close();
 }
 
 Future<void> uploadDataModelFromBox1(String boxName) async {
@@ -173,8 +170,6 @@ Future<void> uploadDataModelFromBox1(String boxName) async {
       }
     }
   }
-
-  await boxDataModel.close();
 }
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -309,11 +304,11 @@ class _OnBoardingScreenState extends State<HomePage1> {
     super.initState();
     LocationManager().interval = 60;
     LocationManager().distanceFilter = 0;
-    LocationManager().notificationTitle = 'Tracking Your Location';
+    LocationManager().notificationTitle = 'Tracking Your Location'.tr();
     LocationManager().notificationMsg =
-        'Habit Tracker is tracking your location';
+        'Habit Tracker is tracking your location'.tr();
     LocationManager().notificationBigMsg =
-        'Habit Tracker is tracking your location';
+        'Habit Tracker is tracking your location'.tr();
     _status = LocationStatus.INITIALIZED;
     start();
     _getCurrentLocation();
@@ -389,7 +384,7 @@ class _OnBoardingScreenState extends State<HomePage1> {
         width: double.maxFinite,
         child: ElevatedButton(
           onPressed: stop,
-          child: const Text('STOP'),
+          child:  Text('STOP'.tr()),
         ),
       );
 
@@ -397,17 +392,17 @@ class _OnBoardingScreenState extends State<HomePage1> {
         width: double.maxFinite,
         child: ElevatedButton(
           onPressed: start,
-          child: const Text('START'),
+          child:  Text('START'.tr()),
         ),
       );
 
-  Widget statusText() => Text("Status: ${_status.toString().split('.').last}");
+  Widget statusText() => Text("${"Status:".tr()} ${_status.toString().split('.').last}");
 
   Widget currentLocationButton() => SizedBox(
         width: double.maxFinite,
         child: ElevatedButton(
           onPressed: getCurrentLocation,
-          child: const Text('CURRENT LOCATION'),
+          child:  Text('CURRENT LOCATION'.tr()),
         ),
       );
 
@@ -492,7 +487,7 @@ class _OnBoardingScreenState extends State<HomePage1> {
       }
 
       if (places.isEmpty) {
-        places.add('No results found');
+        places.add('No results found'.tr());
       }
 
       setState(() => _places = places);
@@ -509,7 +504,7 @@ class _OnBoardingScreenState extends State<HomePage1> {
   // locationWidget function to add data to Hive
   Future<Widget> locationWidget() async {
     if (_lastLocation == null) {
-      return const Text("No location yet");
+      return  Text("No location yet".tr());
     } else {
       distance = calculateDistance(
         latitude,

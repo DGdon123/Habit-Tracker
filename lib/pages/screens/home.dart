@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -104,7 +105,7 @@ class _HomeState extends State<Home> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Wake up      Sleep   ',
+          'Wake up      Sleep   '.tr(),
           style: headingStyle,
         ),
         SizedBox(
@@ -197,10 +198,10 @@ class _HomeState extends State<Home> {
                         ],
                       );
                     } else if (snapshotLength == 0) {
-                      return const Center(
-                          child: Text("Add your sleep and wake time."));
+                      return  Center(
+                          child: Text("Add your sleep and wake time.".tr()));
                     } else if (snapshot.hasError) {
-                      return const Text('Something went wrong');
+                      return  Text('Something went wrong'.tr());
                     }
                     return const SizedBox();
                   }),
@@ -218,7 +219,7 @@ class _HomeState extends State<Home> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Screen Time',
+          'Screen Time'.tr(),
           style: headingStyle,
         ),
         SizedBox(
@@ -265,7 +266,7 @@ class _HomeState extends State<Home> {
                               ConnectionState.waiting) {
                             return const SizedBox();
                           } else if (snapshot.hasError) {
-                            return const Text("Error");
+                            return  Text("Error".tr());
                           }
 
                           var duration = snapshot.data!["usage"] as Duration;
@@ -410,7 +411,7 @@ class _HomeState extends State<Home> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          timeString.toString() ?? "00:00:00",
+                          timeString.toString() ?? "00:00:00".tr(),
                           style: TextStyle(
                             color: AppColors.black,
                             fontSize: 19.sp,
@@ -420,7 +421,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         Text(
-                          'to',
+                          'to'.tr(),
                           style: TextStyle(
                             color: AppColors.black.withOpacity(0.7),
                             fontSize: 16.sp,
@@ -430,7 +431,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         Text(
-                          timeString1.toString() ?? "00:00:00",
+                          timeString1.toString() ?? "00:00:00".tr(),
                           style: TextStyle(
                             color: AppColors.black,
                             fontSize: 19.sp,
@@ -458,7 +459,7 @@ class _HomeState extends State<Home> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Focused Time',
+          'Focused Time'.tr(),
           style: headingStyle,
         ),
         SizedBox(
@@ -534,7 +535,7 @@ class _HomeState extends State<Home> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Start Now',
+                                    'Start Now'.tr(),
                                     style: TextStyle(
                                       color: AppColors.black,
                                       fontSize: 10.sp,
@@ -632,7 +633,7 @@ class _HomeState extends State<Home> {
                   ),
                 );
               },
-              child: const Text("Usage")),
+              child:  Text("Usage".tr())),
           Container(
             margin: const EdgeInsets.only(top: 10),
             child: Stack(

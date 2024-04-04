@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -182,22 +183,22 @@ class Onboard {
 }
 
 final List<Onboard> onboardings = [
-  const Onboard(
+   Onboard(
     title: "Track Your\nHabits, Achieve\nYour Goals",
     description:
-        "Stay motivated and reach your full potential with our personalized habit tracking tools.",
+        "Stay motivated and reach your full potential with our personalized habit tracking tools.".tr(),
     image: AppImages.characterFull,
   ),
-  const Onboard(
+   Onboard(
     title: "Unlock Your\nPotential",
     description:
-        "Start building positive habits that last with our easy-to-use habit tracker. Track your progress and achieve your goals!",
+        "Start building positive habits that last with our easy-to-use habit tracker. Track your progress and achieve your goals!".tr(),
     image: AppImages.characterFull,
   ),
-  const Onboard(
+   Onboard(
     title: "Make Every Day\nCount",
     description:
-        "Small changes lead to big results. Form new habits and unlock a better you!",
+        "Small changes lead to big results. Form new habits and unlock a better you!".tr(),
     image: AppImages.characterFull,
   ),
 ];

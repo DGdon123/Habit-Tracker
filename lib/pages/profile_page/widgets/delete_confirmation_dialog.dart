@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/services/friend_firestore_services.dart';
 
@@ -9,7 +10,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Confirm Deletion'),
+      title:  Text('Confirm Deletion'.tr()),
       content: const Text('Are you sure you want to delete?'),
       actions: [
         TextButton(
@@ -20,7 +21,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
             backgroundColor: Colors.white,
             foregroundColor: Colors.black,
           ),
-          child: const Text('Cancel'),
+          child:  Text('Cancel'.tr()),
         ),
         TextButton(
           onPressed: () {
@@ -31,7 +32,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
             backgroundColor: Colors.red,
             foregroundColor: Colors.white,
           ),
-          child: const Text('Delete'),
+          child:  Text('Delete'.tr()),
         ),
       ],
     );

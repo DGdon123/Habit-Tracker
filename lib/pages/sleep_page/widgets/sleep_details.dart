@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -88,7 +89,7 @@ class _SleepDetailsState extends State<SleepDetails> {
                     );
                   }),
                   Text(
-                    'Avg sleep time',
+                    'Avg sleep time'.tr(),
                     style:
                         TextStyles().secondaryTextStyle(14.sp, FontWeight.w400),
                   )

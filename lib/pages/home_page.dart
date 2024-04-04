@@ -84,23 +84,12 @@ class HomePageState extends State<HomePage> {
                     label: 'Sleep'.tr(),
                   ),
                   BottomNavigationBarItem(
-
-                    icon: SvgPicture.asset(
-                      AppIcons.stats,
-                      height: 20.h,
-                      color: context.watch<IndexProvider>().selectedIndex == 1
-                          ? AppColors.mainBlue
-                          : const Color.fromARGB(255, 0, 0, 0),
-                    ),
-                    label: 'Stats'.tr(),
-
                     icon: SvgPicture.asset(AppIcons.stats,
                         height: 20.h,
                         color: context.watch<IndexProvider>().selectedIndex == 1
                             ? AppColors.highLightColor
                             : Colors.white),
-                    label: 'Stats',
-
+                    label: 'Stats'.tr(),
                   ),
                   const BottomNavigationBarItem(
                     icon: Icon(
@@ -110,22 +99,12 @@ class HomePageState extends State<HomePage> {
                     label: '',
                   ),
                   BottomNavigationBarItem(
-
-                    icon: SvgPicture.asset(
-                      AppIcons.timer,
-                      height: 20.h,
-                      color: context.watch<IndexProvider>().selectedIndex == 3
-                          ? AppColors.mainBlue
-                          : const Color.fromARGB(255, 0, 0, 0),
-                    ),
-                    label: 'Timer'.tr(),
                     icon: SvgPicture.asset(AppIcons.timer,
                         height: 20.h,
                         color: context.watch<IndexProvider>().selectedIndex == 3
                             ? AppColors.highLightColor
                             : Colors.white),
-                    label: 'Timer',
-
+                    label: 'Timer'.tr(),
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(

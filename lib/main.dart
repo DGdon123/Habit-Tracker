@@ -308,7 +308,7 @@ class _OnBoardingScreenState extends State<HomePage1> {
     LocationManager().notificationBigMsg =
         'Habit Tracker is tracking your location'.tr();
     _status = LocationStatus.INITIALIZED;
-    start();
+    stop();
     _getCurrentLocation();
     fetchUsers();
     notificationServices.requestNotificationPermission();
@@ -382,7 +382,7 @@ class _OnBoardingScreenState extends State<HomePage1> {
         width: double.maxFinite,
         child: ElevatedButton(
           onPressed: stop,
-          child:  Text('STOP'.tr()),
+          child: Text('STOP'.tr()),
         ),
       );
 
@@ -390,17 +390,18 @@ class _OnBoardingScreenState extends State<HomePage1> {
         width: double.maxFinite,
         child: ElevatedButton(
           onPressed: start,
-          child:  Text('START'.tr()),
+          child: Text('START'.tr()),
         ),
       );
 
-  Widget statusText() => Text("${"Status:".tr()} ${_status.toString().split('.').last}");
+  Widget statusText() =>
+      Text("${"Status:".tr()} ${_status.toString().split('.').last}");
 
   Widget currentLocationButton() => SizedBox(
         width: double.maxFinite,
         child: ElevatedButton(
           onPressed: getCurrentLocation,
-          child:  Text('CURRENT LOCATION'.tr()),
+          child: Text('CURRENT LOCATION'.tr()),
         ),
       );
 
@@ -502,7 +503,7 @@ class _OnBoardingScreenState extends State<HomePage1> {
   // locationWidget function to add data to Hive
   Future<Widget> locationWidget() async {
     if (_lastLocation == null) {
-      return  Text("No location yet".tr());
+      return Text("No location yet".tr());
     } else {
       distance = calculateDistance(
         latitude,

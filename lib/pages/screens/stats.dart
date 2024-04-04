@@ -337,30 +337,32 @@ class StatsPageState extends State<StatsPage> {
                 height: 30.h,
               ),
 
-              Column(
-                children: [
-                  datePicker(formattedDate, context),
-                  SizedBox(
-                    height: 50.h,
-                  ),
-                  SizedBox(
-                    height: 300.h,
-                    width: 300.w,
-                    child: PieChart(
-                      PieChartData(
-                        sections: pieChartSections,
-                        borderData: FlBorderData(show: false),
-                        centerSpaceRadius: 0,
-                        sectionsSpace: 0,
-                        centerSpaceColor: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 50.h),
-                  piechartIndicator(),
-                  SizedBox(height: 30.h),
-                ],
-              ),
+              labelValues.isNotEmpty
+                  ? Column(
+                      children: [
+                        datePicker(formattedDate, context),
+                        SizedBox(
+                          height: 50.h,
+                        ),
+                        SizedBox(
+                          height: 300.h,
+                          width: 300.w,
+                          child: PieChart(
+                            PieChartData(
+                              sections: pieChartSections,
+                              borderData: FlBorderData(show: false),
+                              centerSpaceRadius: 0,
+                              sectionsSpace: 0,
+                              centerSpaceColor: Colors.white,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 50.h),
+                        piechartIndicator(),
+                        SizedBox(height: 30.h),
+                      ],
+                    )
+                  : Container(),
               labelValues1.isNotEmpty
                   ? Column(
                       children: [

@@ -68,7 +68,7 @@ List<BarChartGroupData> barChartGroups = [
       width: 10.w,
       toY: 0,
       fromY: 5, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
+      color: Color(0xFF004AAD),
     ),
   ]),
   BarChartGroupData(x: 1, barRods: [
@@ -76,7 +76,7 @@ List<BarChartGroupData> barChartGroups = [
       width: 10.w,
       toY: 0,
       fromY: 7, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
+      color: Color(0xFF004AAD),
     ),
   ]),
   BarChartGroupData(x: 2, barRods: [
@@ -84,7 +84,7 @@ List<BarChartGroupData> barChartGroups = [
       width: 10.w,
       toY: 0,
       fromY: 9, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
+      color: Color(0xFF004AAD),
     ),
   ]),
   BarChartGroupData(x: 3, barRods: [
@@ -92,7 +92,7 @@ List<BarChartGroupData> barChartGroups = [
       width: 10.w,
       toY: 0,
       fromY: 5, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
+      color: Color(0xFF004AAD),
     ),
   ]),
   BarChartGroupData(x: 4, barRods: [
@@ -100,7 +100,7 @@ List<BarChartGroupData> barChartGroups = [
       width: 10.w,
       toY: 0,
       fromY: 8, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
+      color: Color(0xFF004AAD),
     ),
   ]),
   BarChartGroupData(x: 5, barRods: [
@@ -108,7 +108,7 @@ List<BarChartGroupData> barChartGroups = [
       width: 10.w,
       toY: 0,
       fromY: 7, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
+      color: Color(0xFF004AAD),
     ),
   ]),
   BarChartGroupData(x: 6, barRods: [
@@ -116,7 +116,7 @@ List<BarChartGroupData> barChartGroups = [
       width: 10.w,
       toY: 0,
       fromY: 3, // Use the same data from the pie chart (adjust as needed)
-      color: Color(0xFF4E00FF),
+      color: Color(0xFF004AAD),
     ),
   ]),
 ];

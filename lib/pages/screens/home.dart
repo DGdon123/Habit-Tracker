@@ -159,7 +159,7 @@ class _HomeState extends State<Home> {
                             children: [
                               Icon(
                                 Icons.light_mode,
-                                color: AppColors.lightBlack,
+                                color: Colors.yellow.shade600,
                                 size: 34.sp,
                               ),
                               SizedBox(
@@ -182,7 +182,7 @@ class _HomeState extends State<Home> {
                             children: [
                               Icon(
                                 Icons.dark_mode_rounded,
-                                color: AppColors.lightBlack,
+                                color: Colors.yellow.shade600,
                                 size: 30.sp,
                               ),
                               SizedBox(
@@ -672,7 +672,7 @@ class _HomeState extends State<Home> {
                     'XP',
                     style: TextStyle(
                       fontFamily: 'SFProText',
-                      fontSize: 18.sp,
+                      fontSize: 23.sp,
                       fontWeight: FontWeight.normal,
                       color: AppColors.black,
                     ),

@@ -17,7 +17,7 @@ class AppIcons {
   static const String friends = 'assets/icons/friends.svg';
   static const String stats = 'assets/icons/stats.svg';
   static const String sleep = 'assets/icons/sleep.svg';
-  static const String profile = 'assets/icons/profile.svg';
+  //static const String profile = 'assets/icons/profile.svg';
   static const String unfriend = 'assets/icons/unfriend.svg';
   static const String dropdown = 'assets/icons/dropdown.svg';
   static const String plus = 'assets/icons/plus.svg';
@@ -60,4 +60,9 @@ class AppIcons {
   static const String paino = 'assets/icons/keyboard.png';
   static const String jazz = 'assets/icons/jazz.png';
   static const String zen = 'assets/icons/therapy.png';
+  static const String xpbar = 'assets/icons/xpbar.png';
+  static const String night = 'assets/icons/night.png';
+  static const String profile = 'assets/icons/profile.png';
+  static const String time = 'assets/icons/time.png';
+  static const String statistics = 'assets/icons/statistics.png';
 }

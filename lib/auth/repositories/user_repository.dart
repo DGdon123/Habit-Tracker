@@ -6,6 +6,8 @@ import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:habit_tracker/auth/accountSetup.dart';
+import 'package:habit_tracker/auth/accountSetup1.dart';
 import 'package:habit_tracker/auth/signup_page.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/home.dart';
@@ -164,6 +166,23 @@ class UserRepository with ChangeNotifier {
       //
 
       debugPrint("Authenticating user repo: $authResponse");
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CircularProgressIndicator(
+                color: AppColors.mainBlue,
+              ),
+              SizedBox(height: 16),
+              Text('Please wait, your account is creating...'),
+            ],
+          ),
+        ),
+      );
 
       // adding details to the firestore
       UserFireStoreServices()
@@ -290,23 +309,21 @@ class UserRepository with ChangeNotifier {
         idToken: googleAuth.idToken,
       );
       final authResponse = await _auth.signInWithCredential(credential);
-
-      // adding details to the firestore
-      await UserFireStoreServices().addUser(
-          latitude: 0,
-          longitude: 0,
-          dob: "",
-          uid: authResponse.user!.uid,
-          email: authResponse.user!.email.toString(),
-          name: authResponse.user!.displayName.toString(),
-          photoUrl: authResponse.user!.photoURL.toString());
-
-      Navigator.pushReplacement(
+      _status = Status.Authenticated;
+      notifyListeners();
+      Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const HomePage(),
+          builder: (context) => AccountSetup1(
+            email: authResponse.user!.email.toString(),
+            username: authResponse.user!.displayName.toString(),
+            uid: authResponse.user!.uid.toString(),
+            photoURL: authResponse.user!.photoURL.toString(),
+          ),
         ),
       );
+      // adding details to the firestore
+
       return true;
     } catch (e) {
       print(e);
@@ -326,29 +343,23 @@ class UserRepository with ChangeNotifier {
       final OAuthCredential facebookAuthCredential =
           FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
-      final userData = await FacebookAuth.instance.getUserData();
-
       // Once signed in, return the UserCredential
       final authResponse = await FirebaseAuth.instance
           .signInWithCredential(facebookAuthCredential);
       debugPrint("Authenticating Facebook user repo: $authResponse");
-
-      // adding details to the firestore
-      UserFireStoreServices().addUser(
-          latitude: 0,
-          longitude: 0,
-          dob: "",
-          uid: authResponse.user!.uid,
-          email: authResponse.user!.email.toString(),
-          name: authResponse.user!.displayName.toString(),
-          photoUrl: authResponse.user!.photoURL.toString());
-
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const HomePage(),
+          builder: (context) => AccountSetup1(
+            email: authResponse.user!.email.toString(),
+            username: authResponse.user!.displayName.toString(),
+            uid: authResponse.user!.uid.toString(),
+            photoURL: authResponse.user!.photoURL.toString(),
+          ),
         ),
       );
+      // adding details to the firestore
+
       return true;
     } catch (e) {
       print(e);

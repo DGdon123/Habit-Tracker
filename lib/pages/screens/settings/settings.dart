@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
+import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/language/language.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
@@ -61,7 +62,11 @@ class _SettingsPageState extends State<SettingsPage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        context.read<IndexProvider>().setSelectedIndex(4);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => const HomePage())),
+                            (route) => false);
                       },
                       child: SizedBox(
                         height: 28.h,

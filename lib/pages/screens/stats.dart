@@ -108,7 +108,7 @@ class StatsPageState extends State<StatsPage> {
 
   Padding piechartIndicator() {
     // Call updatePieChartSections to fetch user labels and update the pieChartSections list
-    updatePieChartSections();
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: Column(
@@ -185,7 +185,7 @@ class StatsPageState extends State<StatsPage> {
       int minutes = labelData['Minutes'];
       int seconds = labelData['Seconds'];
       int totalSeconds = hours;
-      int value = 5; // Set the default value
+      int value = 1; // Set the default value
       labelValues[label] = (labelValues[label] ?? 0) + value;
       labelValues1[label] = (labelValues1[label] ?? 0) + totalSeconds.toInt();
       labelDataList.add({
@@ -337,30 +337,32 @@ class StatsPageState extends State<StatsPage> {
                 height: 30.h,
               ),
 
-              Column(
-                children: [
-                  datePicker(formattedDate, context),
-                  SizedBox(
-                    height: 50.h,
-                  ),
-                  SizedBox(
-                    height: 300.h,
-                    width: 300.w,
-                    child: PieChart(
-                      PieChartData(
-                        sections: pieChartSections,
-                        borderData: FlBorderData(show: false),
-                        centerSpaceRadius: 0,
-                        sectionsSpace: 0,
-                        centerSpaceColor: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 50.h),
-                  piechartIndicator(),
-                  SizedBox(height: 30.h),
-                ],
-              ),
+              labelValues.isNotEmpty
+                  ? Column(
+                      children: [
+                        datePicker(formattedDate, context),
+                        SizedBox(
+                          height: 50.h,
+                        ),
+                        SizedBox(
+                          height: 300.h,
+                          width: 300.w,
+                          child: PieChart(
+                            PieChartData(
+                              sections: pieChartSections,
+                              borderData: FlBorderData(show: false),
+                              centerSpaceRadius: 0,
+                              sectionsSpace: 0,
+                              centerSpaceColor: Colors.white,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 50.h),
+                        piechartIndicator(),
+                        SizedBox(height: 30.h),
+                      ],
+                    )
+                  : Container(),
               labelValues1.isNotEmpty
                   ? Column(
                       children: [

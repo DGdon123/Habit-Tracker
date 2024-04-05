@@ -56,7 +56,6 @@ Future<void> main() async {
   Hive.registerAdapter(DataModel1Adapter());
   await Hive.openBox<DataModel>('hive_box');
   await Hive.openBox<DataModel1>('hive_box1');
-
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => UserRepository.instance()),
@@ -267,31 +266,37 @@ class _OnBoardingScreenState extends State<HomePage1> {
 
   double latitude = 0;
   double longitude = 0;
-
+  final CollectionReference userCollection =
+      FirebaseFirestore.instance.collection('users');
   Future<void> fetchUsers() async {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
     String? currentUserUid = getUsername();
 
     try {
-      QuerySnapshot snapshot = await users.get();
+      QuerySnapshot snapshot =
+          await userCollection.where('uid', isEqualTo: currentUserUid).get();
 
-      for (var doc in snapshot.docs) {
-        String uid = doc.id;
-        Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
+      if (snapshot.docs.isNotEmpty) {
+        // If the snapshot is not empty, proceed with accessing user data
+        for (var doc in snapshot.docs) {
+          Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
 
-        if (uid == currentUserUid) {
           // This user document matches the current user
           // You can access the user data and do something with it
-          latitude = userData['latitude'];
-          longitude = userData['longitude'];
+        latitude = userData['latitude'] ;
+      longitude = userData['longitude'];
 
+          // If latitude and longitude are not null, log them or perform further actions
           log('Latitude: $latitude, Longitude: $longitude');
           // Example: Use the latitude and longitude data
           // SomeFunctionToUseLocation(latitude, longitude);
-        }
+                }
+      } else {
+        // Handle case where no documents match the current user UID
+        log('No user data found for the current user');
       }
     } catch (error) {
-      print("Failed to fetch users: $error");
+      // Handle any potential errors
+      log("Failed to fetch users: $error");
     }
   }
 

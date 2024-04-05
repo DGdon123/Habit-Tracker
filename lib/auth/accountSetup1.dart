@@ -24,6 +24,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/user_firestore_services.dart';
 
@@ -68,14 +69,10 @@ class _AccountSetupState extends State<AccountSetup1> {
     final user = Provider.of<UserRepository>(context);
     final dob = Provider.of<SelectedDateProvider>(context, listen: false);
 
-    final locProvider = Provider.of<LocationProvider>(context, listen: false);
-    var lat = locProvider.latitude;
-    var longi = locProvider.longitude;
     var dobis = dob.selectedDate ?? DateTime.now();
     var dateString = dobis.toString().split(' ')[0]; // Extract date part
     log(dateString); // Log only the date part
-    log(lat.toString());
-    log(longi.toString());
+
     return Scaffold(
       backgroundColor: AppColors.primaryColor,
       appBar: AppBar(
@@ -165,8 +162,19 @@ class _AccountSetupState extends State<AccountSetup1> {
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
-                      } else {
+                      } 
                         if (currentPage == 2) {
+                            SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          String token =
+                              prefs.getString('device_token').toString();
+                          final locProvider = Provider.of<LocationProvider>(
+                              context,
+                              listen: false);
+                          var lat = locProvider.latitude;
+                          var longi = locProvider.longitude;
+                          log(lat.toString());
+                          log(longi.toString());
                           showDialog(
                             context: context,
                             barrierDismissible: false,
@@ -190,7 +198,7 @@ class _AccountSetupState extends State<AccountSetup1> {
                             await UserFireStoreServices().addUser(
                               latitude: lat.toDouble(),
                               longitude: longi.toDouble(),
-
+                              devicetoken: token,
                               uid: widget.uid?.toString() ??
                                   "", // Check for null and provide a default value
                               email: widget.email?.toString() ??

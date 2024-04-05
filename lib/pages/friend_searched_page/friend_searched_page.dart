@@ -27,21 +27,25 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
     return user?.uid;
   }
 
+  final CollectionReference userCollection =
+      FirebaseFirestore.instance.collection('users');
+
   Map<String, dynamic> userLabels = {};
   String? token;
   List<Map<String, dynamic>> dataList = [];
 
   Future<Map<String, dynamic>> fetchUsers() async {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    String? currentUserUid = getUserID();
 
-    String? userID = getUserID(); // Get the current user's ID
-    logger.d(userID);
+   
+    logger.d(currentUserUid);
     // Initialize a list to hold the Text widgets
 
-    if (userID != null) {
+    if (currentUserUid != null) {
       try {
-        QuerySnapshot snapshot =
-            await users.where('uid', isEqualTo: userID).get();
+         QuerySnapshot snapshot =
+          await userCollection.where('uid', isEqualTo: currentUserUid).get();
+
         if (snapshot.docs.isNotEmpty) {
           for (var doc in snapshot.docs) {
             var data = doc.data()
@@ -53,9 +57,9 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
           logger.d(userLabels);
           if (userLabels['data'] != null && userLabels['data']!.isNotEmpty) {
             setState(() {
-               token = userLabels['data']![0]['token'];
+              token = userLabels['data']![0]['token'];
             });
-           
+
             logger.d(token);
           } else {
             print('No data available');

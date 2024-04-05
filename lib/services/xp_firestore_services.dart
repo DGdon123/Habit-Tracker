@@ -7,7 +7,7 @@ class XpFirestoreServices {
   var userID = FirebaseAuth.instance.currentUser!.uid;
   final userRef = FirebaseFirestore.instance.collection('users');
 
-  Future<void> addXp(int xp) async {
+  Future<void> addXp({required int xp, required String reason}) async {
     debugPrint('xp: $xp, userID: $userID');
     // updating to userRef collection
     await userRef.doc(userID).update({
@@ -19,6 +19,7 @@ class XpFirestoreServices {
       'xp': xp,
       'userID': userID,
       'timestamp': DateTime.now(),
+      'reason': reason,
     });
   }
 

@@ -166,7 +166,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                     shape: RoundedRectangleBorder(
                                       side: const BorderSide(
                                           width: 1, color: Color(0xFFEAECF0)),
-                                      borderRadius: BorderRadius.circular(16.r),
+                                      borderRadius:
+                                          BorderRadius.circular(16.r),
                                     ),
                                   ),
                                   child: Image.asset(

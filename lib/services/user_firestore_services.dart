@@ -11,7 +11,6 @@ class UserFireStoreServices {
       {required String uid,
       required String email,
       required String name,
-      required String dob,
       required String photoUrl,
       required double latitude,
       required double longitude}) async {
@@ -32,7 +31,6 @@ class UserFireStoreServices {
       'email': email,
       'name': name.toLowerCase().trim(),
       'photoUrl': photoUrl,
-      'dob': dob,
       'latitude': latitude,
       'longitude': longitude,
       "uid": uid,

@@ -92,6 +92,9 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                   ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
                 ],
               ),
             ),
@@ -273,7 +276,7 @@ class _HomeState extends State<Home> {
 
                           var duration = snapshot.data!["usage"] as Duration;
 
-                          var hours = duration!.inHours % 60;
+                          var hours = duration.inHours % 60;
                           var minutes = duration.inMinutes % 60;
 
                           return Text(
@@ -641,7 +644,7 @@ class _HomeState extends State<Home> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                Container(
+                SizedBox(
                   height: 100,
                   width: 100,
                   child: Image.asset(AppIcons.xpbar),
@@ -649,7 +652,7 @@ class _HomeState extends State<Home> {
                 Padding(
                   padding: const EdgeInsets.only(left: 45),
                   child: Container(
-                    padding: EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(2),
                     width: 60,
                     child: Text(
                       '99000',

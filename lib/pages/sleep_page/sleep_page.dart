@@ -86,32 +86,48 @@ class SleepPageState extends State<SleepPage> {
                         'Sleep Time'.tr(),
                         style: TextStyles().titleStyle,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return SleepTime(); // Use the custom dialog
-                            },
-                          );
-                        },
-                        child: Container(
-                            width: 40.h,
-                            height: 40.w,
-                            alignment: Alignment.center,
-                            decoration: ShapeDecoration(
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                side: const BorderSide(
-                                    width: 1, color: Color(0xFFEAECF0)),
-                                borderRadius: BorderRadius.circular(16.r),
-                              ),
-                            ),
-                            child: SvgPicture.asset(
-                              AppIcons.plus,
-                              height: 24.h,
-                            )),
-                      ),
+                      StreamBuilder<QuerySnapshot>(
+                          stream: SleepFireStoreServices()
+                              .listenToTodayAddedSleepTime,
+                          builder: (_, snapshot) {
+                            if (snapshot.connectionState ==
+                                    ConnectionState.waiting ||
+                                snapshot.hasError) {
+                              return SizedBox();
+                            }
+
+                            var docs = snapshot.data?.docs ?? [];
+
+                            return GestureDetector(
+                              onTap: docs.isNotEmpty
+                                  ? null
+                                  : () {
+                                      debugPrint("Tapped");
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return SleepTime(); // Use the custom dialog
+                                        },
+                                      );
+                                    },
+                              child: Container(
+                                  width: 40.h,
+                                  height: 40.w,
+                                  alignment: Alignment.center,
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                          width: 1, color: Color(0xFFEAECF0)),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: SvgPicture.asset(
+                                    AppIcons.plus,
+                                    height: 24.h,
+                                  )),
+                            );
+                          }),
                     ]),
               ),
               SizedBox(
@@ -146,9 +162,9 @@ class SleepPageState extends State<SleepPage> {
                         ),
                       );
                     } else if (snapshotLength == 0) {
-                      return  Text("Add your sleep time".tr());
+                      return Text("Add your sleep time".tr());
                     } else if (snapshot.hasError) {
-                      return  Text('Something went wrong'.tr());
+                      return Text('Something went wrong'.tr());
                     }
                     return const CircularProgressIndicator();
                   }),

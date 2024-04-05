@@ -69,7 +69,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
               audioPlayer.stop();
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (_) => HomePage()),
+                  MaterialPageRoute(builder: (_) => const HomePage()),
                   (route) => false);
             },
             context: context,

@@ -10,6 +10,7 @@ class UserFireStoreServices {
   Future<void> addUser(
       {required String uid,
       required String email,
+      required String devicetoken,
       required String name,
       required String photoUrl,
       required double latitude,
@@ -31,6 +32,7 @@ class UserFireStoreServices {
       'email': email,
       'name': name.toLowerCase().trim(),
       'photoUrl': photoUrl,
+      'device_token': devicetoken,
       'latitude': latitude,
       'longitude': longitude,
       "uid": uid,

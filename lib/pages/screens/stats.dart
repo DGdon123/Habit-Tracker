@@ -42,6 +42,142 @@ class StatsPageState extends State<StatsPage> {
   List<Map<String, dynamic>> dataList = [];
   List<Map<String, dynamic>> dataList2 = [];
   bool select = false;
+
+  Padding piechartIndicator() {
+    // Call updatePieChartSections to fetch user labels and update the pieChartSections list
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+      child: Column(
+        children: pieChartSections
+            .map((section) => Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 10.h,
+                      height: 10.h,
+                      decoration: BoxDecoration(
+                        color: section.color,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(100.r),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Text(
+                      '${section.title} :',
+                      style: secondaryStyle,
+                    ),
+                    SizedBox(width: 5.w),
+                    Text(
+                      '${section.value}%',
+                      style: statusStyle(AppColors.textBlack),
+                    ),
+                  ],
+                ))
+            .toList(),
+      ),
+    );
+  }
+
+  double? maxY;
+  int? maxValue;
+  List<BarChartGroupData> barChartGroups = [];
+  List<PieChartSectionData> pieChartSections = [];
+  List<Map<String, dynamic>> labelDataList =
+      []; // Create a map to aggregate values for each unique label
+  // Create a map to aggregate values for each unique label
+  Map<String, int> labelValues = {};
+  Map<String, int> labelValues1 = {};
+  Future<void> updatePieChartSections() async {
+    // Clear the pieChartSections list before updating it
+    labelDataList.clear();
+
+// Fetch user labels from both sources
+    Map<String, dynamic> labels1 = await fetchUsers();
+    Map<String, dynamic> labels2 = await fetchUsers2();
+
+// Iterate over user labels from the first source and aggregate values for each label
+    if (labels1.isNotEmpty) {
+      labels1['data'].forEach((labelData) {
+        String label = labelData['Label'].toString();
+        int hours = labelData['Hours'];
+        int minutes = labelData['Minutes'];
+        int seconds = labelData['Seconds'];
+        int totalSeconds = hours;
+        int value = 1; // Set the default value
+        labelValues[label] = (labelValues[label] ?? 0) + value;
+        labelValues1[label] = (labelValues1[label] ?? 0) + totalSeconds.toInt();
+        labelDataList.add({
+          'Label': label,
+          'Hours': hours,
+          'Minutes': minutes,
+          'Seconds': seconds,
+        });
+      });
+    }
+
+    if (labels2.isNotEmpty) {
+// Iterate over user labels from the second source and aggregate values for each label
+      labels2['data'].forEach((labelData) {
+        String label = labelData['Label'].toString();
+        int hours = labelData['Hours'];
+        int minutes = labelData['Minutes'];
+        int seconds = labelData['Seconds'];
+        int totalSeconds = hours;
+        int value = 1; // Set the default value
+        labelValues[label] = (labelValues[label] ?? 0) + value;
+        labelValues1[label] = (labelValues1[label] ?? 0) + totalSeconds.toInt();
+        labelDataList.add({
+          'Label': label,
+          'Hours': hours,
+          'Minutes': minutes,
+          'Seconds': seconds,
+        });
+      });
+    }
+
+// Create PieChartSectionData objects based on the aggregated values
+    labelValues.forEach((label, value) {
+      PieChartSectionData section = PieChartSectionData(
+        color: getColorForLabel(label),
+        value: value.toDouble(), // Set the aggregated value
+        title: label,
+        radius: 150,
+        titleStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 13.sp,
+          fontFamily: 'SFProText',
+          fontWeight: FontWeight.w600,
+        ),
+      );
+      setState(() {
+        pieChartSections.add(section);
+      });
+    });
+
+// Create BarChartGroupData objects based on the aggregated values
+    barChartGroups = labelValues1.entries.map((entry) {
+      String label = entry.key;
+      int value = entry.value;
+      logger.d(value);
+      return BarChartGroupData(x: value, barRods: [
+        BarChartRodData(
+          borderRadius: BorderRadius.circular(100.r),
+          width: 40.w,
+          toY: value.toDouble(),
+          fromY: 0, // Use the aggregated value
+          color: getColorForLabel(label),
+        ),
+      ]);
+    }).toList();
+    maxValue = labelValues1.values
+        .fold(0, (prev, value) => value > prev! ? value : prev);
+
+// Calculate maxY by adding a constant offset to the maximum value
+    maxY = maxValue!.toDouble() + 4;
+  }
+
   Future<Map<String, dynamic>> fetchUsers() async {
     CollectionReference users =
         FirebaseFirestore.instance.collection('stopwatch');
@@ -106,134 +242,95 @@ class StatsPageState extends State<StatsPage> {
     return userLabels2; // Return the list of Text widgets
   }
 
-  Padding piechartIndicator() {
-    // Call updatePieChartSections to fetch user labels and update the pieChartSections list
-
+  Padding datePicker(String formattedDate, BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-      child: Column(
-        children: pieChartSections
-            .map((section) => Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 10.h,
-                      height: 10.h,
-                      decoration: BoxDecoration(
-                        color: section.color,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(100.r),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      '${section.title} :',
-                      style: secondaryStyle,
-                    ),
-                    SizedBox(width: 5.w),
-                    Text(
-                      '${section.value}%',
-                      style: statusStyle(AppColors.textBlack),
-                    ),
-                  ],
-                ))
-            .toList(),
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${startDate != null ? DateFormat("MMM dd").format(startDate!) : formattedDate} - ${endDate != null ? DateFormat("MMM dd").format(endDate!) : ''}',
+                style: secondaryStyle,
+              ),
+            ],
+          ),
+          GestureDetector(
+            onTap: () async {
+              DateTime? selectedStartDate;
+              DateTime? selectedEndDate;
+
+              showCustomDateRangePicker(
+                fontFamily: "SFProText",
+                context,
+                dismissible: true,
+                minimumDate: DateTime.now().subtract(const Duration(days: 30)),
+                maximumDate: DateTime.now().add(const Duration(days: 30)),
+                endDate: endDate,
+                startDate: startDate,
+                backgroundColor: Colors.white,
+                primaryColor: AppColors.black,
+                onApplyClick: (start, end) {
+                  setState(() {
+                    endDate = end;
+                    startDate = start;
+                  });
+                },
+                onCancelClick: () {
+                  setState(() {
+                    endDate = null;
+                    startDate = null;
+                  });
+                },
+              );
+
+              // Filter selectable dates based on the timestamp from Firebase
+              for (var data in userLabels['data']) {
+                DateTime timestamp = DateTime.fromMillisecondsSinceEpoch(
+                    data['Timestamp'].seconds * 1000);
+                if (startDate != null && endDate != null) {
+                  if (startDate!.isBefore(timestamp) &&
+                      endDate!.isAfter(timestamp)) {
+                    // If the timestamp falls within the selected date range
+                    if (selectedStartDate == null ||
+                        selectedStartDate.isAfter(timestamp)) {
+                      selectedStartDate = timestamp;
+                    }
+                    if (selectedEndDate == null ||
+                        selectedEndDate.isBefore(timestamp)) {
+                      selectedEndDate = timestamp;
+                    }
+                  }
+                }
+              }
+
+              // Update the selected start and end dates
+              setState(() {
+                startDate = selectedStartDate;
+                endDate = selectedEndDate;
+              });
+            },
+            child: Container(
+                width: 40.h,
+                height: 40.w,
+                alignment: Alignment.center,
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(width: 1, color: Color(0xFFEAECF0)),
+                    borderRadius: BorderRadius.circular(16.r),
+                  ),
+                ),
+                child: SvgPicture.asset(
+                  AppIcons.dropdown,
+                  height: 24.h,
+                )),
+          ),
+        ],
       ),
     );
-  }
-
-  double? maxY;
-  int? maxValue;
-  List<BarChartGroupData> barChartGroups = [];
-  List<PieChartSectionData> pieChartSections = [];
-  List<Map<String, dynamic>> labelDataList =
-      []; // Create a map to aggregate values for each unique label
-  // Create a map to aggregate values for each unique label
-  Map<String, int> labelValues = {};
-  Map<String, int> labelValues1 = {};
-  Future<void> updatePieChartSections() async {
-    // Clear the pieChartSectFuture<void> updatePieChartSections() async {
-    // Clear the pieChartSections list before updating it
-
-    // Fetch user labels from both sources
-    Map<String, dynamic> labels1 = await fetchUsers();
-    Map<String, dynamic> labels2 = await fetchUsers2();
-
-// Iterate over user labels from the first source and aggregate values for each label
-    labels1['data'].forEach((labelData) {
-      String label = labelData['Label'].toString();
-      int hours = labelData['Hours'];
-      int minutes = labelData['Minutes'];
-      int seconds = labelData['Seconds'];
-      int totalSeconds = hours;
-      int value = 1; // Set the default value
-      labelValues[label] = (labelValues[label] ?? 0) + value;
-      labelValues1[label] = (labelValues1[label] ?? 0) + totalSeconds.toInt();
-      labelDataList.add({
-        'Label': label,
-        'Hours': hours,
-        'Minutes': minutes,
-        'Seconds': seconds,
-      });
-    });
-
-// Iterate over user labels from the second source and aggregate values for each label
-    labels2['data'].forEach((labelData) {
-      String label = labelData['Label'].toString();
-      int hours = labelData['Hours'];
-      int minutes = labelData['Minutes'];
-      int seconds = labelData['Seconds'];
-      int totalSeconds = hours;
-      int value = 1; // Set the default value
-      labelValues[label] = (labelValues[label] ?? 0) + value;
-      labelValues1[label] = (labelValues1[label] ?? 0) + totalSeconds.toInt();
-      labelDataList.add({
-        'Label': label,
-        'Hours': hours,
-        'Minutes': minutes,
-        'Seconds': seconds,
-      });
-    });
-// Create PieChartSectionData objects based on the aggregated values
-    labelValues.forEach((label, value) {
-      PieChartSectionData section = PieChartSectionData(
-        color: getColorForLabel(label),
-        value: value.toDouble(), // Set the aggregated value
-        title: label,
-        radius: 150,
-        titleStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 13.sp,
-          fontFamily: 'SFProText',
-          fontWeight: FontWeight.w600,
-        ),
-      );
-      setState(() {
-        pieChartSections.add(section);
-      });
-    });
-
-// Create BarChartGroupData objects based on the aggregated values
-    barChartGroups = labelValues1.entries.map((entry) {
-      String label = entry.key;
-      int value = entry.value;
-      logger.d(value);
-      return BarChartGroupData(x: value, barRods: [
-        BarChartRodData(
-          borderRadius: BorderRadius.circular(100.r),
-          width: 40.w,
-          toY: 0,
-          fromY: value.toDouble(), // Use the aggregated value
-          color: getColorForLabel(label),
-        ),
-      ]);
-    }).toList();
-    maxValue = labelValues1.values
-        .fold(0, (prev, value) => value > prev! ? value : prev);
-
-// Calculate maxY by adding a constant offset to the maximum value
-    maxY = maxValue!.toDouble() + 1;
   }
 
   Color getRandomColor() {
@@ -290,7 +387,6 @@ class StatsPageState extends State<StatsPage> {
   @override
   Widget build(BuildContext context) {
     String formattedDate = DateFormat('dd MMMM yyyy').format(today);
-
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -398,7 +494,7 @@ class StatsPageState extends State<StatsPage> {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20.w),
                               child: SizedBox(
-                                height: 300,
+                                height: 150,
                                 child: BarChart(
                                   BarChartData(
                                     borderData: FlBorderData(
@@ -462,68 +558,6 @@ class StatsPageState extends State<StatsPage> {
             ]),
           ),
         ),
-      ),
-    );
-  }
-
-  Padding datePicker(String formattedDate, BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${startDate != null ? DateFormat("MMM dd").format(startDate!) : formattedDate} - ${endDate != null ? DateFormat("MMM dd").format(endDate!) : ''}',
-                style: secondaryStyle,
-              ),
-            ],
-          ),
-          GestureDetector(
-            onTap: () {
-              showCustomDateRangePicker(
-                fontFamily: "SFProText",
-                context,
-                dismissible: true,
-                minimumDate: DateTime.now().subtract(const Duration(days: 30)),
-                maximumDate: DateTime.now().add(const Duration(days: 30)),
-                endDate: endDate,
-                startDate: startDate,
-                backgroundColor: Colors.white,
-                primaryColor: AppColors.black,
-                onApplyClick: (start, end) {
-                  setState(() {
-                    endDate = end;
-                    startDate = start;
-                  });
-                },
-                onCancelClick: () {
-                  setState(() {
-                    endDate = null;
-                    startDate = null;
-                  });
-                },
-              );
-            },
-            child: Container(
-                width: 40.h,
-                height: 40.w,
-                alignment: Alignment.center,
-                decoration: ShapeDecoration(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(width: 1, color: Color(0xFFEAECF0)),
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                ),
-                child: SvgPicture.asset(
-                  AppIcons.dropdown,
-                  height: 24.h,
-                )),
-          ),
-        ],
       ),
     );
   }

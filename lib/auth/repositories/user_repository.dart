@@ -14,6 +14,7 @@ import 'package:habit_tracker/pages/screens/home.dart';
 import 'package:habit_tracker/services/user_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../login_page.dart';
 
@@ -48,7 +49,8 @@ class UserRepository with ChangeNotifier {
     try {
       _status = Status.Authenticating;
       notifyListeners();
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('device_token').toString();
       // Sign in with email and password
       final authResponse = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
@@ -57,7 +59,7 @@ class UserRepository with ChangeNotifier {
       await UserFireStoreServices().addUser(
           latitude: 0,
           longitude: 0,
-         
+          devicetoken: token,
           uid: authResponse.user!.uid,
           email: authResponse.user!.email.toString(),
           name: authResponse.user!.displayName.toString(),
@@ -156,7 +158,8 @@ class UserRepository with ChangeNotifier {
       notifyListeners();
 
       debugPrint("Authenticating user repo");
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('device_token').toString();
       // Create user with email and password
       final authResponse = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -187,10 +190,10 @@ class UserRepository with ChangeNotifier {
       // adding details to the firestore
       UserFireStoreServices()
           .addUser(
+        devicetoken: token,
         uid: authResponse.user!.uid,
         email: email,
         name: username,
-     
         latitude: latitude,
         longitude: longitude,
         photoUrl: "",
@@ -347,7 +350,7 @@ class UserRepository with ChangeNotifier {
       final authResponse = await FirebaseAuth.instance
           .signInWithCredential(facebookAuthCredential);
       debugPrint("Authenticating Facebook user repo: $authResponse");
-       _status = Status.Authenticated;
+      _status = Status.Authenticated;
       notifyListeners();
       Navigator.push(
         context,

@@ -308,7 +308,7 @@ class _OnBoardingScreenState extends State<HomePage1> {
     LocationManager().notificationBigMsg =
         'Habit Tracker is tracking your location'.tr();
     _status = LocationStatus.INITIALIZED;
-    stop();
+    start();
     _getCurrentLocation();
     fetchUsers();
     notificationServices.requestNotificationPermission();

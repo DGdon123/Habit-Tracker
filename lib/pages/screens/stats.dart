@@ -108,7 +108,7 @@ class StatsPageState extends State<StatsPage> {
 
   Padding piechartIndicator() {
     // Call updatePieChartSections to fetch user labels and update the pieChartSections list
-    updatePieChartSections();
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
       child: Column(
@@ -185,7 +185,7 @@ class StatsPageState extends State<StatsPage> {
       int minutes = labelData['Minutes'];
       int seconds = labelData['Seconds'];
       int totalSeconds = hours;
-      int value = 5; // Set the default value
+      int value = 1; // Set the default value
       labelValues[label] = (labelValues[label] ?? 0) + value;
       labelValues1[label] = (labelValues1[label] ?? 0) + totalSeconds.toInt();
       labelDataList.add({

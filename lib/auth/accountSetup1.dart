@@ -12,6 +12,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
+import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/provider/location_provider.dart';
@@ -24,16 +25,21 @@ import 'package:http/http.dart' as http;
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-class AccountSetup extends StatefulWidget {
+import '../services/user_firestore_services.dart';
+
+class AccountSetup1 extends StatefulWidget {
   final String? username;
   final String? email;
-  final String? password;
-  const AccountSetup({super.key, this.username, this.email, this.password});
+  final String? photoURL;
+  final String? uid;
+
+  const AccountSetup1(
+      {super.key, this.username, this.email, this.photoURL, this.uid});
   @override
-  State<AccountSetup> createState() => _AccountSetupState();
+  State<AccountSetup1> createState() => _AccountSetupState();
 }
 
-class _AccountSetupState extends State<AccountSetup> {
+class _AccountSetupState extends State<AccountSetup1> {
   late final PageController _pageController;
   int currentPage = 0;
 
@@ -63,8 +69,8 @@ class _AccountSetupState extends State<AccountSetup> {
     final dob = Provider.of<SelectedDateProvider>(context, listen: false);
 
     final locProvider = Provider.of<LocationProvider>(context, listen: false);
-    final lat = locProvider.latitude;
-    final longi = locProvider.longitude;
+    var lat = locProvider.latitude;
+    var longi = locProvider.longitude;
     var dobis = dob.selectedDate ?? DateTime.now();
     var dateString = dobis.toString().split(' ')[0]; // Extract date part
     log(dateString); // Log only the date part
@@ -160,14 +166,37 @@ class _AccountSetupState extends State<AccountSetup> {
                         );
                       } else {
                         if (currentPage == 1) {
-                          await user.signUp(
-                              context,
-                              widget.username.toString(),
-                              dateString,
-                              widget.email.toString(),
-                              widget.password.toString(),
-                              lat!.toDouble(),
-                              longi!.toDouble());
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => const AlertDialog(
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  CircularProgressIndicator(
+                                    color: AppColors.mainBlue,
+                                  ),
+                                  SizedBox(height: 16),
+                                  Text(
+                                      'Please wait, your account is creating...'),
+                                ],
+                              ),
+                            ),
+                          );
+                          await UserFireStoreServices().addUser(
+                              latitude: lat!.toDouble(),
+                              longitude: longi!.toDouble(),
+                              dob: "",
+                              uid: widget.uid.toString(),
+                              email: widget.email.toString(),
+                              name: widget.username.toString(),
+                              photoUrl: widget.photoURL.toString());
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const HomePage(),
+                            ),
+                          );
                         }
                       }
                     }
@@ -260,7 +289,7 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
           places.add(formattedPlace);
         }
       } else {
-        places.add('No results found');
+        places.add('No results found'.tr());
       }
 
       setState(() => _places = places);
@@ -275,8 +304,7 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
     final user = Provider.of<UserRepository>(context);
     final dob = Provider.of<SelectedDateProvider>(context, listen: false);
 
-    final lat = locProvider.latitude;
-    final longi = locProvider.longitude;
+
     var dobis = dob.selectedDate ?? DateTime.now();
     var dateString = dobis.toString().split(' ')[0]; // Extract date part
     log(dateString);

@@ -178,25 +178,38 @@ class _AccountSetupState extends State<AccountSetup1> {
                                   ),
                                   SizedBox(height: 16),
                                   Text(
-                                      'Please wait, your account is creating...'),
+                                    'Please wait, your account is creating...',
+                                  ),
                                 ],
                               ),
                             ),
                           );
-                          await UserFireStoreServices().addUser(
-                              latitude: lat!.toDouble(),
-                              longitude: longi!.toDouble(),
-                              dob: "",
-                              uid: widget.uid.toString(),
-                              email: widget.email.toString(),
-                              name: widget.username.toString(),
-                              photoUrl: widget.photoURL.toString());
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const HomePage(),
-                            ),
-                          );
+                          // Check if lat and longi are not null before using them
+                          if (lat != null && longi != null) {
+                            await UserFireStoreServices().addUser(
+                              latitude: lat.toDouble(),
+                              longitude: longi.toDouble(),
+
+                              uid: widget.uid?.toString() ??
+                                  "", // Check for null and provide a default value
+                              email: widget.email?.toString() ??
+                                  "", // Check for null and provide a default value
+                              name: widget.username?.toString() ??
+                                  "", // Check for null and provide a default value
+                              photoUrl: widget.photoURL?.toString() ??
+                                  "", // Check for null and provide a default value
+                            );
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const HomePage(),
+                              ),
+                            );
+                          } else {
+                            // Handle the case where lat or longi is null
+                            // You can show an error message or handle it as per your application logic
+                            print("Error: lat or longi is null");
+                          }
                         }
                       }
                     }
@@ -303,7 +316,6 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
     final locProvider = Provider.of<LocationProvider>(context, listen: false);
     final user = Provider.of<UserRepository>(context);
     final dob = Provider.of<SelectedDateProvider>(context, listen: false);
-
 
     var dobis = dob.selectedDate ?? DateTime.now();
     var dateString = dobis.toString().split(' ')[0]; // Extract date part

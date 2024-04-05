@@ -57,7 +57,7 @@ class UserRepository with ChangeNotifier {
       await UserFireStoreServices().addUser(
           latitude: 0,
           longitude: 0,
-          dob: "",
+         
           uid: authResponse.user!.uid,
           email: authResponse.user!.email.toString(),
           name: authResponse.user!.displayName.toString(),
@@ -190,7 +190,7 @@ class UserRepository with ChangeNotifier {
         uid: authResponse.user!.uid,
         email: email,
         name: username,
-        dob: dob,
+     
         latitude: latitude,
         longitude: longitude,
         photoUrl: "",
@@ -347,6 +347,8 @@ class UserRepository with ChangeNotifier {
       final authResponse = await FirebaseAuth.instance
           .signInWithCredential(facebookAuthCredential);
       debugPrint("Authenticating Facebook user repo: $authResponse");
+       _status = Status.Authenticated;
+      notifyListeners();
       Navigator.push(
         context,
         MaterialPageRoute(

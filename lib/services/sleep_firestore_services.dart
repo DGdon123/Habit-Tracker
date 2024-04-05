@@ -4,12 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SleepFireStoreServices {
-  void addNewSleepTime(
+  Future<void> addNewSleepTime(
       {required String sleepTime,
       required String wakeTime,
-      required String difference}) {
+      required String difference}) async {
     debugPrint("Sleep time: $sleepTime, Wake time: $wakeTime");
-
 
     var sleepTimeRef = FirebaseFirestore.instance.collection("sleep-time");
     var userID = FirebaseAuth.instance.currentUser!.uid;
@@ -19,7 +18,7 @@ class SleepFireStoreServices {
     String date =
         "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
 
-    sleepTimeRef.add({
+    await sleepTimeRef.add({
       "userID": userID,
       "sleepTime": sleepTime.toString(),
       "wakeTime": wakeTime.toString(),

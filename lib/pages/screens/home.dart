@@ -16,6 +16,7 @@ import 'package:habit_tracker/pages/usage_page/usage_page.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
+import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -91,6 +92,9 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                   ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
                 ],
               ),
             ),
@@ -146,6 +150,7 @@ class _HomeState extends State<Home> {
                         snapshot.connectionState == ConnectionState.active &&
                         snapshotLength != 0) {
                       var doc = snapshot.data!.docs[0];
+
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -271,7 +276,7 @@ class _HomeState extends State<Home> {
 
                           var duration = snapshot.data!["usage"] as Duration;
 
-                          var hours = duration!.inHours % 60;
+                          var hours = duration.inHours % 60;
                           var minutes = duration.inMinutes % 60;
 
                           return Text(
@@ -639,7 +644,7 @@ class _HomeState extends State<Home> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                Container(
+                SizedBox(
                   height: 100,
                   width: 100,
                   child: Image.asset(AppIcons.xpbar),
@@ -647,7 +652,7 @@ class _HomeState extends State<Home> {
                 Padding(
                   padding: const EdgeInsets.only(left: 45),
                   child: Container(
-                    padding: EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(2),
                     width: 60,
                     child: Text(
                       '99000',

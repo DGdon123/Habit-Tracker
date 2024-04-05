@@ -83,6 +83,7 @@ class _SleepDetailsState extends State<SleepDetails> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Consumer<AvgSleepProvider>(builder: (_, avgSleep, __) {
+                    debugPrint("Avg sleep time: ${avgSleep.avgTime}");
                     return Text(
                       "${avgSleep.avgTime}H",
                       style: TextStyles().subtitleStyle,

@@ -12,6 +12,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
+import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/provider/location_provider.dart';
@@ -19,22 +20,26 @@ import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:habit_tracker/utils/styles.dart';
-import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-class AccountSetup extends StatefulWidget {
+import '../services/user_firestore_services.dart';
+
+class AccountSetup1 extends StatefulWidget {
   final String? username;
   final String? email;
-  final String? password;
-  const AccountSetup({super.key, this.username, this.email, this.password});
+  final String? photoURL;
+  final String? uid;
+
+  const AccountSetup1(
+      {super.key, this.username, this.email, this.photoURL, this.uid});
   @override
-  State<AccountSetup> createState() => _AccountSetupState();
+  State<AccountSetup1> createState() => _AccountSetupState();
 }
 
-class _AccountSetupState extends State<AccountSetup> {
+class _AccountSetupState extends State<AccountSetup1> {
   late final PageController _pageController;
   int currentPage = 0;
 
@@ -64,8 +69,8 @@ class _AccountSetupState extends State<AccountSetup> {
     final dob = Provider.of<SelectedDateProvider>(context, listen: false);
 
     final locProvider = Provider.of<LocationProvider>(context, listen: false);
-    final lat = locProvider.latitude;
-    final longi = locProvider.longitude;
+    var lat = locProvider.latitude;
+    var longi = locProvider.longitude;
     var dobis = dob.selectedDate ?? DateTime.now();
     var dateString = dobis.toString().split(' ')[0]; // Extract date part
     log(dateString); // Log only the date part
@@ -109,7 +114,6 @@ class _AccountSetupState extends State<AccountSetup> {
               children: const [
                 PickCharacterPage(),
                 AccountSetupSetName(),
-                SetUpGoals(),
               ],
             ),
           ),
@@ -123,7 +127,7 @@ class _AccountSetupState extends State<AccountSetup> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        3, // Replace with the total number of pages
+                        2, // Replace with the total number of pages
                         (index) => Container(
                           margin: EdgeInsets.symmetric(horizontal: 4.0.w),
                           width: currentPage == index
@@ -155,21 +159,57 @@ class _AccountSetupState extends State<AccountSetup> {
                       );
                     } else {
                       // You are going forward to the next page
-                      if (currentPage < 2) {
+                      if (currentPage < 1) {
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
                       } else {
-                        if (currentPage == 2) {
-                          await user.signUp(
+                        if (currentPage == 1) {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => const AlertDialog(
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  CircularProgressIndicator(
+                                    color: AppColors.mainBlue,
+                                  ),
+                                  SizedBox(height: 16),
+                                  Text(
+                                    'Please wait, your account is creating...',
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                          // Check if lat and longi are not null before using them
+                          if (lat != null && longi != null) {
+                            await UserFireStoreServices().addUser(
+                              latitude: lat.toDouble(),
+                              longitude: longi.toDouble(),
+
+                              uid: widget.uid?.toString() ??
+                                  "", // Check for null and provide a default value
+                              email: widget.email?.toString() ??
+                                  "", // Check for null and provide a default value
+                              name: widget.username?.toString() ??
+                                  "", // Check for null and provide a default value
+                              photoUrl: widget.photoURL?.toString() ??
+                                  "", // Check for null and provide a default value
+                            );
+                            Navigator.pushReplacement(
                               context,
-                              widget.username.toString(),
-                              dateString,
-                              widget.email.toString(),
-                              widget.password.toString(),
-                              lat!.toDouble(),
-                              longi!.toDouble());
+                              MaterialPageRoute(
+                                builder: (context) => const HomePage(),
+                              ),
+                            );
+                          } else {
+                            // Handle the case where lat or longi is null
+                            // You can show an error message or handle it as per your application logic
+                            print("Error: lat or longi is null");
+                          }
                         }
                       }
                     }
@@ -177,7 +217,7 @@ class _AccountSetupState extends State<AccountSetup> {
                   child: Row(
                     children: [
                       Text(
-                        currentPage == 2 ? 'Finish'.tr() : 'Next'.tr(),
+                        currentPage == 1 ? 'Finish'.tr() : 'Next'.tr(),
                         style: TextStyle(
                           color: AppColors.buttonYellow,
                           fontFamily: 'SFProText',
@@ -262,7 +302,7 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
           places.add(formattedPlace);
         }
       } else {
-        places.add('No results found');
+        places.add('No results found'.tr());
       }
 
       setState(() => _places = places);
@@ -277,8 +317,6 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
     final user = Provider.of<UserRepository>(context);
     final dob = Provider.of<SelectedDateProvider>(context, listen: false);
 
-    final lat = locProvider.latitude;
-    final longi = locProvider.longitude;
     var dobis = dob.selectedDate ?? DateTime.now();
     var dateString = dobis.toString().split(' ')[0]; // Extract date part
     log(dateString);
@@ -677,233 +715,4 @@ class _AccountSetupWaketimeState extends State<AccountSetupWaketime> {
       ],
     );
   }
-}
-
-class SetUpGoals extends StatefulWidget {
-  const SetUpGoals({super.key});
-
-  @override
-  State<SetUpGoals> createState() => _SetUpGoalsState();
-}
-
-int sleepTime = 0;
-int screenTime = 0;
-int workoutFrequency = 0;
-int focusTime = 0;
-
-class _SetUpGoalsState extends State<SetUpGoals> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 14.h,
-          ),
-          Center(
-            child: Text(
-              'Set Up Goals',
-              style: TextStyle(
-                  fontFamily: 'SFProText',
-                  fontSize: 22.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBlack),
-            ),
-          ),
-          SizedBox(
-            height: 25.h,
-          ),
-          Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-                color: AppColors.widgetColorV,
-                borderRadius: BorderRadius.circular(12)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(
-                  'Set Sleep Goals:',
-                  style: TextStyle(
-                      fontFamily: 'SFProText',
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textBlack),
-                ),
-                _buildPicker(
-                  itemCount: 13,
-                  selectedItem: 7,
-                  onSelectedItemChanged: (value) {
-                    setState(() {
-                      sleepTime = value;
-                      //_selectedMinute = value;
-                    });
-                  },
-                ),
-                Text(
-                  'hours per Day',
-                  style: TextStyle(
-                      fontFamily: 'SFProText',
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textBlack),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 14.h,
-          ),
-          Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-                color: AppColors.widgetColorR,
-                borderRadius: BorderRadius.circular(12)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(
-                  'Set Screentime:',
-                  style: TextStyle(
-                      fontFamily: 'SFProText',
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textBlack),
-                ),
-                _buildPicker(
-                  itemCount: 25,
-                  selectedItem: 7,
-                  onSelectedItemChanged: (value) {
-                    setState(() {
-                      screenTime = value;
-                      //_selectedMinute = value;
-                    });
-                  },
-                ),
-                Text(
-                  'hours per Day',
-                  style: TextStyle(
-                      fontFamily: 'SFProText',
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textBlack),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 14.h,
-          ),
-          Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-                color: AppColors.widgetColorG,
-                borderRadius: BorderRadius.circular(12)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(
-                  'Set Focus Time:',
-                  style: TextStyle(
-                      fontFamily: 'SFProText',
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textBlack),
-                ),
-                _buildPicker(
-                  itemCount: 13,
-                  selectedItem: 4,
-                  onSelectedItemChanged: (value) {
-                    setState(() {
-                      focusTime = value;
-                      //_selectedMinute = value;
-                    });
-                  },
-                ),
-                Text(
-                  'hours per Day',
-                  style: TextStyle(
-                      fontFamily: 'SFProText',
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textBlack),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 14.h,
-          ),
-          Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-                color: AppColors.widgetColorB,
-                borderRadius: BorderRadius.circular(12)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(
-                  'Set Workout:        \nFrequency',
-                  style: TextStyle(
-                      fontFamily: 'SFProText',
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textBlack),
-                ),
-                _buildPicker(
-                  itemCount: 8,
-                  selectedItem: 5,
-                  onSelectedItemChanged: (value) {
-                    setState(() {
-                      workoutFrequency = value;
-                      //_selectedMinute = value;
-                    });
-                  },
-                ),
-                Text(
-                  'days per Week',
-                  style: TextStyle(
-                      fontFamily: 'SFProText',
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textBlack),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 14.h,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-Widget _buildPicker({
-  required int itemCount,
-  required int selectedItem,
-  required void Function(int) onSelectedItemChanged,
-}) {
-  return SizedBox(
-    width: 60.0,
-    height: 120.0,
-    child: CupertinoPicker(
-      selectionOverlay: Container(),
-      itemExtent: 52,
-      diameterRatio: 1,
-      backgroundColor: Colors.transparent,
-      scrollController: FixedExtentScrollController(initialItem: selectedItem),
-      onSelectedItemChanged: onSelectedItemChanged,
-      children: List<Widget>.generate(itemCount, (index) {
-        return Center(
-          child: Text(
-            index.toString().padLeft(2, '0'),
-            style: const TextStyle(fontSize: 25),
-          ),
-        );
-      }),
-    ),
-  );
 }

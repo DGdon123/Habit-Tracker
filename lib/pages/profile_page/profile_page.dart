@@ -298,7 +298,6 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                           final users = await UserFireStoreServices()
                               .searchUserByUserName(searchText);
 
-
                           if (users.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -334,8 +333,6 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                 ),
               ],
             ),
-
-                       
           ),
           SizedBox(
             height: 5.h,
@@ -436,7 +433,11 @@ Widget AchievmentsContainer({
 
   debugPrint('todayDate: $todayDate, uploadedDate: $uploadedDate');
 
-  var dateRemark = uploadedDate == todayDate
+  var todayDateString = "${todayDate.year}-${todayDate.month}-${todayDate.day}";
+  var uploadedDateString =
+      "${uploadedDate.year}-${uploadedDate.month}-${uploadedDate.day}";
+
+  var dateRemark = uploadedDateString == todayDateString
       ? 'Today'
       : '${uploadedDate.year}-${uploadedDate.month}-${uploadedDate.day}';
 

@@ -41,7 +41,7 @@ class _WakeTimeState extends State<WakeTime> {
       difference: SleepPageUtils().roundHourAndMinute(difference.inMinutes),
     );
 
-    await XpFirestoreServices().addXp(difference.inHours);
+    await XpFirestoreServices().addXp(xp: difference.inHours, reason: 'Sleep');
   }
 
   @override

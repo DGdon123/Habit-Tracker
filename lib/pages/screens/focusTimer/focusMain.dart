@@ -63,7 +63,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
               // adding xp only when timer is greater than or equal to 1 minute
               if (widget.hour != 0 || widget.minute != 0) {
                 var xp = widget.hour * 60 + widget.minute;
-                XpFirestoreServices().addXp(xp);
+                XpFirestoreServices().addXp(xp: xp, reason: "Focus Timer");
               }
 
               audioPlayer.stop();

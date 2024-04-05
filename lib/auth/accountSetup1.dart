@@ -114,6 +114,7 @@ class _AccountSetupState extends State<AccountSetup1> {
               children: const [
                 PickCharacterPage(),
                 AccountSetupSetName(),
+                SetUpGoals(),
               ],
             ),
           ),
@@ -127,7 +128,7 @@ class _AccountSetupState extends State<AccountSetup1> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        2, // Replace with the total number of pages
+                        3, // Replace with the total number of pages
                         (index) => Container(
                           margin: EdgeInsets.symmetric(horizontal: 4.0.w),
                           width: currentPage == index
@@ -159,13 +160,13 @@ class _AccountSetupState extends State<AccountSetup1> {
                       );
                     } else {
                       // You are going forward to the next page
-                      if (currentPage < 1) {
+                      if (currentPage < 2) {
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
                       } else {
-                        if (currentPage == 1) {
+                        if (currentPage == 2) {
                           showDialog(
                             context: context,
                             barrierDismissible: false,
@@ -715,4 +716,233 @@ class _AccountSetupWaketimeState extends State<AccountSetupWaketime> {
       ],
     );
   }
+}
+
+class SetUpGoals extends StatefulWidget {
+  const SetUpGoals({super.key});
+
+  @override
+  State<SetUpGoals> createState() => _SetUpGoalsState();
+}
+
+int sleepTime = 0;
+int screenTime = 0;
+int workoutFrequency = 0;
+int focusTime = 0;
+
+class _SetUpGoalsState extends State<SetUpGoals> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 14.h,
+          ),
+          Center(
+            child: Text(
+              'Set Up Goals',
+              style: TextStyle(
+                  fontFamily: 'SFProText',
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textBlack),
+            ),
+          ),
+          SizedBox(
+            height: 25.h,
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                color: AppColors.widgetColorV,
+                borderRadius: BorderRadius.circular(12)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  'Set Sleep Goals:',
+                  style: TextStyle(
+                      fontFamily: 'SFProText',
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack),
+                ),
+                _buildPicker(
+                  itemCount: 13,
+                  selectedItem: 7,
+                  onSelectedItemChanged: (value) {
+                    setState(() {
+                      sleepTime = value;
+                      //_selectedMinute = value;
+                    });
+                  },
+                ),
+                Text(
+                  'hours per Day',
+                  style: TextStyle(
+                      fontFamily: 'SFProText',
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 14.h,
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                color: AppColors.widgetColorR,
+                borderRadius: BorderRadius.circular(12)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  'Set Screentime:',
+                  style: TextStyle(
+                      fontFamily: 'SFProText',
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack),
+                ),
+                _buildPicker(
+                  itemCount: 25,
+                  selectedItem: 7,
+                  onSelectedItemChanged: (value) {
+                    setState(() {
+                      screenTime = value;
+                      //_selectedMinute = value;
+                    });
+                  },
+                ),
+                Text(
+                  'hours per Day',
+                  style: TextStyle(
+                      fontFamily: 'SFProText',
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 14.h,
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                color: AppColors.widgetColorG,
+                borderRadius: BorderRadius.circular(12)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  'Set Focus Time:',
+                  style: TextStyle(
+                      fontFamily: 'SFProText',
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack),
+                ),
+                _buildPicker(
+                  itemCount: 13,
+                  selectedItem: 4,
+                  onSelectedItemChanged: (value) {
+                    setState(() {
+                      focusTime = value;
+                      //_selectedMinute = value;
+                    });
+                  },
+                ),
+                Text(
+                  'hours per Day',
+                  style: TextStyle(
+                      fontFamily: 'SFProText',
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 14.h,
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                color: AppColors.widgetColorB,
+                borderRadius: BorderRadius.circular(12)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  'Set Workout:        \nFrequency',
+                  style: TextStyle(
+                      fontFamily: 'SFProText',
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack),
+                ),
+                _buildPicker(
+                  itemCount: 8,
+                  selectedItem: 5,
+                  onSelectedItemChanged: (value) {
+                    setState(() {
+                      workoutFrequency = value;
+                      //_selectedMinute = value;
+                    });
+                  },
+                ),
+                Text(
+                  'days per Week',
+                  style: TextStyle(
+                      fontFamily: 'SFProText',
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 14.h,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Widget _buildPicker({
+  required int itemCount,
+  required int selectedItem,
+  required void Function(int) onSelectedItemChanged,
+}) {
+  return SizedBox(
+    width: 60.0,
+    height: 120.0,
+    child: CupertinoPicker(
+      selectionOverlay: Container(),
+      itemExtent: 52,
+      diameterRatio: 1,
+      backgroundColor: Colors.transparent,
+      scrollController: FixedExtentScrollController(initialItem: selectedItem),
+      onSelectedItemChanged: onSelectedItemChanged,
+      children: List<Widget>.generate(itemCount, (index) {
+        return Center(
+          child: Text(
+            index.toString().padLeft(2, '0'),
+            style: const TextStyle(fontSize: 25),
+          ),
+        );
+      }),
+    ),
+  );
 }

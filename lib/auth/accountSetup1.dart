@@ -162,9 +162,9 @@ class _AccountSetupState extends State<AccountSetup1> {
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
-                      } 
+                      } else {
                         if (currentPage == 2) {
-                            SharedPreferences prefs =
+                          SharedPreferences prefs =
                               await SharedPreferences.getInstance();
                           String token =
                               prefs.getString('device_token').toString();
@@ -226,7 +226,7 @@ class _AccountSetupState extends State<AccountSetup1> {
                   child: Row(
                     children: [
                       Text(
-                        currentPage == 1 ? 'Finish'.tr() : 'Next'.tr(),
+                        currentPage == 2 ? 'Finish'.tr() : 'Next'.tr(),
                         style: TextStyle(
                           color: AppColors.buttonYellow,
                           fontFamily: 'SFProText',
@@ -763,7 +763,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
             height: 25.h,
           ),
           Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
                 color: AppColors.widgetColorV,
                 borderRadius: BorderRadius.circular(12)),
@@ -803,7 +803,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
             height: 14.h,
           ),
           Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
                 color: AppColors.widgetColorR,
                 borderRadius: BorderRadius.circular(12)),
@@ -843,7 +843,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
             height: 14.h,
           ),
           Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
                 color: AppColors.widgetColorG,
                 borderRadius: BorderRadius.circular(12)),
@@ -883,7 +883,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
             height: 14.h,
           ),
           Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
                 color: AppColors.widgetColorB,
                 borderRadius: BorderRadius.circular(12)),

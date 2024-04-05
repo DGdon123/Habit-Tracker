@@ -154,7 +154,7 @@ class _HomeState extends State<Home> {
                             children: [
                               Icon(
                                 Icons.light_mode,
-                                color: AppColors.lightBlack,
+                                color: Colors.yellow.shade600,
                                 size: 34.sp,
                               ),
                               SizedBox(
@@ -177,7 +177,7 @@ class _HomeState extends State<Home> {
                             children: [
                               Icon(
                                 Icons.dark_mode_rounded,
-                                color: AppColors.lightBlack,
+                                color: Colors.yellow.shade600,
                                 size: 30.sp,
                               ),
                               SizedBox(
@@ -198,10 +198,10 @@ class _HomeState extends State<Home> {
                         ],
                       );
                     } else if (snapshotLength == 0) {
-                      return  Center(
+                      return Center(
                           child: Text("Add your sleep and wake time.".tr()));
                     } else if (snapshot.hasError) {
-                      return  Text('Something went wrong'.tr());
+                      return Text('Something went wrong'.tr());
                     }
                     return const SizedBox();
                   }),
@@ -266,7 +266,7 @@ class _HomeState extends State<Home> {
                               ConnectionState.waiting) {
                             return const SizedBox();
                           } else if (snapshot.hasError) {
-                            return  Text("Error".tr());
+                            return Text("Error".tr());
                           }
 
                           var duration = snapshot.data!["usage"] as Duration;
@@ -633,7 +633,7 @@ class _HomeState extends State<Home> {
                   ),
                 );
               },
-              child:  Text("Usage".tr())),
+              child: Text("Usage".tr())),
           Container(
             margin: const EdgeInsets.only(top: 10),
             child: Stack(
@@ -667,7 +667,7 @@ class _HomeState extends State<Home> {
                     'XP',
                     style: TextStyle(
                       fontFamily: 'SFProText',
-                      fontSize: 18.sp,
+                      fontSize: 23.sp,
                       fontWeight: FontWeight.normal,
                       color: AppColors.black,
                     ),

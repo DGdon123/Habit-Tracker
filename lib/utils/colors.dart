@@ -25,4 +25,5 @@ class AppColors {
   static const Color widgetColorR = Color(0xFFFF8686);
   static const Color widgetColorV = Color(0xFFC1AFFA);
 
+  static const Color buttonColorG = Color(0xFFF1F5FE);
 }

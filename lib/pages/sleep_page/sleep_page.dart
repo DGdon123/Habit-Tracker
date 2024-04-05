@@ -136,19 +136,19 @@ class SleepPageState extends State<SleepPage> {
                           children: [
                             SleepWakeDisplayCard(
                                 title: 'Sleep Time'.tr(),
-                                bgColor: const Color(0xFF000C7C),
+                                bgColor: const Color(0xFF004AAD),
                                 time: doc.get("sleepTime")),
                             SleepWakeDisplayCard(
                                 title: 'Wake Time'.tr(),
-                                bgColor: const Color(0xFF7C0068),
+                                bgColor: const Color(0xFFFFDE59),
                                 time: doc.get("wakeTime")),
                           ],
                         ),
                       );
                     } else if (snapshotLength == 0) {
-                      return  Text("Add your sleep time".tr());
+                      return Text("Add your sleep time".tr());
                     } else if (snapshot.hasError) {
-                      return  Text('Something went wrong'.tr());
+                      return Text('Something went wrong'.tr());
                     }
                     return const CircularProgressIndicator();
                   }),

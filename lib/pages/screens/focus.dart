@@ -593,14 +593,14 @@ class FocusPageState extends State<FocusPage> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
+                child: Column(
                   children: [
                     SizedBox(
                       height: 100.h,
                       width: MediaQuery.of(context).size.width - 40,
                       child: PageView(
                           controller: _pageController,
-                          scrollDirection: Axis.horizontal,
+                          scrollDirection: Axis.vertical,
                           children: pages),
                     ),
                   ],
@@ -625,8 +625,8 @@ class FocusPageState extends State<FocusPage> {
                       },
                     ),
                     const Text(
-                      ':',
-                      style: TextStyle(fontSize: 32),
+                      'hr :',
+                      style: TextStyle(fontSize: 28),
                     ),
                     // Minutes
                     _buildPicker(
@@ -640,8 +640,8 @@ class FocusPageState extends State<FocusPage> {
                       },
                     ),
                     const Text(
-                      ':',
-                      style: TextStyle(fontSize: 32),
+                      'min :',
+                      style: TextStyle(fontSize: 28),
                     ),
                     // Seconds
                     _buildPicker(
@@ -653,6 +653,10 @@ class FocusPageState extends State<FocusPage> {
                           //  _selectedSecond = value;
                         });
                       },
+                    ),
+                    const Text(
+                      'sec',
+                      style: TextStyle(fontSize: 28),
                     ),
                   ],
                 ),
@@ -768,7 +772,7 @@ class FocusPageState extends State<FocusPage> {
     required void Function(int) onSelectedItemChanged,
   }) {
     return SizedBox(
-      width: 100.0,
+      width: 70.0,
       height: 250.0,
       child: CupertinoPicker(
         selectionOverlay: Container(),
@@ -782,7 +786,7 @@ class FocusPageState extends State<FocusPage> {
           return Center(
             child: Text(
               index.toString().padLeft(2, '0'),
-              style: const TextStyle(fontSize: 50),
+              style: const TextStyle(fontSize: 40),
             ),
           );
         }),
@@ -912,13 +916,13 @@ class FocusPageState extends State<FocusPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child:  Text('Cancel'.tr()),
+              child: Text('Cancel'.tr()),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(textController.text);
               },
-              child:  Text(
+              child: Text(
                 'OK'.tr(),
                 style: TextStyle(
                   color: AppColors.mainBlue,

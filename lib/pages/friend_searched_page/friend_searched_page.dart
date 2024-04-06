@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,41 +38,32 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
   Future<Map<String, dynamic>> fetchUsers() async {
     String? currentUserUid = getUserID();
 
-   
     logger.d(currentUserUid);
     // Initialize a list to hold the Text widgets
 
     if (currentUserUid != null) {
       try {
-         QuerySnapshot snapshot =
-          await userCollection.where('uid', isEqualTo: currentUserUid).get();
+        QuerySnapshot snapshot =
+            await userCollection.where('uid', isEqualTo: currentUserUid).get();
 
         if (snapshot.docs.isNotEmpty) {
           for (var doc in snapshot.docs) {
-            var data = doc.data()
-                as Map<String, dynamic>; // Cast data to Map<String, dynamic>
-            dataList.add(data); // Add user data to the list
-          }
-          userLabels['data'] = dataList;
-
-          logger.d(userLabels);
-          if (userLabels['data'] != null && userLabels['data']!.isNotEmpty) {
+            Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
+            // Add user data to the list
             setState(() {
-              token = userLabels['data']![0]['token'];
+              token = userData['device_token'];
             });
 
             logger.d(token);
-          } else {
-            print('No data available');
           }
         } else {
-          print('No data found for the current user');
+          log('No data found for the current user');
         }
       } catch (error) {
-        print("Failed to fetch users: $error");
+        log("Failed to fetch users: $error");
       }
     } else {
-      print('User ID is null');
+      log('User ID is null');
     }
 
     return userLabels; // Return the list of Text widgets
@@ -81,6 +73,22 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
   void initState() {
     fetchUsers();
     super.initState();
+  }
+
+  Future<void> addNotifications(String sendername, String receiverID,
+      String devicetoken, String message) {
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('notifications');
+
+    return users
+        .add({
+          'sendername': sendername,
+          'receiverID': receiverID,
+          'receiverdevicetoken': devicetoken,
+          'message': message
+        })
+        .then((value) => print("User added successfully!"))
+        .catchError((error) => print("Failed to add user: $error"));
   }
 
   @override
@@ -123,8 +131,9 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
                         notificationServices
                             .getDeviceToken()
                             .then((value) async {
+                          log(data.toString());
                           var data1 = {
-                            'to': data["token"],
+                            'to': data["device_token"],
                             'priority': 'high',
                             'notification': {
                               'title': 'Habit Tracker',
@@ -143,6 +152,11 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
                                     'key=AAAAclKtwpw:APA91bE40rUSq6qXigGzh_3Y6D4mtkr1vjbkZt2_7HDJMzYWB9r53AXdxnWeOue5ZEwSXb_xQnhtJjh3y5AnkApfWJPmicHaIUdbJ2LDs47EhcBQQmk0FhN8sy_vW-b1AEgVxva7lu0n'
                               });
                         });
+                        addNotifications(
+                            getUserName().toString(),
+                            data["uid"],
+                            data["device_token"],
+                            '${getUsername()} has sent you a friend request.');
                       },
                     ),
                   );

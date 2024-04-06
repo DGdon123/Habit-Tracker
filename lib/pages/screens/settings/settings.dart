@@ -5,9 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
+import 'package:habit_tracker/pages/chat_room/chat_room.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/language/language.dart';
 import 'package:habit_tracker/pages/screens/notifications/notifications.dart';
@@ -158,21 +160,34 @@ class _SettingsPageState extends State<SettingsPage> {
                                 SizedBox(
                                   width: 10.w,
                                 ),
-                                Container(
-                                  width: 48.h,
-                                  height: 48.w,
-                                  alignment: Alignment.center,
-                                  decoration: ShapeDecoration(
-                                    color: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      side: const BorderSide(
-                                          width: 1, color: Color(0xFFEAECF0)),
-                                      borderRadius: BorderRadius.circular(16.r),
+
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ChatRoom()));
+                                  },
+                                  child: Container(
+                                    width: 48.h,
+                                    height: 48.w,
+                                    alignment: Alignment.center,
+                                    decoration: ShapeDecoration(
+                                      color: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        side: const BorderSide(
+                                            width: 1, color: Color(0xFFEAECF0)),
+                                        borderRadius:
+                                            BorderRadius.circular(16.r),
+                                      ),
                                     ),
-                                  ),
-                                  child: Image.asset(
-                                    AppImages.googlefit,
-                                    height: 30.h,
+                                    child: Image.asset(
+                                      AppImages.googlefit,
+                                      height: 30.h,
+
+                                
+
+                                    ),
                                   ),
                                 )
                               ],

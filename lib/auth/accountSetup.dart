@@ -12,6 +12,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
+import 'package:habit_tracker/auth/widgets/gym_in_time.dart';
+import 'package:habit_tracker/auth/widgets/gym_out_time.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/provider/goals_provider.dart';
@@ -25,6 +27,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:roundcheckbox/roundcheckbox.dart';
 
 class AccountSetup extends StatefulWidget {
   final String? username;
@@ -107,6 +110,7 @@ class _AccountSetupState extends State<AccountSetup> {
                 PickCharacterPage(),
                 AccountSetupSetName(),
                 SetUpGoals(),
+                WorkoutTrackType()
               ],
             ),
           ),
@@ -120,7 +124,7 @@ class _AccountSetupState extends State<AccountSetup> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        3, // Replace with the total number of pages
+                        4, // Replace with the total number of pages
                         (index) => Container(
                           margin: EdgeInsets.symmetric(horizontal: 4.0.w),
                           width: currentPage == index
@@ -152,19 +156,21 @@ class _AccountSetupState extends State<AccountSetup> {
                       );
                     } else {
                       // You are going forward to the next page
-                      if (currentPage < 2) {
+                      if (currentPage < 3) {
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
                       } else {
-                        if (currentPage == 2) {
+
+                        if (currentPage == 3) {
                           final locProvider = Provider.of<LocationProvider>(
                               context,
                               listen: false);
                           final lat = locProvider.latitude;
                           final longi = locProvider.longitude;
                           final goalProvider = Provider.of<GoalsProvider>(
+
                               context,
                               listen: false);
                           var sleep = goalProvider.goals;
@@ -192,7 +198,7 @@ class _AccountSetupState extends State<AccountSetup> {
                   child: Row(
                     children: [
                       Text(
-                        currentPage == 2 ? 'Finish'.tr() : 'Next'.tr(),
+                        currentPage == 3 ? 'Finish'.tr() : 'Next'.tr(),
                         style: TextStyle(
                           color: AppColors.buttonYellow,
                           fontFamily: 'SFProText',
@@ -929,4 +935,135 @@ Widget _buildPicker({
       }),
     ),
   );
+}
+
+class WorkoutTrackType extends StatefulWidget {
+  const WorkoutTrackType({super.key});
+
+  @override
+  State<WorkoutTrackType> createState() => _WorkoutTrackTypeState();
+}
+
+bool isManualSelected = false;
+bool isAutomaticSelected = false;
+
+class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+        child: Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        children: [
+          Text(
+            'How do you want to track your workout?',
+            style: TextStyle(
+                fontFamily: 'SFProText',
+                fontSize: 22.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textBlack),
+          ),
+          const SizedBox(
+            height: 12,
+          ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                isAutomaticSelected = !isAutomaticSelected;
+                isManualSelected = false;
+              });
+            },
+            child: Card(
+              color: AppColors.mainColor,
+              elevation: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: [
+                    RoundCheckBox(
+                      checkedColor: AppColors.widgetColorR,
+                      isChecked: isAutomaticSelected,
+                      size: 27,
+                      onTap: (selected) {
+                        setState(() {
+                          isAutomaticSelected = !isAutomaticSelected;
+                          isManualSelected = false;
+                        });
+                      },
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Text(
+                      'Automatic',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 12,
+          ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                isManualSelected = !isManualSelected;
+                isAutomaticSelected = false;
+              });
+              // isManualSelected
+              //     ? showDialog(
+              //         context: context,
+              //         builder: (BuildContext context) {
+              //           return GymInTime(); // Use the custom dialog
+              //         },
+              //       )
+              //     : Container();
+            },
+            child: Card(
+              elevation: 0,
+              color: AppColors.mainColor,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: [
+                    RoundCheckBox(
+                      checkedColor: AppColors.widgetColorR,
+                      isChecked: isManualSelected,
+                      size: 27,
+                      onTap: (selected) {
+                        setState(() {
+                          isManualSelected = !isManualSelected;
+                          isAutomaticSelected = false;
+                        });
+                      },
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Text(
+                      'Manual',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+        ],
+      ),
+    ));
+  }
 }

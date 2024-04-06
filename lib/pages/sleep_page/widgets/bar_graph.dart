@@ -96,7 +96,7 @@ class BarGraph extends StatelessWidget {
           }),
     );
   }
-}
+} 
 
 List<BarChartGroupData> getBarChartGroups(
     List<QueryDocumentSnapshot<Map<String, dynamic>>> docs) {
@@ -126,7 +126,7 @@ List<BarChartGroupData> getBarChartGroups(
         BarChartRodData(
           width: 10,
           toY: difference,
-          color: Color(0xFF4E00FF),
+          color: Color(0xFF004AAD),
         ),
       ]),
     );

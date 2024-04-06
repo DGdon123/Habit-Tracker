@@ -10,6 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/language/language.dart';
+import 'package:habit_tracker/pages/screens/notifications/notifications.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -166,8 +167,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     shape: RoundedRectangleBorder(
                                       side: const BorderSide(
                                           width: 1, color: Color(0xFFEAECF0)),
-                                      borderRadius:
-                                          BorderRadius.circular(16.r),
+                                      borderRadius: BorderRadius.circular(16.r),
                                     ),
                                   ),
                                   child: Image.asset(
@@ -257,35 +257,44 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ),
                       seperator(),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 20.h, horizontal: 10.w),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  AppIcons.notification,
-                                  height: 26.h,
-                                ),
-                                SizedBox(
-                                  width: 8.w,
-                                ),
-                                Text(
-                                  'Notifications'.tr(),
-                                  style: settingsTextStyle,
-                                )
-                              ],
-                            ),
-                            Icon(
-                              Icons.chevron_right,
-                              size: 24.h,
-                              color: const Color.fromARGB(255, 104, 104, 115),
-                            )
-                          ],
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const NotificationsPage()));
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20.h, horizontal: 10.w),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    AppIcons.notification,
+                                    height: 26.h,
+                                  ),
+                                  SizedBox(
+                                    width: 8.w,
+                                  ),
+                                  Text(
+                                    'Notifications'.tr(),
+                                    style: settingsTextStyle,
+                                  )
+                                ],
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                size: 24.h,
+                                color: const Color.fromARGB(255, 104, 104, 115),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                       seperator(),

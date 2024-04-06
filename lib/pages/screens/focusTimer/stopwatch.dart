@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/main.dart';
 import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -309,7 +310,21 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                               InkWell(
                                 onTap: () {
                                   if (started == false) {
+                                    debugPrint(
+                                        "Close tapped $hours, $minutes, $seconds");
+
                                     audioPlayer.stop();
+
+                                    if (hours != 0 || minutes != 0) {
+                                      debugPrint("adding to firestore");
+                                      XpFirestoreServices()
+                                          .addXp(
+                                              xp: (hours * 60) + minutes,
+                                              reason: "Stopwatch")
+                                          .then((value) =>
+                                              Navigator.pop(context));
+                                      return;
+                                    }
                                     Navigator.pop(context);
                                   } else {
                                     QuickAlert.show(

@@ -10,6 +10,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/pages/screens/focusTimer/focus_page_completion.dart';
+import 'package:habit_tracker/pages/screens/focusTimer/focus_page_completion_seconds.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
@@ -41,6 +43,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
   bool showHeadphoneOptions = false;
   int milli = 0;
   late StopWatchTimer _stopWatchTimer;
+
   @override
   void initState() {
     super.initState();
@@ -57,27 +60,28 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
         _progressValue = remainingMilliseconds / milli;
         setState(() {});
         if (_progressValue == 0) {
-          playMusic(de.AssetSource('tingtong.mp3'));
-          QuickAlert.show(
-            onConfirmBtnTap: () {
-              // adding xp only when timer is greater than or equal to 1 minute
-              if (widget.hour != 0 || widget.minute != 0) {
-                var xp = widget.hour * 60 + widget.minute;
-                XpFirestoreServices().addXp(xp: xp, reason: "Focus Timer");
-              }
-
-              audioPlayer.stop();
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => const HomePage()),
-                  (route) => false);
-            },
-            context: context,
-            confirmBtnText: 'Exit'.tr(),
-            type: QuickAlertType.info,
-            confirmBtnColor: AppColors.mainBlue,
-            text: 'Your focus timer has been completed!'.tr(),
-          );
+          if (widget.hour != 0 || widget.minute != 0) {
+            var xp = widget.hour * 60 + widget.minute;
+            XpFirestoreServices()
+                .addXp(xp: xp, reason: widget.label.toString());
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => FocusTimerComplete(
+                          hour: widget.hour,
+                          minute: widget.minute,
+                          seconds: widget.second,
+                          label: widget.label,
+                          xp: xp,
+                        )));
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => FocusTimerCompleteSeconds(
+                          seconds: widget.second,
+                        )));
+          }
         }
       },
       onChangeRawSecond: (value) => print('onChangeRawSecond $value'),

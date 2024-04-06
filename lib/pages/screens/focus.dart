@@ -286,16 +286,13 @@ class FocusPageState extends State<FocusPage> {
     return userWidgets;
   }
 
-  Future<void> addUser(String label, int hours, int minutes, int seconds) {
+  Future<void> addUser(String label) {
     CollectionReference users =
         FirebaseFirestore.instance.collection('focus_timer_card');
 
     return users
         .add({
           'Label': label,
-          'Hours': hours,
-          'Minutes': minutes,
-          'Seconds': seconds,
           'ID': getUserID(),
           'Name': getUserName(),
           'Timestamp': FieldValue.serverTimestamp(),
@@ -351,66 +348,7 @@ class FocusPageState extends State<FocusPage> {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              TextField(
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  setState(() {
-                    hours3 = int.parse(value);
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: 'Hours'.tr(),
-                  hintStyle: TextStyle(
-                    color: Colors.black.withOpacity(0.75),
-                    fontSize: 18.sp,
-                    fontFamily: 'SFProText',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              TextField(
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  setState(() {
-                    minutes3 = int.parse(value);
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: 'Minutes'.tr(),
-                  hintStyle: TextStyle(
-                    color: Colors.black.withOpacity(0.75),
-                    fontSize: 18.sp,
-                    fontFamily: 'SFProText',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              TextField(
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  setState(() {
-                    seconds3 = int.parse(value);
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: 'Seconds'.tr(),
-                  hintStyle: TextStyle(
-                    color: Colors.black.withOpacity(0.75),
-                    fontSize: 18.sp,
-                    fontFamily: 'SFProText',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
+
               // Input field for label
             ],
           ),
@@ -424,7 +362,9 @@ class FocusPageState extends State<FocusPage> {
             ),
             TextButton(
               onPressed: () {
-                addUser(label, hours3, minutes3, seconds3);
+                addUser(
+                  label,
+                );
                 if (label.isEmpty) {
                   QuickAlert.show(
                     context: context,
@@ -434,8 +374,13 @@ class FocusPageState extends State<FocusPage> {
                     text: 'Please, fill up all the fields!'.tr(),
                   );
                 } else {
-                  addUser(label, hours3, minutes3, seconds3);
-
+                  addUser(
+                    label,
+                  );
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomePage()),
+                      (route) => false);
                   context.read<IndexProvider>().setSelectedIndex(3);
                 }
               },
@@ -600,7 +545,7 @@ class FocusPageState extends State<FocusPage> {
                       width: MediaQuery.of(context).size.width - 40,
                       child: PageView(
                           controller: _pageController,
-                          scrollDirection: Axis.vertical,
+                          scrollDirection: Axis.horizontal,
                           children: pages),
                     ),
                   ],
@@ -667,35 +612,35 @@ class FocusPageState extends State<FocusPage> {
                   children: [
                     Text(
                       "00".tr(),
-                      style: TextStyle(fontSize: 50, letterSpacing: -0.5),
+                      style: const TextStyle(fontSize: 50, letterSpacing: -0.5),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 23,
                     ),
-                    Text(
+                    const Text(
                       ':',
                       style: TextStyle(fontSize: 32, height: -0.2),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 22,
                     ),
                     Text(
                       "00".tr(),
-                      style: TextStyle(fontSize: 50, letterSpacing: -0.5),
+                      style: const TextStyle(fontSize: 50, letterSpacing: -0.5),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 22,
                     ),
-                    Text(
+                    const Text(
                       ':',
                       style: TextStyle(fontSize: 32, height: -0.2),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 23,
                     ),
                     Text(
                       "00".tr(),
-                      style: TextStyle(fontSize: 50, letterSpacing: -0.5),
+                      style: const TextStyle(fontSize: 50, letterSpacing: -0.5),
                     ),
                   ],
                 ),
@@ -924,7 +869,7 @@ class FocusPageState extends State<FocusPage> {
               },
               child: Text(
                 'OK'.tr(),
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppColors.mainBlue,
                 ),
               ),

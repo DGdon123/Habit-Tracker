@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
-import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -12,21 +11,16 @@ import 'package:hive/hive.dart';
 import 'package:audioplayers/audioplayers.dart' as de;
 import 'package:provider/provider.dart';
 
-class FocusTimerComplete extends StatefulWidget {
-  int? minute;
-  int? hour;
+class FocusTimerCompleteSeconds extends StatefulWidget {
   int? seconds;
-  String? label;
-  int? xp;
 
-  FocusTimerComplete(
-      {super.key, this.xp, this.label, this.hour, this.minute, this.seconds});
+  FocusTimerCompleteSeconds({super.key, this.seconds});
 
   @override
-  State<FocusTimerComplete> createState() => _PickCharacterPageState();
+  State<FocusTimerCompleteSeconds> createState() => _PickCharacterPageState();
 }
 
-class _PickCharacterPageState extends State<FocusTimerComplete> {
+class _PickCharacterPageState extends State<FocusTimerCompleteSeconds> {
   de.AudioPlayer audioPlayer = de.AudioPlayer();
   @override
   Widget build(BuildContext context) {
@@ -65,7 +59,7 @@ class _PickCharacterPageState extends State<FocusTimerComplete> {
                   ),
                 ),
                 SizedBox(
-                  height: 30.h,
+                  height: 70.h,
                 ),
                 Text(
                   'Good Job!',
@@ -81,40 +75,13 @@ class _PickCharacterPageState extends State<FocusTimerComplete> {
                 SizedBox(
                   height: 40.h,
                 ),
-                if (widget.hour != 0 &&
-                    widget.minute != 0 &&
-                    widget.seconds != 0)
-                  Text(
-                    '${widget.hour} hour ${widget.minute} min ${widget.seconds} sec',
-                    style: TextStyle(
-                        fontFamily: 'SfProText',
-                        fontSize: 35.sp,
-                        fontWeight: FontWeight.w400),
-                  )
-                else if (widget.hour == 0 &&
-                    widget.minute != 0 &&
-                    widget.seconds != 0)
-                  Text(
-                    '${widget.minute} min ${widget.seconds} sec',
-                    style: TextStyle(
-                        fontFamily: 'SfProText',
-                        fontSize: 35.sp,
-                        fontWeight: FontWeight.w400),
-                  ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
-                  decoration: BoxDecoration(
-                      color: AppColors.widgetColorG,
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Text(
-                    '+${widget.xp} XP',
-                    style: TextStyle(
-                        fontFamily: 'SfProText',
-                        fontSize: 35.sp,
-                        fontWeight: FontWeight.w600),
-                  ),
-                )
+                Text(
+                  '${widget.seconds} sec',
+                  style: TextStyle(
+                      fontFamily: 'SfProText',
+                      fontSize: 35.sp,
+                      fontWeight: FontWeight.w400),
+                ),
               ],
             ),
           ),

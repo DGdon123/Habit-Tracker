@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/main.dart';
 import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -333,6 +334,12 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                                     setState(() {
                                       started = false;
                                       addUser(hours, minutes, seconds);
+                                      if (hours != 0 || minutes != 0) {
+                                        var xp = hours * 60 + minutes;
+                                        XpFirestoreServices().addXp(
+                                            xp: xp,
+                                            reason: widget.label.toString());
+                                      }
                                     });
                                   } else {
                                     _stopWatchTimer.onStartTimer();

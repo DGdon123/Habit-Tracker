@@ -14,6 +14,10 @@ class UserFireStoreServices {
       required String name,
       required String photoUrl,
       required double latitude,
+      required int sleep,
+      required int screen,
+      required int focus,
+      required int workout,
       required double longitude}) async {
     final ifExists =
         await userCollection.where('email', isEqualTo: email).get();
@@ -34,6 +38,10 @@ class UserFireStoreServices {
       'photoUrl': photoUrl,
       'device_token': devicetoken,
       'latitude': latitude,
+      'sleepGoals': sleep,
+      'screenTime': screen,
+      'focusTime': focus,
+      'workoutFrequency': workout,
       'longitude': longitude,
       "uid": uid,
     });

@@ -35,6 +35,22 @@ class _AccountSetupSetNameState extends State<FriendRequestCard> {
     return user?.uid;
   }
 
+  Future<void> addNotifications(
+      String sendername, String uid, String devicetoken, String message) {
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('notifications');
+
+    return users
+        .add({
+          'sendername': sendername,
+          'receiverID': uid,
+          'receiverdevicetoken': devicetoken,
+          'message': message
+        })
+        .then((value) => print("User added successfully!"))
+        .catchError((error) => print("Failed to add user: $error"));
+  }
+
   @override
   Widget build(BuildContext context) {
     NotificationServices notificationServices = NotificationServices();
@@ -88,6 +104,12 @@ class _AccountSetupSetNameState extends State<FriendRequestCard> {
                                       'key=AAAAclKtwpw:APA91bE40rUSq6qXigGzh_3Y6D4mtkr1vjbkZt2_7HDJMzYWB9r53AXdxnWeOue5ZEwSXb_xQnhtJjh3y5AnkApfWJPmicHaIUdbJ2LDs47EhcBQQmk0FhN8sy_vW-b1AEgVxva7lu0n'
                                 });
                           });
+                          log(widget.token);
+                          addNotifications(
+                              getUserName().toString(),
+                              widget.senderID,
+                              widget.token,
+                              '${getUserName()} has accepted your friend request.');
                         },
                       ),
                       IconButton(

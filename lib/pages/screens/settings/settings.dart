@@ -12,6 +12,7 @@ import 'package:habit_tracker/auth/repositories/user_repository.dart';
 import 'package:habit_tracker/pages/chat_room/chat_room.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/language/language.dart';
+import 'package:habit_tracker/pages/screens/notifications/notifications.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -159,6 +160,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 SizedBox(
                                   width: 10.w,
                                 ),
+
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.push(
@@ -182,6 +184,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                     child: Image.asset(
                                       AppImages.googlefit,
                                       height: 30.h,
+
+                                
+
                                     ),
                                   ),
                                 )
@@ -267,35 +272,44 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ),
                       seperator(),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 20.h, horizontal: 10.w),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  AppIcons.notification,
-                                  height: 26.h,
-                                ),
-                                SizedBox(
-                                  width: 8.w,
-                                ),
-                                Text(
-                                  'Notifications'.tr(),
-                                  style: settingsTextStyle,
-                                )
-                              ],
-                            ),
-                            Icon(
-                              Icons.chevron_right,
-                              size: 24.h,
-                              color: const Color.fromARGB(255, 104, 104, 115),
-                            )
-                          ],
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const NotificationsPage()));
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20.h, horizontal: 10.w),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    AppIcons.notification,
+                                    height: 26.h,
+                                  ),
+                                  SizedBox(
+                                    width: 8.w,
+                                  ),
+                                  Text(
+                                    'Notifications'.tr(),
+                                    style: settingsTextStyle,
+                                  )
+                                ],
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                size: 24.h,
+                                color: const Color.fromARGB(255, 104, 104, 115),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                       seperator(),

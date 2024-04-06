@@ -11,11 +11,13 @@ import 'package:habit_tracker/auth/accountSetup1.dart';
 import 'package:habit_tracker/auth/signup_page.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/home.dart';
+import 'package:habit_tracker/provider/goals_provider.dart';
 import 'package:habit_tracker/services/user_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../provider/location_provider.dart';
 import '../login_page.dart';
 
 enum Status {
@@ -54,16 +56,6 @@ class UserRepository with ChangeNotifier {
       // Sign in with email and password
       final authResponse = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-
-      // adding details to the firestore
-      await UserFireStoreServices().addUser(
-          latitude: 0,
-          longitude: 0,
-          devicetoken: token,
-          uid: authResponse.user!.uid,
-          email: authResponse.user!.email.toString(),
-          name: authResponse.user!.displayName.toString(),
-          photoUrl: authResponse.user!.photoURL.toString());
 
       // If signInWithEmailAndPassword succeeds, update status and return true
       _status = Status.Authenticated;
@@ -151,8 +143,18 @@ class UserRepository with ChangeNotifier {
     }
   }
 
-  Future<bool> signUp(BuildContext context, String username, String dob,
-      String email, String password, double latitude, double longitude) async {
+  Future<bool> signUp(
+      BuildContext context,
+      String username,
+      String dob,
+      String email,
+      String password,
+      double latitude,
+      double longitude,
+      int sleep,
+      int screen,
+      int focus,
+      int workout) async {
     try {
       _status = Status.Authenticating;
       notifyListeners();
@@ -196,6 +198,10 @@ class UserRepository with ChangeNotifier {
         name: username,
         latitude: latitude,
         longitude: longitude,
+        sleep: sleep,
+        screen: screen,
+        focus: focus,
+        workout: workout,
         photoUrl: "",
       )
           .then((_) {

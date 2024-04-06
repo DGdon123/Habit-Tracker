@@ -23,6 +23,7 @@ import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/provider/avg_sleep_provider.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/provider/flag_provider.dart';
+import 'package:habit_tracker/provider/goals_provider.dart';
 import 'package:habit_tracker/services/notification_services.dart';
 import 'package:http/http.dart' as http;
 import 'package:habit_tracker/pages/auth_onboarding_deciding_screen.dart';
@@ -61,6 +62,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (_) => UserRepository.instance()),
       ChangeNotifierProvider(create: (_) => SelectedDateProvider()),
       ChangeNotifierProvider(create: (_) => FlagImageProvider()),
+      ChangeNotifierProvider(create: (_) => GoalsProvider()),
       ChangeNotifierProvider(create: (_) => StartEndDateProvider()),
       ChangeNotifierProvider(create: (_) => LocationProvider()),
       ChangeNotifierProvider(create: (_) => StartEndDateProvider()),
@@ -278,18 +280,19 @@ class _OnBoardingScreenState extends State<HomePage1> {
       if (snapshot.docs.isNotEmpty) {
         // If the snapshot is not empty, proceed with accessing user data
         for (var doc in snapshot.docs) {
+          
           Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
 
           // This user document matches the current user
           // You can access the user data and do something with it
-        latitude = userData['latitude'] ;
-      longitude = userData['longitude'];
+          latitude = userData['latitude'];
+          longitude = userData['longitude'];
 
           // If latitude and longitude are not null, log them or perform further actions
           log('Latitude: $latitude, Longitude: $longitude');
           // Example: Use the latitude and longitude data
           // SomeFunctionToUseLocation(latitude, longitude);
-                }
+        }
       } else {
         // Handle case where no documents match the current user UID
         log('No user data found for the current user');

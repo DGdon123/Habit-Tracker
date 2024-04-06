@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:carp_background_location/carp_background_location.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart' as img;
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
@@ -11,7 +14,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:habit_tracker/auth/repositories/gymtime_model.dart';
+import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
+import 'package:habit_tracker/location/current_location.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
@@ -21,13 +28,14 @@ import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:habit_tracker/utils/styles.dart';
+import 'package:hive/hive.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../services/user_firestore_services.dart';
 
 class AccountSetup1 extends StatefulWidget {
@@ -114,6 +122,7 @@ class _AccountSetupState extends State<AccountSetup1> {
                 PickCharacterPage(),
                 AccountSetupSetName(),
                 SetUpGoals(),
+                WorkoutTrackType()
               ],
             ),
           ),
@@ -882,7 +891,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                     onSelectedItemChanged: (value) {
                       setState(() {
                         focusTime = value;
-                         goalProvider.setSelectedIndex2(focusTime);
+                        goalProvider.setSelectedIndex2(focusTime);
                         //_selectedMinute = value;
                       });
                     },
@@ -923,7 +932,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                     onSelectedItemChanged: (value) {
                       setState(() {
                         workoutFrequency = value;
-                         goalProvider.setSelectedIndex3(workoutFrequency);
+                        goalProvider.setSelectedIndex3(workoutFrequency);
                         //_selectedMinute = value;
                       });
                     },
@@ -975,6 +984,7 @@ Widget _buildPicker({
     ),
   );
 }
+
 class WorkoutTrackType extends StatefulWidget {
   const WorkoutTrackType({super.key});
 
@@ -986,6 +996,245 @@ bool isManualSelected = false;
 bool isAutomaticSelected = false;
 
 class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
+  String logStr = '';
+  LocationDto? _lastLocation;
+  StreamSubscription<LocationDto>? locationSubscription;
+  LocationStatus _status = LocationStatus.UNKNOWN;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    LocationManager().interval = 60;
+    LocationManager().distanceFilter = 0;
+    LocationManager().notificationTitle = 'Tracking Your Location'.tr();
+    LocationManager().notificationMsg =
+        'Habit Tracker is tracking your location'.tr();
+    LocationManager().notificationBigMsg =
+        'Habit Tracker is tracking your location'.tr();
+    _status = LocationStatus.INITIALIZED;
+  }
+
+  void getCurrentLocation() async =>
+      onData(await LocationManager().getCurrentLocation());
+
+  void onData(LocationDto location) {
+    print('>> $location');
+    setState(() {
+      _lastLocation = location;
+    });
+  }
+
+  /// Is "location always" permission granted?
+  Future<bool> isLocationAlwaysGranted() async =>
+      await Permission.locationAlways.isGranted;
+
+  /// Tries to ask for "location always" permissions from the user.
+  /// Returns `true` if successful, `false` otherwise.
+  Future<bool> askForLocationAlwaysPermission() async {
+    bool granted = await Permission.locationAlways.isGranted;
+    PermissionStatus? granted2; // Added.
+    if (!granted) {
+      granted2 = await Permission.location.request(); // Added.
+      if (granted2 == PermissionStatus.granted) {
+        granted = await Permission.locationAlways.request() ==
+            PermissionStatus.granted;
+      }
+    }
+
+    return granted;
+  }
+
+  void start() async {
+    // ask for location permissions, if not already granted
+    if (!await isLocationAlwaysGranted()) {
+      await askForLocationAlwaysPermission();
+    }
+
+    locationSubscription?.cancel();
+    locationSubscription = LocationManager().locationStream.listen(onData);
+    await LocationManager().start();
+    setState(() {
+      _status = LocationStatus.RUNNING;
+      locationWidget();
+    });
+  }
+
+  double latitude = 0;
+  double longitude = 0;
+  double distance = 0;
+  // Function to calculate distance between two sets of latitude and longitude
+  double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    return Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
+  }
+
+  // locationWidget function to add data to Hive
+  Future<Widget> locationWidget() async {
+    if (_lastLocation == null) {
+      return Text("No location yet".tr());
+    } else {
+      final locProvider = Provider.of<LocationProvider>(context, listen: false);
+      var lat = locProvider.latitude;
+      var longi = locProvider.longitude;
+
+      if (lat != null && longi != null) {
+        distance = calculateDistance(
+          lat,
+          longi,
+          _lastLocation!.latitude,
+          _lastLocation!.longitude,
+        );
+      }
+
+      log(distance.toString());
+      if (distance <= 300) {
+        // Open the Hive box where user location times are stored
+        var box = await Hive.openBox<DataModel>('hive_box');
+
+        // Create a DataModel instance with current date and time
+        var currentDate = DateTime.now().toString().split(' ')[0];
+        var currentTime = _lastLocation!.time.toString();
+        DateTime time =
+            DateTime.fromMillisecondsSinceEpoch(_lastLocation!.time ~/ 1);
+
+// Format the DateTime object to a desired string format
+        String formattedTime = DateFormat('HH:mm:ss').format(time);
+        DataModel dataModel = DataModel(date: currentDate, time: formattedTime);
+
+        // Add the dataModel instance to the Hive box
+        await box.add(dataModel);
+
+        await box.close();
+      }
+      if (distance > 300) {
+        // Open the Hive box where user location times are stored
+        var box = await Hive.openBox<DataModel1>('hive_box1');
+
+        // Create a DataModel instance with current date and time
+        var currentDate = DateTime.now().toString().split(' ')[0];
+        var currentTime = _lastLocation!.time.toString();
+        DateTime time =
+            DateTime.fromMillisecondsSinceEpoch(_lastLocation!.time ~/ 1);
+
+// Format the DateTime object to a desired string format
+        String formattedTime = DateFormat('HH:mm:ss').format(time);
+        DataModel1 dataModel1 =
+            DataModel1(date: currentDate, time: formattedTime);
+
+        // Add the dataModel instance to the Hive box
+        await box.add(dataModel1);
+
+        await box.close();
+      }
+      return Column(
+        children: <Widget>[
+          Text(
+            '${_lastLocation!.latitude}, ${_lastLocation!.longitude}',
+          ),
+          const Text('@'),
+          Text(
+            '${DateTime.fromMillisecondsSinceEpoch(_lastLocation!.time ~/ 1)}',
+          ),
+        ],
+      );
+    }
+  }
+
+  void stop() {
+    locationSubscription?.cancel();
+    LocationManager().stop();
+    setState(() {
+      _status = LocationStatus.STOPPED;
+      getLastLocationTime();
+      getLastLocationTime1();
+    });
+  }
+
+  Widget stopButton() => SizedBox(
+        width: double.maxFinite,
+        child: ElevatedButton(
+          onPressed: stop,
+          child: Text('STOP'.tr()),
+        ),
+      );
+
+  Widget startButton() => SizedBox(
+        width: double.maxFinite,
+        child: ElevatedButton(
+          onPressed: start,
+          child: Text('START'.tr()),
+        ),
+      );
+
+  Widget statusText() =>
+      Text("${"Status:".tr()} ${_status.toString().split('.').last}");
+
+  Widget currentLocationButton() => SizedBox(
+        width: double.maxFinite,
+        child: ElevatedButton(
+          onPressed: getCurrentLocation,
+          child: Text('CURRENT LOCATION'.tr()),
+        ),
+      );
+
+  @override
+  void dispose() => super.dispose();
+
+  // getLastLocationTime function to retrieve data from Hive
+  Future<DateTime?> getLastLocationTime() async {
+    try {
+      // Initialize Hive
+
+      // Open the Hive box where user location times are stored
+      var box = await Hive.openBox<DataModel>('hive_box');
+
+      // Get the last added dataModel instance from the box
+      DataModel? lastDataModel =
+          box.isNotEmpty ? box.getAt(box.length - 1) : null;
+
+      // Extract the date and time from the lastDataModel instance
+      if (lastDataModel != null) {
+        var dateString = lastDataModel.date;
+        var timeString = lastDataModel.time;
+        var dateTimeString = '$dateString $timeString';
+        log('DataModel1: $dateTimeString');
+        return DateTime.parse(dateTimeString);
+      }
+      // Close the Hive box
+      await box.close();
+    } catch (error) {
+      print('Failed to retrieve last location time: $error');
+    }
+    return null;
+  }
+
+  Future<DateTime?> getLastLocationTime1() async {
+    try {
+      // Initialize Hive
+
+      // Open the Hive box where user location times are stored
+      var box = await Hive.openBox<DataModel1>('hive_box1');
+
+      // Get the last added dataModel instance from the box
+      DataModel1? lastDataModel =
+          box.isNotEmpty ? box.getAt(box.length - 1) : null;
+
+      // Extract the date and time from the lastDataModel instance
+      if (lastDataModel != null) {
+        var dateString = lastDataModel.date;
+        var timeString = lastDataModel.time;
+        var dateTimeString = '$dateString $timeString';
+        log('DataModel2: $dateTimeString');
+        return DateTime.parse(dateTimeString);
+      }
+      // Close the Hive box
+      await box.close();
+    } catch (error) {
+      print('Failed to retrieve last location time: $error');
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -1009,6 +1258,7 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
               setState(() {
                 isAutomaticSelected = !isAutomaticSelected;
                 isManualSelected = false;
+                start();
               });
             },
             child: Card(
@@ -1053,6 +1303,7 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
               setState(() {
                 isManualSelected = !isManualSelected;
                 isAutomaticSelected = false;
+                stop();
               });
               // isManualSelected
               //     ? showDialog(

@@ -16,5 +16,5 @@ class AppImages {
   static const String germany = 'assets/flags/germany.png';
   static const String googlefit = 'assets/images/googlefit.png';
   static const String female = 'assets/images/female.png';
-  
+  static const String twogift = 'assets/icons/gifts-svg.svg';
 }

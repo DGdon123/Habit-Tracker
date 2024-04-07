@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:habit_tracker/pages/chat_room/chat_room.dart';
 import 'package:habit_tracker/pages/profile_page/widgets/friend_container.dart';
 import 'package:habit_tracker/services/friend_firestore_services.dart';
 
@@ -50,6 +51,14 @@ class FriendsListView extends StatelessWidget {
                                 name: data["name"],
                                 photoUrl: data["photoUrl"],
                                 uid: data["uid"],
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ChatRoom(
+                                                name: data["name"],
+                                              )));
+                                },
                               );
                             }
                             return const SizedBox();

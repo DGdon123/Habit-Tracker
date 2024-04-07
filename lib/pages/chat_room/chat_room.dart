@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/utils/buttons.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
+import 'package:hive/hive.dart';
 
 class ChatRoom extends StatefulWidget {
   String? name;
@@ -15,8 +17,12 @@ class ChatRoom extends StatefulWidget {
 }
 
 TextEditingController _textEditingController = TextEditingController();
+
+
+
 void giftPopUp(BuildContext context) {
-  final xpController = TextEditingController();
+  final _xpController = TextEditingController();
+
   showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -46,22 +52,26 @@ void giftPopUp(BuildContext context) {
                 height: 20,
               ),
               TextField(
-                controller: xpController,
+
+                controller: _xpController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 12),
-                    hintStyle: const TextStyle(
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                    hintStyle: TextStyle(
+
                       color: CupertinoColors.systemGrey,
                     ),
                     labelText: 'XP',
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                         borderSide:
-                            const BorderSide(color: AppColors.blue, width: 1)),
+
+                            BorderSide(color: AppColors.blue, width: 1)),
                     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(
+                        borderSide: BorderSide(
+
                             color: AppColors.widgetColorB, width: 0.4))),
               ),
             ],
@@ -195,9 +205,14 @@ class _ChatRoomState extends State<ChatRoom> {
                   const SizedBox(
                     width: 15,
                   ),
-                  SvgPicture.asset(
-                    AppIcons.gift,
-                    width: 35,
+                  GestureDetector(
+                    onTap: () {
+                      return giftPopUp(context);
+                    },
+                    child: SvgPicture.asset(
+                      AppIcons.gift,
+                      width: 30,
+                    ),
                   ),
                   const SizedBox(
                     width: 15,
@@ -218,16 +233,18 @@ class _ChatRoomState extends State<ChatRoom> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: FloatingActionButton(
-                      shape: const CircleBorder(),
-                      onPressed: () {},
-                      backgroundColor: AppColors.mainBlue,
-                      elevation: 0,
-                      child: const Icon(
-                        Icons.send,
-                        color: Colors.white,
-                        size: 18,
-                      ),
+                    child: SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: FloatingActionButton(
+                          shape: const CircleBorder(),
+                          onPressed: () {},
+                          backgroundColor: AppColors.blue,
+                          elevation: 0,
+                          child: SvgPicture.asset(
+                            AppIcons.sendIcon,
+                            width: 18,
+                          )),
                     ),
                   )
                 ],

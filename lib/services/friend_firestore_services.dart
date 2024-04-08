@@ -67,9 +67,13 @@ class FriendFirestoreServices {
         .snapshots();
   }
 
-  void removeAddedFriend({required String friendID}) {
-    FirebaseFirestore.instance.collection("friends").doc(userID).update({
+  Future<void> removeAddedFriend({required String friendID}) async {
+    await friendsRef.doc(userID).update({
       "friends": FieldValue.arrayRemove([friendID])
+    });
+
+    await friendsRef.doc(friendID).update({
+      "friends": FieldValue.arrayRemove([userID])
     });
   }
 

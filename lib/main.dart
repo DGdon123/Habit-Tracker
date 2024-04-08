@@ -255,9 +255,6 @@ class _OnBoardingScreenState extends State<HomePage1> {
     return user?.uid;
   }
 
-  final CollectionReference userCollection =
-      FirebaseFirestore.instance.collection('users');
-
   NotificationServices notificationServices = NotificationServices();
 
   @override

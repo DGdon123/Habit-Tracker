@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageServices {
@@ -18,6 +20,7 @@ class LocalStorageServices {
   Future<bool> isAutomaticSelected() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool status = prefs.getBool('isAutomaticSelected') ?? false;
+    log("Automatic selection is $status");
     return status;
   }
 
@@ -25,5 +28,7 @@ class LocalStorageServices {
   Future<void> setAutomatic(bool selected) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isAutomaticSelected', selected);
+
+    log("Automatic selection set to $selected");
   }
 }

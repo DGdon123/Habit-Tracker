@@ -4,14 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:habit_tracker/pages/home_page.dart';
-import 'package:habit_tracker/pages/profile_page/widgets/friends_list_view.dart';
-import 'package:habit_tracker/pages/profile_page/widgets/received_friend_request.dart';
+import 'package:habit_tracker/pages/friend_searched_page/friend_searched_page.dart';
 import 'package:habit_tracker/pages/screens/settings/settings.dart';
 import 'package:habit_tracker/services/user_firestore_services.dart';
 import 'package:habit_tracker/services/xp_firestore_services.dart';
@@ -19,7 +15,8 @@ import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
 
-import '../friend_searched_page/friend_searched_page.dart';
+import 'widgets/friends_list_view.dart';
+import 'widgets/received_friend_request.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -49,12 +46,7 @@ class ProfilePageState extends State<ProfilePage>
         body: DefaultTabController(
           length: 2,
           child: Container(
-            margin: EdgeInsets.only(
-                top: kIsWeb
-                    ? 35.h
-                    : Platform.isIOS
-                        ? 50.h
-                        : 35.h),
+            margin: EdgeInsets.only(top: Platform.isIOS ? 50.h : 35.h),
             child: Column(
               children: [
                 Padding(
@@ -76,17 +68,11 @@ class ProfilePageState extends State<ProfilePage>
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 30.h,
-                ),
+                SizedBox(height: 30.h),
                 topBar(),
-                SizedBox(
-                  height: 30.h,
-                ),
+                SizedBox(height: 30.h),
                 tabBar(),
-                SizedBox(
-                  height: 20.h,
-                ),
+                SizedBox(height: 20.h),
                 Container(
                   decoration: const ShapeDecoration(
                     shape: RoundedRectangleBorder(
@@ -338,10 +324,8 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
             height: 5.h,
           ),
           const ReceivedFriendRequest(),
-          SizedBox(
-            height: 5.h,
-          ),
-          Expanded(child: FriendsListView()),
+          SizedBox(height: 5.h),
+          const Expanded(child: FriendsListView()),
         ],
       ),
     );
@@ -379,9 +363,6 @@ class ActivityPage extends StatelessWidget {
                 )
               ],
             ),
-          ),
-          SizedBox(
-            height: 5.h,
           ),
           Expanded(
               child: StreamBuilder<QuerySnapshot>(
@@ -444,7 +425,7 @@ Widget AchievmentsContainer({
   var uploadedTime = "${uploadedDate.hour}:${uploadedDate.minute}";
 
   return Container(
-    margin: EdgeInsets.only(bottom: 10.h),
+    margin: EdgeInsets.only(bottom: 10.h, right: 20.w, left: 20.w),
     padding: const EdgeInsets.all(16),
     decoration: ShapeDecoration(
       color: Colors.white,

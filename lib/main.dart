@@ -80,6 +80,8 @@ Future<void> main() async {
       child: const MyApp(),
     ),
   ));
+
+  // only when automatic background fetch is set to true
   initBackgroundFetch();
 }
 

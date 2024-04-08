@@ -126,6 +126,4 @@ class NotificationServices {
       context.read<IndexProvider>().setSelectedIndex(4);
     }
   }
-
-  
 }

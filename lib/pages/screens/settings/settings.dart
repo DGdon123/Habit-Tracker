@@ -160,14 +160,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                 SizedBox(
                                   width: 10.w,
                                 ),
-
                                 GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => ChatRoom()));
-                                  },
+                                  onTap: () {},
                                   child: Container(
                                     width: 48.h,
                                     height: 48.w,
@@ -184,9 +178,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                     child: Image.asset(
                                       AppImages.googlefit,
                                       height: 30.h,
-
-                                
-
                                     ),
                                   ),
                                 )

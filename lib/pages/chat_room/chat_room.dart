@@ -1,20 +1,84 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:habit_tracker/utils/buttons.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
+import 'package:hive/hive.dart';
 
 class ChatRoom extends StatefulWidget {
-  const ChatRoom({super.key});
+  String? name;
+  ChatRoom({super.key, this.name});
 
   @override
   State<ChatRoom> createState() => _ChatRoomState();
 }
 
 TextEditingController _textEditingController = TextEditingController();
-void giftPop(){
-  
+
+
+
+void giftPopUp(BuildContext context) {
+  final _xpController = TextEditingController();
+
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(
+            child: Text(
+              'Gift XP to your friend',
+              style: TextStyle(
+                color: AppColors.textBlack,
+                fontSize: 19.sp,
+                fontFamily: 'SFProText',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              SvgPicture.asset(
+                AppIcons.twogift,
+                width: 80.w,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              TextField(
+
+                controller: _xpController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                    hintStyle: TextStyle(
+
+                      color: CupertinoColors.systemGrey,
+                    ),
+                    labelText: 'XP',
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide:
+
+                            BorderSide(color: AppColors.blue, width: 1)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+
+                            color: AppColors.widgetColorB, width: 0.4))),
+              ),
+            ],
+          ),
+          actions: [CustomButton(text: 'Send Gift', onPressed: () {})],
+        );
+      });
 }
 
 class _ChatRoomState extends State<ChatRoom> {
@@ -25,7 +89,7 @@ class _ChatRoomState extends State<ChatRoom> {
         surfaceTintColor: Colors.transparent,
         shadowColor: CupertinoColors.extraLightBackgroundGray,
         elevation: 2,
-        title: Text('Prakhyat Gurung'),
+        title: Text(widget.name.toString()),
       ),
       body: Stack(
         children: [
@@ -55,8 +119,8 @@ class _ChatRoomState extends State<ChatRoom> {
                           padding: const EdgeInsets.only(left: 12),
                           child: Container(
                             // width: 150,
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
                                 color: CupertinoColors.lightBackgroundGray,
                                 borderRadius: BorderRadius.only(
                                     topRight: Radius.circular(8),
@@ -73,8 +137,8 @@ class _ChatRoomState extends State<ChatRoom> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 12),
                           child: Text(
                             '14:59',
                             style: TextStyle(color: CupertinoColors.systemGrey),
@@ -91,7 +155,7 @@ class _ChatRoomState extends State<ChatRoom> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Spacer(),
+                    const Spacer(),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -99,8 +163,8 @@ class _ChatRoomState extends State<ChatRoom> {
                           padding: const EdgeInsets.only(right: 12),
                           child: Container(
                             // width: 150,
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
                                 color: AppColors.mainBlue,
                                 borderRadius: BorderRadius.only(
                                     topRight: Radius.circular(8),
@@ -117,7 +181,7 @@ class _ChatRoomState extends State<ChatRoom> {
                             ),
                           ),
                         ),
-                        Text(
+                        const Text(
                           '15:00',
                           style: TextStyle(color: CupertinoColors.systemGrey),
                         ),
@@ -141,16 +205,21 @@ class _ChatRoomState extends State<ChatRoom> {
                   const SizedBox(
                     width: 15,
                   ),
-                  SvgPicture.asset(
-                    AppIcons.gift,
-                    width: 35,
+                  GestureDetector(
+                    onTap: () {
+                      return giftPopUp(context);
+                    },
+                    child: SvgPicture.asset(
+                      AppIcons.gift,
+                      width: 30,
+                    ),
                   ),
                   const SizedBox(
                     width: 15,
                   ),
                   Expanded(
                     child: TextField(
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
@@ -164,16 +233,18 @@ class _ChatRoomState extends State<ChatRoom> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: FloatingActionButton(
-                      shape: const CircleBorder(),
-                      onPressed: () {},
-                      backgroundColor: AppColors.mainBlue,
-                      elevation: 0,
-                      child: const Icon(
-                        Icons.send,
-                        color: Colors.white,
-                        size: 18,
-                      ),
+                    child: SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: FloatingActionButton(
+                          shape: const CircleBorder(),
+                          onPressed: () {},
+                          backgroundColor: AppColors.blue,
+                          elevation: 0,
+                          child: SvgPicture.asset(
+                            AppIcons.sendIcon,
+                            width: 18,
+                          )),
                     ),
                   )
                 ],
@@ -185,4 +256,3 @@ class _ChatRoomState extends State<ChatRoom> {
     );
   }
 }
-

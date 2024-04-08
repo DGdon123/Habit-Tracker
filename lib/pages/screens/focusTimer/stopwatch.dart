@@ -348,6 +348,12 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                                     setState(() {
                                       started = false;
                                       addUser(hours, minutes, seconds);
+                                      if (hours != 0 || minutes != 0) {
+                                        var xp = hours * 60 + minutes;
+                                        XpFirestoreServices().addXp(
+                                            xp: xp,
+                                            reason: widget.label.toString());
+                                      }
                                     });
                                   } else {
                                     _stopWatchTimer.onStartTimer();

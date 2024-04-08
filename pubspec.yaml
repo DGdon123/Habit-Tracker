@@ -71,6 +71,8 @@ dependencies:
   flutter_local_notifications: ^17.0.0
   numberpicker: ^2.1.2
   roundcheckbox: ^2.0.5
+  image_picker: ^1.0.7
+  firebase_storage: ^11.7.0
 
 dev_dependencies:
   flutter_test:

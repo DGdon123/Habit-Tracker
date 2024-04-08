@@ -15,6 +15,7 @@ import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.d
 import 'package:habit_tracker/pages/usage_page/usage_page.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
+import 'package:habit_tracker/services/local_storage_services.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
@@ -53,6 +54,13 @@ class _HomeState extends State<Home> {
       child: Scaffold(
           body: Column(
         children: [
+          FutureBuilder(
+              future: LocalStorageServices().isAutomaticSelected(),
+              builder: (_, data) {
+                log("Home.dart is automatic selected: ${data.data}");
+
+                return SizedBox();
+              }),
           const SizedBox(
             height: 5,
           ),

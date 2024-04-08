@@ -65,7 +65,6 @@ class UserRepository with ChangeNotifier {
       final isOldUser = await UserFireStoreServices()
           .checkIfUserExists(authResponse.user!.email.toString());
 
-      log("Is old user: $isOldUser");
       if (isOldUser) {
         Navigator.pushReplacement(
           context,

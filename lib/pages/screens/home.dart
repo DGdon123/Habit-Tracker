@@ -11,7 +11,9 @@ import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
 import 'package:habit_tracker/location/current_location.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/pages/screens/friends.dart';
+import 'package:habit_tracker/pages/screens/widgets/start_end_time_picker.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.dart';
+import 'package:habit_tracker/pages/sleep_page/widgets/start_end_date_picker.dart';
 import 'package:habit_tracker/pages/usage_page/usage_page.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
@@ -394,19 +396,31 @@ class _HomeState extends State<Home> {
               borderRadius: BorderRadius.circular(16.r),
             ),
           ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            child: FutureBuilder<bool>(
-                future: LocalStorageServices().isAutomaticSelected(),
-                builder: (_, data) {
-                  debugPrint("Data Home.dart: ${data.data}");
+          child: FutureBuilder<bool>(
+              future: LocalStorageServices().isAutomaticSelected(),
+              builder: (_, data) {
+                debugPrint("Data Home.dart: ${data.data}");
 
-                  if (data.hasData && data.data == false) {
-                    return Center(
-                      child: Text("Click to add today's workout.".tr()),
-                    );
-                  } else if (data.hasData && data.data == true) {
-                    return Row(
+                if (data.hasData && data.data == false) {
+                  return GestureDetector(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (_) {
+                            return StartEndTimePicker();
+                          });
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      child: Center(
+                        child: Text("Click to add today's workout.".tr()),
+                      ),
+                    ),
+                  );
+                } else if (data.hasData && data.data == true) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -461,11 +475,11 @@ class _HomeState extends State<Home> {
                           ],
                         ),
                       ],
-                    );
-                  }
-                  return const SizedBox();
-                }),
-          ),
+                    ),
+                  );
+                }
+                return const SizedBox();
+              }),
         ),
       ],
     );

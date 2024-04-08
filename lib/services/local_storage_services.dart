@@ -20,7 +20,6 @@ class LocalStorageServices {
   Future<bool> isAutomaticSelected() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool status = prefs.getBool('isAutomaticSelected') ?? false;
-    log("Automatic selection is $status");
     return status;
   }
 

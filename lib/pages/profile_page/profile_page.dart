@@ -10,6 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:habit_tracker/auth/accountSetup.dart';
+import 'package:habit_tracker/auth/accountSetup1.dart';
 import 'package:habit_tracker/auth/forgot_password.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/profile_page/widgets/friends_list_view.dart';
@@ -18,12 +19,15 @@ import 'package:habit_tracker/pages/profile_page/widgets/received_friend_request
 import 'package:habit_tracker/pages/friend_searched_page/friend_searched_page.dart';
 
 import 'package:habit_tracker/pages/screens/settings/settings.dart';
+import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/services/user_firestore_services.dart';
 import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/buttons.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
+import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 
 import 'widgets/friends_list_view.dart';
 import 'widgets/received_friend_request.dart';
@@ -181,7 +185,12 @@ class ProfilePageState extends State<ProfilePage>
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const EditGoals()));
+                            builder: (context) => EditGoals(
+                                  sleep: sleep,
+                                  workout: workout,
+                                  focus: focus,
+                                  screen: screen,
+                                )));
                   },
                   child: const Icon(Icons.edit))
             ],
@@ -736,34 +745,43 @@ Widget AchievmentsContainer({
 }
 
 class EditGoals extends StatefulWidget {
-  const EditGoals({super.key});
+  final int sleep;
+  final int screen;
+  final int focus;
+  final int workout;
+  const EditGoals(
+      {required this.sleep,
+      required this.screen,
+      required this.focus,
+      required this.workout,
+      super.key});
 
   @override
   State<EditGoals> createState() => _EditGoalsState();
 }
 
 class _EditGoalsState extends State<EditGoals> {
-  int sleepTime = 0;
-  int screenTime = 0;
-  int workoutFrequency = 0;
-  int focusTime = 0;
-
+  int sleep = 0;
+  int screen = 0;
+  int focus = 0;
+  int workout = 0;
+  var userID = FirebaseAuth.instance.currentUser!.uid;
+  CollectionReference userRef = FirebaseFirestore.instance.collection('users');
   @override
   Widget build(BuildContext context) {
     //final goalProvider = Provider.of<GoalsProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            'Edit Goals',
-            style: TextStyle(
-                fontFamily: 'SFProText',
-                fontSize: 22.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textBlack),
-          ),
+        title: Text(
+          'Edit Goals',
+          style: TextStyle(
+              fontFamily: 'SFProText',
+              fontSize: 22.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textBlack),
         ),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18.0),
@@ -772,7 +790,7 @@ class _EditGoalsState extends State<EditGoals> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: 25.h,
+                height: 15.h,
               ),
               Container(
                 padding: const EdgeInsets.all(8),
@@ -792,10 +810,11 @@ class _EditGoalsState extends State<EditGoals> {
                     ),
                     _buildPicker(
                       itemCount: 13,
-                      selectedItem: 0,
+                      selectedItem: widget
+                          .sleep, // Pass the value of sleep as the initial selected item
                       onSelectedItemChanged: (value) {
                         setState(() {
-                          sleepTime = value;
+                          sleep = value;
                           // goalProvider.setSelectedIndex(sleepTime);
                           //_selectedMinute = value;
                         });
@@ -833,10 +852,11 @@ class _EditGoalsState extends State<EditGoals> {
                     ),
                     _buildPicker(
                       itemCount: 25,
-                      selectedItem: 0,
+                      selectedItem: widget.screen,
                       onSelectedItemChanged: (value) {
                         setState(() {
-                          screenTime = value;
+                          screen = value;
+                          // screenTime = value;
                           // goalProvider.setSelectedIndex1(screenTime);
                           //_selectedMinute = value;
                         });
@@ -874,10 +894,11 @@ class _EditGoalsState extends State<EditGoals> {
                     ),
                     _buildPicker(
                       itemCount: 13,
-                      selectedItem: 0,
+                      selectedItem: widget.focus,
                       onSelectedItemChanged: (value) {
                         setState(() {
-                          focusTime = value;
+                          focus = value;
+                          // focusTime = value;
                           // goalProvider.setSelectedIndex2(focusTime);
                           //_selectedMinute = value;
                         });
@@ -915,10 +936,11 @@ class _EditGoalsState extends State<EditGoals> {
                     ),
                     _buildPicker(
                       itemCount: 8,
-                      selectedItem: 0,
+                      selectedItem: widget.workout,
                       onSelectedItemChanged: (value) {
                         setState(() {
-                          workoutFrequency = value;
+                          workout = value;
+                          // workoutFrequency = value;
                           //goalProvider.setSelectedIndex3(workoutFrequency);
                           //_selectedMinute = value;
                         });
@@ -939,9 +961,33 @@ class _EditGoalsState extends State<EditGoals> {
                 height: 14.h,
               ),
               CustomButton(
-                onPressed: () {},
+                onPressed: () async {
+                  await userRef.doc(userID).update({
+                    'focusTime': focus,
+                    'screenTime': screen,
+                    'sleepGoals': sleep,
+                    'workoutFrequency': workout
+                  });
+                  QuickAlert.show(
+                    context: context,
+                    type: QuickAlertType.success,
+                    confirmBtnColor: AppColors.mainBlue,
+                    onConfirmBtnTap: () {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HomePage()),
+                          (route) => false);
+                      context.read<IndexProvider>().setSelectedIndex(4);
+                    },
+                    text: 'Goals Updated Successfully!',
+                  );
+                },
                 text: 'Save',
-              )
+              ),
+              SizedBox(
+                height: 14.h,
+              ),
             ],
           ),
         ),

@@ -5,6 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/utils/buttons.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
+import 'package:provider/provider.dart';
+
+import 'repositories/user_repository.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -14,9 +17,19 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  TextEditingController emailController = TextEditingController();
+  final emailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserRepository>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -33,54 +46,72 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Column(
-          children: [
-            SizedBox(
-              height: 30.h,
-            ),
-            SizedBox(
-              height: 180.h,
-              child: Image.asset(AppIcons.forgot),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 10),
-              child: Center(
-                child: Text(
-                  "Enter the email associated with your account and \nwe'll send an email with instructions to reset your \npassword."
-                      .tr(),
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(
-                    fontSize: 14,
-                    height: 1.8,
-                    letterSpacing: 0.2,
-                    fontFamily: "SfProText",
-                    fontWeight: FontWeight.normal,
-                    color: CupertinoColors.darkBackgroundGray,
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 30.h,
+              ),
+              SizedBox(
+                height: 180.h,
+                child: Image.asset(AppIcons.forgot),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                child: Center(
+                  child: Text(
+                    "Enter the email associated with your account and \nwe'll send an email with instructions to reset your \npassword."
+                        .tr(),
+                    textAlign: TextAlign.justify,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      height: 1.8,
+                      letterSpacing: 0.2,
+                      fontFamily: "SfProText",
+                      fontWeight: FontWeight.normal,
+                      color: CupertinoColors.darkBackgroundGray,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Center(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                child: CustomAppForm(
-                  isPrefixIconrequired: true,
-                  readOnly: false,
-                  keyboardType: TextInputType.emailAddress,
-                  textEditingController: emailController,
-                  prefixIcon: CupertinoIcons.envelope,
-                  lable: "Email".tr(),
+              Center(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  child: CustomAppForm(
+                    isPrefixIconrequired: true,
+                    readOnly: false,
+                    keyboardType: TextInputType.emailAddress,
+                    textEditingController: emailController,
+                    prefixIcon: CupertinoIcons.envelope,
+                    lable: "Email".tr(),
+                    validator: (value) =>
+                        (value!.isEmpty) ? "Please Enter Email".tr() : null,
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14.0),
-              child: CustomButton(text: 'Send', onPressed: () {}),
-            )
-          ],
+              user.status == Status.Authenticating
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                      child: CustomButton(
+                          text: 'Send',
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              if (!await user.resetPassword(
+                                context,
+                                emailController.text,
+                              )) {}
+                            }
+                          }),
+                    )
+            ],
+          ),
         ),
       ),
     );
@@ -89,7 +120,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
 class CustomAppForm extends StatefulWidget {
   const CustomAppForm({
-    Key? key,
+    super.key,
     required this.textEditingController,
     this.textInputAction = TextInputAction.next,
     required this.lable,
@@ -108,7 +139,7 @@ class CustomAppForm extends StatefulWidget {
     this.prefixIcon,
     this.onChanged,
     this.isSuffixIconrequired = false,
-  }) : super(key: key);
+  });
 
   final String lable;
   final bool isPrefixIconrequired;
@@ -142,7 +173,7 @@ class _CustomAppFormState extends State<CustomAppForm> {
       child: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(),
+            decoration: const BoxDecoration(),
             child: TextFormField(
               onChanged: widget.onChanged,
               readOnly: widget.readOnly,
@@ -196,7 +227,7 @@ class _CustomAppFormState extends State<CustomAppForm> {
                   fillColor: Colors.white,
                   filled: true,
                   hintText: widget.lable,
-                  hintStyle: TextStyle(
+                  hintStyle: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w100,
                       fontFamily: "SfProText")),

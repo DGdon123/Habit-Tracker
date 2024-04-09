@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:habit_tracker/auth/forgot_password.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
 import 'package:habit_tracker/auth/signup_page.dart';
 import 'package:habit_tracker/utils/buttons.dart';
@@ -226,9 +227,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text(
-                              'Forgot Pasword?'.tr(),
-                              style: AppTextStyles.secondaryLogin,
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) =>
+                                            const ForgotPasswordScreen()));
+                              },
+                              child: Text(
+                                'Forgot Pasword?'.tr(),
+                                style: AppTextStyles.secondaryLogin,
+                              ),
                             ),
                           ],
                         ),

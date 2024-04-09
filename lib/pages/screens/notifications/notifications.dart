@@ -123,15 +123,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                             backgroundImage: NetworkImage(
                                                 userData['photourl']),
                                           ))
-                                      : Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 8.0),
+                                      : const Padding(
+                                          padding: EdgeInsets.only(right: 8.0),
                                           child: CircleAvatar(
-                                            child: SvgPicture.asset(
-                                              AppIcons.twogift,
-                                              width: 50.w,
-                                            ),
-                                          )),
+                                              child: Icon(Icons.person))),
                                   Flexible(
                                     child: Text(
                                       userData['message'] ?? '',

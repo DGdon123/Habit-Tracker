@@ -25,6 +25,7 @@ import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.
 import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/provider/goals_provider.dart';
 import 'package:habit_tracker/provider/location_provider.dart';
+import 'package:habit_tracker/services/local_storage_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
@@ -1009,6 +1010,10 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
       await askForLocationAlwaysPermission();
     }
 
+    log('setting automatic to true Home.dart');
+
+    await LocalStorageServices().setAutomatic(true);
+
     locationSubscription?.cancel();
     locationSubscription = LocationManager().locationStream.listen(onData);
     await LocationManager().start();
@@ -1098,7 +1103,11 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
     }
   }
 
-  void stop() {
+  void stop() async {
+    await LocalStorageServices().setAutomatic(false);
+
+    log("setting automatic to false Home.dart");
+
     locationSubscription?.cancel();
     LocationManager().stop();
     setState(() {

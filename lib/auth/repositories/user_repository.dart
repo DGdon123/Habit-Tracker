@@ -59,13 +59,28 @@ class UserRepository with ChangeNotifier {
 
       // If signInWithEmailAndPassword succeeds, update status and return true
       _status = Status.Authenticated;
+
       notifyListeners();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ),
-      );
+
+      final isOldUser = await UserFireStoreServices()
+          .checkIfUserExists(authResponse.user!.email.toString());
+
+      if (isOldUser) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Home(),
+          ),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+        );
+      }
+
       return true;
     } catch (e) {
       // If signInWithEmailAndPassword fails, update status based on specific error types
@@ -320,17 +335,32 @@ class UserRepository with ChangeNotifier {
       final authResponse = await _auth.signInWithCredential(credential);
       _status = Status.Authenticated;
       notifyListeners();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AccountSetup1(
-            email: authResponse.user!.email.toString(),
-            username: authResponse.user!.displayName.toString(),
-            uid: authResponse.user!.uid.toString(),
-            photoURL: authResponse.user!.photoURL.toString(),
+
+      final isOldUser = await UserFireStoreServices()
+          .checkIfUserExists(authResponse.user!.email.toString());
+
+      log("Is old user: $isOldUser");
+      if (isOldUser) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Home(),
           ),
-        ),
-      );
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AccountSetup1(
+              email: authResponse.user!.email.toString(),
+              username: authResponse.user!.displayName.toString(),
+              uid: authResponse.user!.uid.toString(),
+              photoURL: authResponse.user!.photoURL.toString(),
+            ),
+          ),
+        );
+      }
+
       // adding details to the firestore
 
       return true;
@@ -358,18 +388,31 @@ class UserRepository with ChangeNotifier {
       debugPrint("Authenticating Facebook user repo: $authResponse");
       _status = Status.Authenticated;
       notifyListeners();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AccountSetup1(
-            email: authResponse.user!.email.toString(),
-            username: authResponse.user!.displayName.toString(),
-            uid: authResponse.user!.uid.toString(),
-            photoURL: authResponse.user!.photoURL.toString(),
+
+      final isOldUser = await UserFireStoreServices()
+          .checkIfUserExists(authResponse.user!.email.toString());
+
+      log("Is old user: $isOldUser");
+      if (isOldUser) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Home(),
           ),
-        ),
-      );
-      // adding details to the firestore
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AccountSetup1(
+              email: authResponse.user!.email.toString(),
+              username: authResponse.user!.displayName.toString(),
+              uid: authResponse.user!.uid.toString(),
+              photoURL: authResponse.user!.photoURL.toString(),
+            ),
+          ),
+        );
+      }
 
       return true;
     } catch (e) {

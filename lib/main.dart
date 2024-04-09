@@ -24,6 +24,7 @@ import 'package:habit_tracker/provider/avg_sleep_provider.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/provider/flag_provider.dart';
 import 'package:habit_tracker/provider/goals_provider.dart';
+import 'package:habit_tracker/services/local_storage_services.dart';
 import 'package:habit_tracker/services/notification_services.dart';
 import 'package:http/http.dart' as http;
 import 'package:habit_tracker/pages/auth_onboarding_deciding_screen.dart';
@@ -80,7 +81,11 @@ Future<void> main() async {
       child: const MyApp(),
     ),
   ));
-  initBackgroundFetch();
+
+  // only when automatic background fetch is set to true
+  if (await LocalStorageServices().isAutomaticSelected()) {
+    initBackgroundFetch();
+  }
 }
 
 @pragma('vm:entry-point')

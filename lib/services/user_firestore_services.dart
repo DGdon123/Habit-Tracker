@@ -81,4 +81,12 @@ class UserFireStoreServices {
 
     return searchResults;
   }
+
+  /// Check if the user is already present in the database
+  Future<bool> checkIfUserExists(String email) async {
+    final response =
+        await userCollection.where('email', isEqualTo: email).get();
+
+    return response.docs.isNotEmpty;
+  }
 }

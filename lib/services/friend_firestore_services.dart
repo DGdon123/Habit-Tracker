@@ -39,13 +39,19 @@ class FriendFirestoreServices {
   }
 
   void acceptFriendRequest({required String senderID}) {
-    // first removing
+    // first removingwe
     removeFriendRequest(senderID: senderID);
 
     // adding to friends collection
     friendsRef.doc(userID).set({
       "uid": userID,
       "friends": FieldValue.arrayUnion([senderID])
+    }, SetOptions(merge: true));
+
+    // adding to friends collection of sender
+    friendsRef.doc(senderID).set({
+      "uid": senderID,
+      "friends": FieldValue.arrayUnion([userID])
     }, SetOptions(merge: true));
   }
 
@@ -61,9 +67,13 @@ class FriendFirestoreServices {
         .snapshots();
   }
 
-  void removeAddedFriend({required String friendID}) {
-    FirebaseFirestore.instance.collection("friends").doc(userID).update({
+  Future<void> removeAddedFriend({required String friendID}) async {
+    await friendsRef.doc(userID).update({
       "friends": FieldValue.arrayRemove([friendID])
+    });
+
+    await friendsRef.doc(friendID).update({
+      "friends": FieldValue.arrayRemove([userID])
     });
   }
 

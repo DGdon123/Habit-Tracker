@@ -310,7 +310,21 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                               InkWell(
                                 onTap: () {
                                   if (started == false) {
+                                    debugPrint(
+                                        "Close tapped $hours, $minutes, $seconds");
+
                                     audioPlayer.stop();
+
+                                    if (hours != 0 || minutes != 0) {
+                                      debugPrint("adding to firestore");
+                                      XpFirestoreServices()
+                                          .addXp(
+                                              xp: (hours * 60) + minutes,
+                                              reason: "Stopwatch")
+                                          .then((value) =>
+                                              Navigator.pop(context));
+                                      return;
+                                    }
                                     Navigator.pop(context);
                                   } else {
                                     QuickAlert.show(

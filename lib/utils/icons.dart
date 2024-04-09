@@ -68,4 +68,5 @@ class AppIcons {
   static const String gift = 'assets/icons/gift.svg';
   static const String sendIcon = 'assets/icons/sendIcon.svg';
   static const String twogift = 'assets/icons/gifts-svg.svg';
+  static const String forgot = 'assets/icons/forgot.png';
 }

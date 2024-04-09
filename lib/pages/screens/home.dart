@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -37,11 +38,49 @@ class _HomeState extends State<Home> {
     fontSize: 14.sp,
     color: Colors.black.withOpacity(0.65),
   );
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  int focus = 0;
+  int screen = 0;
+  int sleep = 0;
+  int workout = 0;
+  int xp = 0;
+  String? getUserID() {
+    User? user = _auth.currentUser;
+    return user?.uid;
+  }
+
+  Future<void> fetchUsers() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    String? currentUserUid = getUserID();
+
+    try {
+      QuerySnapshot snapshot = await users.get();
+
+      for (var doc in snapshot.docs) {
+        String uid = doc.id;
+        Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
+
+        if (uid == currentUserUid) {
+          // This user document matches the current user
+          // You can access the user data and do something with it
+          setState(() {
+            xp = userData['xp'] ?? 0;
+          });
+
+          // Example: Use the latitude and longitude data
+          // SomeFunctionToUseLocation(latitude, longitude);
+        }
+      }
+    } catch (error) {
+      print("Failed to fetch users: $error");
+    }
+  }
 
   @override
   void initState() {
     getLastLocationTime();
     getLastLocationTime1();
+    fetchUsers();
     super.initState();
   }
 
@@ -252,8 +291,7 @@ class _HomeState extends State<Home> {
               children: [
                 Image.asset(
                   AppIcons.phone,
-                  width: 40,
-                  color: AppColors.lightBlack,
+                  width: 50,
                 ),
                 const SizedBox(
                   width: 10,
@@ -648,7 +686,7 @@ class _HomeState extends State<Home> {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return const CurrentLocation();
+                        return const PickCharacterPage();
                       },
                     ),
                   );
@@ -696,7 +734,7 @@ class _HomeState extends State<Home> {
                     padding: const EdgeInsets.all(2),
                     width: 60,
                     child: Text(
-                      '99000',
+                      '$xp',
                       style: TextStyle(
                         overflow: TextOverflow.ellipsis,
                         fontFamily: 'SFProText',

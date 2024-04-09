@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +8,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:habit_tracker/auth/accountSetup.dart';
+import 'package:habit_tracker/auth/forgot_password.dart';
+import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/pages/profile_page/widgets/friends_list_view.dart';
+import 'package:habit_tracker/pages/profile_page/widgets/received_friend_request.dart';
+
 import 'package:habit_tracker/pages/friend_searched_page/friend_searched_page.dart';
+
 import 'package:habit_tracker/pages/screens/settings/settings.dart';
 import 'package:habit_tracker/services/user_firestore_services.dart';
 import 'package:habit_tracker/services/xp_firestore_services.dart';
@@ -28,15 +37,63 @@ class ProfilePage extends StatefulWidget {
 class ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  String? getUsername() {
-    User? user = _auth.currentUser;
-    return user?.displayName;
-  }
 
   final List<Widget> _pages = [
     const ActivityPage(),
     const FriendsPageTab(),
   ];
+  String? getUsername() {
+    User? user = _auth.currentUser;
+    return user?.displayName;
+  }
+
+  String? getUserID() {
+    User? user = _auth.currentUser;
+    return user?.uid;
+  }
+
+  int focus = 0;
+  int screen = 0;
+  int sleep = 0;
+  int workout = 0;
+  int xp = 0;
+
+  Future<void> fetchUsers() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    String? currentUserUid = getUserID();
+
+    try {
+      QuerySnapshot snapshot = await users.get();
+
+      for (var doc in snapshot.docs) {
+        String uid = doc.id;
+        Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
+
+        if (uid == currentUserUid) {
+          // This user document matches the current user
+          // You can access the user data and do something with it
+          setState(() {
+            focus = userData['focusTime'];
+            screen = userData['screenTime'];
+            sleep = userData['sleepGoals'];
+            xp = userData['xp'] ?? 0;
+            workout = userData['workoutFrequency'];
+          });
+
+          // Example: Use the latitude and longitude data
+          // SomeFunctionToUseLocation(latitude, longitude);
+        }
+      }
+    } catch (error) {
+      print("Failed to fetch users: $error");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUsers();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +127,10 @@ class ProfilePageState extends State<ProfilePage>
                 ),
                 SizedBox(height: 30.h),
                 topBar(),
+                SizedBox(
+                  height: 30.h,
+                ),
+                midBar(),
                 SizedBox(height: 30.h),
                 tabBar(),
                 SizedBox(height: 20.h),
@@ -95,6 +156,183 @@ class ProfilePageState extends State<ProfilePage>
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Padding midBar() {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                "Goals",
+                style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'SfProText'),
+              ),
+              const Spacer(),
+              GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const EditGoals()));
+                  },
+                  child: const Icon(Icons.edit))
+            ],
+          ),
+          SizedBox(
+            height: 10.h,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: MediaQuery.sizeOf(context).width * 0.46,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    color: AppColors.widgetColorV,
+                    borderRadius: BorderRadius.circular(8)),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.dark_mode_rounded,
+                      color: Colors.yellow.shade600,
+                      size: 30.sp,
+                    ),
+                    SizedBox(
+                      width: 10.w,
+                    ),
+                    Text(
+                      "Sleep Time: ",
+                      style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'SfProText'),
+                    ),
+                    Text(
+                      "$sleep hrs",
+                      style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'SfProText'),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                width: MediaQuery.sizeOf(context).width * 0.46,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    color: AppColors.widgetColorR,
+                    borderRadius: BorderRadius.circular(8)),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      AppIcons.phone,
+                      width: 30.sp,
+                    ),
+                    SizedBox(
+                      width: 10.w,
+                    ),
+                    Text(
+                      "Screentime: ",
+                      style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'SfProText'),
+                    ),
+                    Text(
+                      "$screen hrs",
+                      style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'SfProText'),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: MediaQuery.sizeOf(context).width * 0.46,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    color: AppColors.widgetColorB,
+                    borderRadius: BorderRadius.circular(8)),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      AppIcons.workout,
+                      width: 30.sp,
+                      color: AppColors.lightBlack,
+                    ),
+                    SizedBox(
+                      width: 10.w,
+                    ),
+                    Text(
+                      "Workout: ",
+                      style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'SfProText'),
+                    ),
+                    Text(
+                      "$workout days",
+                      style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'SfProText'),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                width: MediaQuery.sizeOf(context).width * 0.46,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    color: AppColors.widgetColorG,
+                    borderRadius: BorderRadius.circular(8)),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      AppIcons.foucsed,
+                      width: 30.sp,
+                      color: AppColors.lightBlack,
+                    ),
+                    SizedBox(
+                      width: 10.w,
+                    ),
+                    Text(
+                      "Focus Time: ",
+                      style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'SfProText'),
+                    ),
+                    Text(
+                      "$focus hrs",
+                      style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'SfProText'),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -180,7 +418,7 @@ class ProfilePageState extends State<ProfilePage>
                         AppIcons.xp,
                       ),
                       Text(
-                        '1452 XP',
+                        '$xp XP',
                         style: TextStyle(
                           color: Colors.black.withOpacity(0.75),
                           fontSize: 14.sp,
@@ -251,22 +489,22 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                       filled: true,
                       fillColor: Colors.white,
                       focusColor: Colors.white,
-                      contentPadding: EdgeInsets.symmetric(vertical: 10),
-                      prefixIcon: Icon(
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                      prefixIcon: const Icon(
                         Icons.search,
                         color: CupertinoColors.systemGrey,
                       ),
-                      hintStyle: TextStyle(
+                      hintStyle: const TextStyle(
                         color: CupertinoColors.systemGrey,
                       ),
                       hintText: 'Search Friends',
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide:
-                              BorderSide(color: AppColors.blue, width: 1)),
+                          borderSide: const BorderSide(
+                              color: AppColors.blue, width: 1)),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                               color: AppColors.widgetColorB, width: 0.4))),
                   onChanged: (value) {
                     setState(() {
@@ -297,12 +535,12 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                                   )));
                         },
                   child: Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
                               blurRadius: .2,
-                              offset: Offset(0.0, 0.5),
+                              offset: const Offset(0.0, 0.5),
                               color: Colors.black.withOpacity(0.5))
                         ],
                         color: AppColors.mainColor,
@@ -481,6 +719,244 @@ Widget AchievmentsContainer({
           ),
         ),
       ],
+    ),
+  );
+}
+
+class EditGoals extends StatefulWidget {
+  const EditGoals({super.key});
+
+  @override
+  State<EditGoals> createState() => _EditGoalsState();
+}
+
+class _EditGoalsState extends State<EditGoals> {
+  int sleepTime = 0;
+  int screenTime = 0;
+  int workoutFrequency = 0;
+  int focusTime = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    //final goalProvider = Provider.of<GoalsProvider>(context, listen: false);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Center(
+          child: Text(
+            'Edit Goals',
+            style: TextStyle(
+                fontFamily: 'SFProText',
+                fontSize: 22.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textBlack),
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 25.h,
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: AppColors.widgetColorV,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      'Set Sleep Goals:',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    ),
+                    _buildPicker(
+                      itemCount: 13,
+                      selectedItem: 0,
+                      onSelectedItemChanged: (value) {
+                        setState(() {
+                          sleepTime = value;
+                          // goalProvider.setSelectedIndex(sleepTime);
+                          //_selectedMinute = value;
+                        });
+                      },
+                    ),
+                    Text(
+                      'hours per Day',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 14.h,
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: AppColors.widgetColorR,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      'Set Screentime:',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    ),
+                    _buildPicker(
+                      itemCount: 25,
+                      selectedItem: 0,
+                      onSelectedItemChanged: (value) {
+                        setState(() {
+                          screenTime = value;
+                          // goalProvider.setSelectedIndex1(screenTime);
+                          //_selectedMinute = value;
+                        });
+                      },
+                    ),
+                    Text(
+                      'hours per Day',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 14.h,
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: AppColors.widgetColorG,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      'Set Focus Time:',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    ),
+                    _buildPicker(
+                      itemCount: 13,
+                      selectedItem: 0,
+                      onSelectedItemChanged: (value) {
+                        setState(() {
+                          focusTime = value;
+                          // goalProvider.setSelectedIndex2(focusTime);
+                          //_selectedMinute = value;
+                        });
+                      },
+                    ),
+                    Text(
+                      'hours per Day',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 14.h,
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: AppColors.widgetColorB,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      'Set Workout:        \nFrequency',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    ),
+                    _buildPicker(
+                      itemCount: 8,
+                      selectedItem: 0,
+                      onSelectedItemChanged: (value) {
+                        setState(() {
+                          workoutFrequency = value;
+                          //goalProvider.setSelectedIndex3(workoutFrequency);
+                          //_selectedMinute = value;
+                        });
+                      },
+                    ),
+                    Text(
+                      'days per Week',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 14.h,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+Widget _buildPicker({
+  required int itemCount,
+  required int selectedItem,
+  required void Function(int) onSelectedItemChanged,
+}) {
+  return SizedBox(
+    width: 60.0,
+    height: 120.0,
+    child: CupertinoPicker(
+      selectionOverlay: Container(),
+      itemExtent: 52,
+      diameterRatio: 1,
+      backgroundColor: Colors.transparent,
+      scrollController: FixedExtentScrollController(initialItem: selectedItem),
+      onSelectedItemChanged: onSelectedItemChanged,
+      children: List<Widget>.generate(itemCount, (index) {
+        return Center(
+          child: Text(
+            index.toString().padLeft(2, '0'),
+            style: const TextStyle(fontSize: 25),
+          ),
+        );
+      }),
     ),
   );
 }

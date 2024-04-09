@@ -6,9 +6,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:habit_tracker/pages/chat_room/chat_room.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationServices {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -117,13 +119,36 @@ class NotificationServices {
     });
   }
 
-  void handleMessage(BuildContext context, RemoteMessage message) {
+  Future<void> handleMessage(
+      BuildContext context, RemoteMessage message) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String name = prefs.getString('name').toString();
+    String chatRoomId = prefs.getString('chatRoomId').toString();
+    String photoURL = prefs.getString('photoURL').toString();
+    String receiverDeviceToken =
+        prefs.getString('receiverDeviceToken').toString();
+    String receiverID = prefs.getString('receiverID').toString();
+    log(name);
+    log(chatRoomId);
+    log(photoURL);
+    log(receiverDeviceToken);
+    log(receiverID);
     if (message.data["type"] == "msg") {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const HomePage()),
           (route) => false);
       context.read<IndexProvider>().setSelectedIndex(4);
+    } else if (message.data["type"] == "free") {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ChatRoom(
+                  receiverDeviceToken: receiverDeviceToken,
+                  chatRoomId: chatRoomId,
+                  receiverID: receiverID,
+                  photoURL: photoURL,
+                  name: name)));
     }
   }
 }

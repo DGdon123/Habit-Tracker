@@ -7,26 +7,30 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const CustomButton({
+    super.key,
     required this.text,
     required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 70.h,
-      decoration: BoxDecoration(
-        color: AppColors.blue,
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: Center(
-        child: Text(
-          text,
-          style: Theme.of(context).textTheme.displayMedium!.copyWith(
-            fontFamily: 'SFProText',
-            fontSize: 20.sp,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+        height: 70.h,
+        decoration: BoxDecoration(
+          color: AppColors.blue,
+          borderRadius: BorderRadius.circular(10.r),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                  fontFamily: 'SFProText',
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
           ),
         ),
       ),

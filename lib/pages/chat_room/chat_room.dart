@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:quickalert/quickalert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,6 +19,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
+import '../../main.dart';
 import '../../services/notification_services.dart';
 
 class ChatRoom extends StatefulWidget {
@@ -43,110 +46,137 @@ class _ChatRoomState extends State<ChatRoom> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   NotificationServices notificationServices = NotificationServices();
+  final xpController = TextEditingController();
+
+  String? getUsername() {
+    User? user = _auth.currentUser;
+    return user?.displayName;
+  }
+
+  String? getUserID() {
+    User? user = _auth.currentUser;
+    return user?.uid;
+  }
+
+  int xp = 0;
+
+  Future<void> fetchUsers() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    String? currentUserUid = getUserID();
+
+    try {
+      QuerySnapshot snapshot = await users.get();
+
+      for (var doc in snapshot.docs) {
+        String uid = doc.id;
+        Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
+
+        if (uid == currentUserUid) {
+          // This user document matches the current user
+          // You can access the user data and do something with it
+          setState(() {
+            xp = userData['xp'] ?? 0;
+          });
+
+          // Example: Use the latitude and longitude data
+          // SomeFunctionToUseLocation(latitude, longitude);
+        }
+      }
+    } catch (error) {
+      print("Failed to fetch users: $error");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUsers();
+  }
 
   void giftPopUp(BuildContext context) {
-    final xpController = TextEditingController();
-
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Center(
-              child: Text(
-                'Gift XP to your friend',
-                style: TextStyle(
-                  color: AppColors.textBlack,
-                  fontSize: 19.sp,
-                  fontFamily: 'SFProText',
-                  fontWeight: FontWeight.w500,
-                ),
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Center(
+            child: Text(
+              'Gift XP to your friend',
+              style: TextStyle(
+                color: AppColors.textBlack,
+                fontSize: 19,
+                fontFamily: 'SFProText',
+                fontWeight: FontWeight.w500,
               ),
             ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                SvgPicture.asset(
-                  AppIcons.twogift,
-                  width: 80.w,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                TextField(
-                  controller: xpController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 12),
-                      hintStyle: const TextStyle(
-                        color: CupertinoColors.systemGrey,
-                      ),
-                      labelText: 'XP',
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                              color: AppColors.blue, width: 1)),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                              color: AppColors.widgetColorB, width: 0.4))),
-                ),
-              ],
-            ),
-            actions: [CustomButton(text: 'Send Gift', onPressed: () {})],
-          );
-        });
-  }
-
-  Future<void> addNotifications(String sendername, String receiverID,
-      String devicetoken, String message) {
-    CollectionReference users =
-        FirebaseFirestore.instance.collection('notifications');
-
-    return users
-        .add({
-          'sendername': sendername,
-          'receiverID': receiverID,
-          'receiverdevicetoken': devicetoken,
-          'message': message
-        })
-        .then((value) => print("User added successfully!"))
-        .catchError((error) => print("Failed to add user: $error"));
-  }
-
-  Widget messages(Size size, Map<String, dynamic> map, BuildContext context) {
-    return Container(
-      width: size.width,
-      alignment: map['sendby'] == _auth.currentUser!.uid
-          ? Alignment.centerRight
-          : Alignment.centerLeft,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(8),
-              topLeft: Radius.circular(8),
-              bottomRight: Radius.circular(8)),
-          color: map['sendby'] == _auth.currentUser!.uid
-              ? AppColors.mainBlue // Color for current user's messages
-              : CupertinoColors.lightBackgroundGray,
-        ),
-        child: Text(
-          map['message'],
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color: map['sendby'] == _auth.currentUser!.uid
-                ? AppColors.white // Color for current user's messages
-                : AppColors.textBlack,
           ),
-        ),
-      ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              SvgPicture.asset(
+                AppIcons.twogift,
+                width: 80,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              TextField(
+                controller: xpController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                  hintStyle: const TextStyle(color: CupertinoColors.systemGrey),
+                  labelText: 'XP',
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide:
+                        const BorderSide(color: AppColors.blue, width: 1),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(
+                        color: AppColors.widgetColorB, width: 0.4),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            CustomButton(
+              text: 'Send Gift',
+              onPressed: () {
+                if (int.parse(xpController.text) > xp) {
+                  QuickAlert.show(
+                    context: context,
+                    type: QuickAlertType.error,
+                    confirmBtnColor: AppColors.mainBlue,
+                    onConfirmBtnTap: () {
+                      xpController.clear();
+                      Navigator.pop(context);
+                    },
+                    title: 'Oops...',
+                    text: 'Sorry, you have only $xp xp.',
+                  );
+                } else {
+                  onSendMessage1(context, xpController.text);
+                }
+              },
+            )
+          ],
+        );
+      },
     );
+  }
+
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void onSendMessage() async {
@@ -169,6 +199,82 @@ class _ChatRoomState extends State<ChatRoom> {
     } else {
       print("Enter Some Text");
     }
+  }
+
+  void onSendMessage1(BuildContext context, String xpValue) async {
+    if (xpValue.isNotEmpty) {
+      Map<String, dynamic> messages = {
+        "sendby": _auth.currentUser!.uid,
+        "message": '$xpValue XP.',
+        "receiver": widget.receiverID,
+        "receiverdevicetoken": widget.receiverDeviceToken,
+        "type": "text",
+        "time": FieldValue.serverTimestamp(),
+      };
+
+      xpController.clear();
+      await _firestore
+          .collection('chatroom')
+          .doc(widget.chatRoomId)
+          .collection('chats')
+          .add(messages);
+      Navigator.pop(context);
+    } else {
+      print("Enter Some Text");
+    }
+  }
+
+  Widget messages(Size size, Map<String, dynamic> map, BuildContext context) {
+    String? senderName =
+        map['sendby'] == _auth.currentUser!.uid ? "You" : widget.name;
+
+    String messageText = map['message'];
+
+    // Check if the message contains "XP"
+    if (messageText.contains("XP")) {
+      // If the message contains "XP", customize the message text
+      // Example: "You sent 7 XP" or "Dipesh Gurung sent you 7 XP"
+      messageText = "🎁 $senderName sent $messageText"; // Modify as needed
+    }
+
+    return Container(
+      width: size.width,
+      alignment: map['sendby'] == _auth.currentUser!.uid
+          ? Alignment.centerRight
+          : Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(8),
+              topLeft: Radius.circular(8),
+              bottomRight: Radius.circular(8)),
+          color: map['sendby'] == _auth.currentUser!.uid
+              ? AppColors.mainBlue // Color for current user's messages
+              : CupertinoColors.lightBackgroundGray,
+        ),
+        child: Text(
+          messageText,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: map['sendby'] == _auth.currentUser!.uid
+                ? AppColors.white // Color for current user's messages
+                : AppColors.textBlack,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void fresh() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('name', widget.name);
+    prefs.setString('chatRoomId', widget.chatRoomId);
+    prefs.setString('photoURL', widget.photoURL);
+    prefs.setString('receiverDeviceToken', widget.receiverDeviceToken);
+    prefs.setString('receiverID', widget.receiverID);
   }
 
   @override
@@ -219,159 +325,153 @@ class _ChatRoomState extends State<ChatRoom> {
           child: Text(widget.name.toString()),
         ),
       ),
-      body: Stack(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: _firestore
-                      .collection('chatroom')
-                      .doc(widget.chatRoomId)
-                      .collection('chats')
-                      .orderBy("time", descending: false)
-                      .snapshots(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                    debugPrint(
-                        "Snapshot received: ${snapshot.data?.docs}, chat room id: ${widget.chatRoomId}");
-                    if (snapshot.data != null) {
-                      return ListView.builder(
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          Map<String, dynamic> map = snapshot.data!.docs[index]
-                              .data() as Map<String, dynamic>;
-                          return Column(
-                            children: [
-                              messages(size, map, context),
-                              StreamBuilder<QuerySnapshot>(
-                                stream: _firestore
-                                    .collection('chatroom')
-                                    .doc(widget.chatRoomId)
-                                    .collection('chats')
-                                    .where("receiverdevicetoken",
-                                        isEqualTo: widget.receiverDeviceToken)
-                                    .orderBy('time', descending: true)
-                                    .limit(1)
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.active) {
-                                    // Ensure that there is at least one message in the chatroom
-                                    if (snapshot.hasData &&
-                                        snapshot.data!.docs.isNotEmpty) {
-                                      // Get the latest message data
-                                      Map<String, dynamic> latestMessageData =
-                                          snapshot.data!.docs.first.data()
-                                              as Map<String, dynamic>;
+          Flexible(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _firestore
+                  .collection('chatroom')
+                  .doc(widget.chatRoomId)
+                  .collection('chats')
+                  .orderBy("time", descending: false)
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                debugPrint(
+                    "Snapshot received: ${snapshot.data?.docs}, chat room id: ${widget.chatRoomId}");
+                if (snapshot.data != null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    // Scroll to the end of the list when new messages are received
+                    _scrollController.animateTo(
+                      _scrollController.position.maxScrollExtent,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  });
 
-                                      // Construct the notification payload using the latest message data
-                                      var data1 = {
-                                        'to': widget.receiverDeviceToken,
-                                        'priority': 'high',
-                                        'notification': {
-                                          'title':
-                                              _auth.currentUser!.displayName,
-                                          'body':
-                                              '${latestMessageData['message']}'
-                                        },
-                                        'data': {'type': 'msg'}
-                                      };
-
-                                      // Send the notification
-                                      http.post(
-                                        Uri.parse(
-                                            'https://fcm.googleapis.com/fcm/send'),
-                                        body: jsonEncode(data1),
-                                        headers: {
-                                          'Content-Type':
-                                              'application/json; charset=UTF-8',
-                                          'Authorization':
-                                              'key=AAAAclKtwpw:APA91bE40rUSq6qXigGzh_3Y6D4mtkr1vjbkZt2_7HDJMzYWB9r53AXdxnWeOue5ZEwSXb_xQnhtJjh3y5AnkApfWJPmicHaIUdbJ2LDs47EhcBQQmk0FhN8sy_vW-b1AEgVxva7lu0n'
-                                        },
-                                      );
-
-                                      // Add the notification to your notifications
-                                      addNotifications(
-                                          widget.name,
-                                          widget.receiverID,
-                                          widget.receiverDeviceToken,
-                                          '${latestMessageData['message']}');
-                                    }
-                                  }
-                                  return Container(); // Return an empty container
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
-              ),
-              Align(
-                alignment: Alignment.bottomLeft,
-                child: Container(
-                  color: CupertinoColors.lightBackgroundGray,
-                  child: Row(
-                    children: [
-                      const SizedBox(
-                        width: 15,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          return giftPopUp(context);
-                        },
-                        child: SvgPicture.asset(
-                          AppIcons.gift,
-                          width: 30,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 15,
-                      ),
-                      Expanded(
-                        child: TextField(
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
+                  return ListView.builder(
+                    controller: _scrollController,
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> map = snapshot.data!.docs[index]
+                          .data() as Map<String, dynamic>;
+                      return Column(
+                        children: [
+                          messages(size, map, context),
+                          StreamBuilder<QuerySnapshot>(
+                            stream: _firestore
+                                .collection('chatroom')
+                                .doc(widget.chatRoomId)
+                                .collection('chats')
+                                .where("receiverdevicetoken",
+                                    isEqualTo: widget.receiverDeviceToken)
+                                .orderBy('time', descending: true)
+                                .limit(1)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.active) {
+                                if (snapshot.hasData &&
+                                    snapshot.data!.docs.isNotEmpty) {
+                                  Map<String, dynamic> latestMessageData =
+                                      snapshot.data!.docs.first.data()
+                                          as Map<String, dynamic>;
+                                  fresh();
+                                  var data1 = {
+                                    'to': widget.receiverDeviceToken,
+                                    'priority': 'high',
+                                    'notification': {
+                                      'title': "Habit Tracker",
+                                      'body':
+                                          '${_auth.currentUser!.displayName}: ${latestMessageData['message']}'
+                                    },
+                                    'data': {'type': 'free'}
+                                  };
+                                  http.post(
+                                    Uri.parse(
+                                        'https://fcm.googleapis.com/fcm/send'),
+                                    body: jsonEncode(data1),
+                                    headers: {
+                                      'Content-Type':
+                                          'application/json; charset=UTF-8',
+                                      'Authorization':
+                                          'key=AAAAclKtwpw:APA91bE40rUSq6qXigGzh_3Y6D4mtkr1vjbkZt2_7HDJMzYWB9r53AXdxnWeOue5ZEwSXb_xQnhtJjh3y5AnkApfWJPmicHaIUdbJ2LDs47EhcBQQmk0FhN8sy_vW-b1AEgVxva7lu0n'
+                                    },
+                                  );
+                                }
+                              }
+                              return Container();
+                            },
                           ),
-                          controller: _message,
-                          decoration: const InputDecoration(
-                              hintText: "Write message...",
-                              hintStyle: TextStyle(color: Colors.black54),
-                              border: InputBorder.none),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  return Container();
+                }
+              },
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Container(
+              color: CupertinoColors.lightBackgroundGray,
+              child: Row(
+                children: [
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      giftPopUp(context);
+                    },
+                    child: SvgPicture.asset(
+                      AppIcons.gift,
+                      width: 30,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  Expanded(
+                    child: TextField(
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
+                      controller: _message,
+                      decoration: const InputDecoration(
+                          hintText: "Write message...",
+                          hintStyle: TextStyle(color: Colors.black54),
+                          border: InputBorder.none),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: FloatingActionButton(
+                        shape: const CircleBorder(),
+                        onPressed: () {
+                          onSendMessage();
+                        },
+                        backgroundColor: AppColors.blue,
+                        elevation: 0,
+                        child: SvgPicture.asset(
+                          AppIcons.sendIcon,
+                          width: 18,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          height: 40,
-                          width: 40,
-                          child: FloatingActionButton(
-                              shape: const CircleBorder(),
-                              onPressed: () {
-                                onSendMessage();
-                              },
-                              backgroundColor: AppColors.blue,
-                              elevation: 0,
-                              child: SvgPicture.asset(
-                                AppIcons.sendIcon,
-                                width: 18,
-                              )),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );

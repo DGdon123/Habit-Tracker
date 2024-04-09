@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/pages/chat_room/chat_room.dart';
 import 'package:habit_tracker/pages/profile_page/widgets/friend_container.dart';
 import 'package:habit_tracker/services/friend_firestore_services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FriendsListView extends StatefulWidget {
   const FriendsListView({super.key});
@@ -77,6 +78,7 @@ class _ChatRoomState extends State<FriendsListView> {
                                     _auth.currentUser!.uid,
                                     data['uid'],
                                   );
+
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(

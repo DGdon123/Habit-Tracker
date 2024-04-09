@@ -13,11 +13,13 @@ import 'package:http/http.dart' as http;
 class FriendRequestCard extends StatefulWidget {
   final String senderID;
   final String token;
+  final String photourl;
   final String name;
   const FriendRequestCard(
       {super.key,
       required this.senderID,
       required this.token,
+      required this.photourl,
       required this.name});
   @override
   State<FriendRequestCard> createState() => _AccountSetupSetNameState();
@@ -35,8 +37,8 @@ class _AccountSetupSetNameState extends State<FriendRequestCard> {
     return user?.uid;
   }
 
-  Future<void> addNotifications(
-      String sendername, String uid, String devicetoken, String message) {
+  Future<void> addNotifications(String sendername, String uid, String photourl,
+      String devicetoken, String message) {
     CollectionReference users =
         FirebaseFirestore.instance.collection('notifications');
 
@@ -44,11 +46,17 @@ class _AccountSetupSetNameState extends State<FriendRequestCard> {
         .add({
           'sendername': sendername,
           'receiverID': uid,
+          'photourl': photourl,
           'receiverdevicetoken': devicetoken,
           'message': message
         })
         .then((value) => print("User added successfully!"))
         .catchError((error) => print("Failed to add user: $error"));
+  }
+
+  String? getPhoto() {
+    User? user = auth.currentUser;
+    return user?.photoURL;
   }
 
   @override
@@ -108,6 +116,7 @@ class _AccountSetupSetNameState extends State<FriendRequestCard> {
                           addNotifications(
                               getUserName().toString(),
                               widget.senderID,
+                              getPhoto().toString(),
                               widget.token,
                               '${getUserName()} has accepted your friend request.');
                         },

@@ -16,11 +16,13 @@ class FriendFirestoreServices {
   void sendFriendRequestNotification(
       {required String receiverID,
       required String token,
+      required String photourl,
       required String name}) {
     friendRequestRef.add({
       "senderID": userID,
       "sendername": name,
       "receiverID": receiverID,
+      "photourl":photourl,
       "token": token,
       "timestamp": DateTime.now().millisecondsSinceEpoch
     });

@@ -25,6 +25,11 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
     return user?.displayName;
   }
 
+  String? getPhoto() {
+    User? user = auth.currentUser;
+    return user?.photoURL;
+  }
+
   String? getUserID() {
     User? user = auth.currentUser;
     return user?.uid;
@@ -78,7 +83,7 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
   }
 
   Future<void> addNotifications(String sendername, String receiverID,
-      String devicetoken, String message) {
+      String photourl, String devicetoken, String message) {
     CollectionReference users =
         FirebaseFirestore.instance.collection('notifications');
 
@@ -86,6 +91,7 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
         .add({
           'sendername': sendername,
           'receiverID': receiverID,
+          'photourl': photourl,
           'receiverdevicetoken': devicetoken,
           'message': message
         })
@@ -144,7 +150,7 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
                       decoration: BoxDecoration(boxShadow: [
                         BoxShadow(
                             spreadRadius: 0.3,
-                            offset: Offset(0, .5),
+                            offset: const Offset(0, .5),
                             color: Colors.black.withOpacity(0.5))
                       ], shape: BoxShape.circle, color: AppColors.white),
                       height: 46,
@@ -154,6 +160,7 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
                           FriendFirestoreServices()
                               .sendFriendRequestNotification(
                                   receiverID: data["uid"],
+                                  photourl: getPhoto().toString(),
                                   token: token.toString(),
                                   name: getUsername().toString());
                           notificationServices
@@ -184,6 +191,7 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
                           addNotifications(
                               getUserName().toString(),
                               data["uid"],
+                              getPhoto().toString(),
                               data["device_token"],
                               '${getUsername()} has sent you a friend request.');
                         },

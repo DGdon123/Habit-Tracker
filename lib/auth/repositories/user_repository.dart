@@ -69,7 +69,7 @@ class UserRepository with ChangeNotifier {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const Home(),
+            builder: (context) => const HomePage(),
           ),
         );
       } else {
@@ -344,7 +344,7 @@ class UserRepository with ChangeNotifier {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const Home(),
+            builder: (context) => const HomePage(),
           ),
         );
       } else {
@@ -397,7 +397,7 @@ class UserRepository with ChangeNotifier {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const Home(),
+            builder: (context) => const HomePage(),
           ),
         );
       } else {

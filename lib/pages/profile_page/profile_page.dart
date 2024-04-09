@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,15 +37,63 @@ class ProfilePage extends StatefulWidget {
 class ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  String? getUsername() {
-    User? user = _auth.currentUser;
-    return user?.displayName;
-  }
 
   final List<Widget> _pages = [
     const ActivityPage(),
     const FriendsPageTab(),
   ];
+  String? getUsername() {
+    User? user = _auth.currentUser;
+    return user?.displayName;
+  }
+
+  String? getUserID() {
+    User? user = _auth.currentUser;
+    return user?.uid;
+  }
+
+  int focus = 0;
+  int screen = 0;
+  int sleep = 0;
+  int workout = 0;
+  int xp = 0;
+
+  Future<void> fetchUsers() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    String? currentUserUid = getUserID();
+
+    try {
+      QuerySnapshot snapshot = await users.get();
+
+      for (var doc in snapshot.docs) {
+        String uid = doc.id;
+        Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
+
+        if (uid == currentUserUid) {
+          // This user document matches the current user
+          // You can access the user data and do something with it
+          setState(() {
+            focus = userData['focusTime'];
+            screen = userData['screenTime'];
+            sleep = userData['sleepGoals'];
+            xp = userData['xp'] ?? 0;
+            workout = userData['workoutFrequency'];
+          });
+
+          // Example: Use the latitude and longitude data
+          // SomeFunctionToUseLocation(latitude, longitude);
+        }
+      }
+    } catch (error) {
+      print("Failed to fetch users: $error");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUsers();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,14 +127,11 @@ class ProfilePageState extends State<ProfilePage>
                 ),
                 SizedBox(height: 30.h),
                 topBar(),
-
                 SizedBox(
                   height: 30.h,
                 ),
                 midBar(),
-
                 SizedBox(height: 30.h),
-
                 tabBar(),
                 SizedBox(height: 20.h),
                 Container(
@@ -116,7 +162,7 @@ class ProfilePageState extends State<ProfilePage>
 
   Padding midBar() {
     return Padding(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: Column(
         children: [
           Row(
@@ -128,13 +174,15 @@ class ProfilePageState extends State<ProfilePage>
                     fontWeight: FontWeight.bold,
                     fontFamily: 'SfProText'),
               ),
-              Spacer(),
+              const Spacer(),
               GestureDetector(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => EditGoals()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const EditGoals()));
                   },
-                  child: Icon(Icons.edit))
+                  child: const Icon(Icons.edit))
             ],
           ),
           SizedBox(
@@ -145,7 +193,7 @@ class ProfilePageState extends State<ProfilePage>
             children: [
               Container(
                 width: MediaQuery.sizeOf(context).width * 0.46,
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     color: AppColors.widgetColorV,
                     borderRadius: BorderRadius.circular(8)),
@@ -167,7 +215,7 @@ class ProfilePageState extends State<ProfilePage>
                           fontFamily: 'SfProText'),
                     ),
                     Text(
-                      "8 hrs",
+                      "$sleep hrs",
                       style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
@@ -178,7 +226,7 @@ class ProfilePageState extends State<ProfilePage>
               ),
               Container(
                 width: MediaQuery.sizeOf(context).width * 0.46,
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     color: AppColors.widgetColorR,
                     borderRadius: BorderRadius.circular(8)),
@@ -199,7 +247,7 @@ class ProfilePageState extends State<ProfilePage>
                           fontFamily: 'SfProText'),
                     ),
                     Text(
-                      "3 hrs",
+                      "$screen hrs",
                       style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
@@ -210,7 +258,7 @@ class ProfilePageState extends State<ProfilePage>
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
@@ -218,7 +266,7 @@ class ProfilePageState extends State<ProfilePage>
             children: [
               Container(
                 width: MediaQuery.sizeOf(context).width * 0.46,
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     color: AppColors.widgetColorB,
                     borderRadius: BorderRadius.circular(8)),
@@ -240,7 +288,7 @@ class ProfilePageState extends State<ProfilePage>
                           fontFamily: 'SfProText'),
                     ),
                     Text(
-                      "8 hrs",
+                      "$workout days",
                       style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
@@ -251,7 +299,7 @@ class ProfilePageState extends State<ProfilePage>
               ),
               Container(
                 width: MediaQuery.sizeOf(context).width * 0.46,
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     color: AppColors.widgetColorG,
                     borderRadius: BorderRadius.circular(8)),
@@ -273,7 +321,7 @@ class ProfilePageState extends State<ProfilePage>
                           fontFamily: 'SfProText'),
                     ),
                     Text(
-                      "8 hrs",
+                      "$focus hrs",
                       style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
@@ -370,7 +418,7 @@ class ProfilePageState extends State<ProfilePage>
                         AppIcons.xp,
                       ),
                       Text(
-                        '1452 XP',
+                        '$xp XP',
                         style: TextStyle(
                           color: Colors.black.withOpacity(0.75),
                           fontSize: 14.sp,
@@ -441,22 +489,22 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                       filled: true,
                       fillColor: Colors.white,
                       focusColor: Colors.white,
-                      contentPadding: EdgeInsets.symmetric(vertical: 10),
-                      prefixIcon: Icon(
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                      prefixIcon: const Icon(
                         Icons.search,
                         color: CupertinoColors.systemGrey,
                       ),
-                      hintStyle: TextStyle(
+                      hintStyle: const TextStyle(
                         color: CupertinoColors.systemGrey,
                       ),
                       hintText: 'Search Friends',
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide:
-                              BorderSide(color: AppColors.blue, width: 1)),
+                          borderSide: const BorderSide(
+                              color: AppColors.blue, width: 1)),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                               color: AppColors.widgetColorB, width: 0.4))),
                   onChanged: (value) {
                     setState(() {
@@ -487,12 +535,12 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                                   )));
                         },
                   child: Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
                               blurRadius: .2,
-                              offset: Offset(0.0, 0.5),
+                              offset: const Offset(0.0, 0.5),
                               color: Colors.black.withOpacity(0.5))
                         ],
                         color: AppColors.mainColor,

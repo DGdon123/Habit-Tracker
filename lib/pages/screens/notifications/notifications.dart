@@ -85,8 +85,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           color: AppColors.black.withOpacity(0.5),
                         ),
                   ),
-                  Spacer(),
-                  Icon(CupertinoIcons.bell)
+                  const Spacer(),
+                  const Icon(CupertinoIcons.bell)
                 ],
               ),
               SizedBox(height: 20.h),
@@ -109,20 +109,29 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             child: Container(
                               width: MediaQuery.sizeOf(context).width,
                               height: 70.h,
-                              padding: EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                   color: AppColors.mainColor,
                                   borderRadius: BorderRadius.circular(8)),
                               child: Row(
                                 children: [
-                                  Padding(
-                                      padding: EdgeInsets.only(right: 8.0),
-                                      child: CircleAvatar(
-                                        child: SvgPicture.asset(
-                                          AppIcons.twogift,
-                                          width: 50.w,
-                                        ),
-                                      )),
+                                  userData['photourl'] != null
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 8.0),
+                                          child: CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                                userData['photourl']),
+                                          ))
+                                      : Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 8.0),
+                                          child: CircleAvatar(
+                                            child: SvgPicture.asset(
+                                              AppIcons.twogift,
+                                              width: 50.w,
+                                            ),
+                                          )),
                                   Flexible(
                                     child: Text(
                                       userData['message'] ?? '',

@@ -254,8 +254,7 @@ class _HomeState extends State<Home> {
               children: [
                 Image.asset(
                   AppIcons.phone,
-                  width: 40,
-                  color: AppColors.lightBlack,
+                  width: 50,
                 ),
                 const SizedBox(
                   width: 10,

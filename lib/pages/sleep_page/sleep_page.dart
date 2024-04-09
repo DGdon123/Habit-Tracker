@@ -146,7 +146,7 @@ class SleepPageState extends State<SleepPage> {
                         snapshotLength != 0) {
                       var doc = snapshot.data!.docs[0];
                       return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        padding: EdgeInsets.symmetric(horizontal: 15.w),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -154,6 +154,9 @@ class SleepPageState extends State<SleepPage> {
                                 title: 'Sleep Time'.tr(),
                                 bgColor: const Color(0xFF004AAD),
                                 time: doc.get("sleepTime")),
+                            SizedBox(
+                              width: 4.w,
+                            ),
                             SleepWakeDisplayCard(
                                 title: 'Wake Time'.tr(),
                                 bgColor: const Color(0xFFFFDE59),

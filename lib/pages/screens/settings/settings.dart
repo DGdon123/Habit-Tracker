@@ -13,6 +13,7 @@ import 'package:habit_tracker/pages/chat_room/chat_room.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/language/language.dart';
 import 'package:habit_tracker/pages/screens/notifications/notifications.dart';
+import 'package:habit_tracker/pages/screens/settings/goal_completetion_screen.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -161,7 +162,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                   width: 10.w,
                                 ),
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) =>
+                                                GoalCompletionScreen()));
+                                  },
                                   child: Container(
                                     width: 48.h,
                                     height: 48.w,

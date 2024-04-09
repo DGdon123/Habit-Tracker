@@ -62,8 +62,8 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
         if (_progressValue == 0) {
           if (widget.hour != 0 || widget.minute != 0) {
             var xp = widget.hour * 60 + widget.minute;
-            XpFirestoreServices()
-                .addXp(xp: xp, reason: widget.label.toString());
+            XpFirestoreServices().addXp(
+                xp: xp, reason: "Earned from Focus Timer", increment: true);
             Navigator.push(
                 context,
                 MaterialPageRoute(

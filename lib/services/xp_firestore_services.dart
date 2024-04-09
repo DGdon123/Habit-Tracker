@@ -8,7 +8,10 @@ class XpFirestoreServices {
   CollectionReference xpRef = FirebaseFirestore.instance.collection("xp");
   var userID = FirebaseAuth.instance.currentUser!.uid;
   CollectionReference userRef = FirebaseFirestore.instance.collection('users');
-  Future<void> addXp({required int xp, required String reason}) async {
+  Future<void> addXp(
+      {required int xp,
+      required String reason,
+      required bool increment}) async {
     try {
       var userID = FirebaseAuth.instance.currentUser!
           .uid; // Move userID initialization inside the function
@@ -25,6 +28,51 @@ class XpFirestoreServices {
         'userID': userID,
         'timestamp': DateTime.now(),
         'reason': reason,
+        'increment': increment
+      });
+
+      log(reason);
+    } catch (error) {
+      print('Error adding XP: $error');
+      // Handle error accordingly
+    }
+  }
+
+  Future<void> subtractXp(
+      {required int xp,
+      required String receiverID,
+      required String reason,
+      required String reason2,required bool increment2,
+      required bool increment}) async {
+    try {
+      var userID = FirebaseAuth.instance.currentUser!
+          .uid; // Move userID initialization inside the function
+      debugPrint('xp: $xp, userID: $userID');
+
+      // Update userRef collection
+      await userRef.doc(userID).update({
+        'xp': FieldValue.increment(-xp),
+      });
+      await userRef.doc(receiverID).update({
+        'xp': FieldValue.increment(xp),
+      });
+
+      // Add to xpRef
+      await xpRef.add({
+        'xp': xp,
+        'userID': userID,
+        'timestamp': DateTime.now(),
+        'reason': reason,
+        'increment': increment
+      });
+
+      // Add to xpRef
+      await xpRef.add({
+        'xp': xp,
+        'userID': receiverID,
+        'timestamp': DateTime.now(),
+        'reason': reason2,
+        'increment': increment2
       });
 
       log(reason);

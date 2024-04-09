@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/auth/repositories/gymtime_model.dart';
 import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
+import 'package:habit_tracker/auth/widgets/gym_in_time.dart';
 import 'package:habit_tracker/location/current_location.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/pages/screens/friends.dart';
@@ -15,6 +16,7 @@ import 'package:habit_tracker/pages/screens/widgets/start_end_time_picker.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/start_end_date_picker.dart';
 import 'package:habit_tracker/pages/usage_page/usage_page.dart';
+import 'package:habit_tracker/provider/gym_time_provider.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
 import 'package:habit_tracker/services/local_storage_services.dart';
@@ -407,8 +409,13 @@ class _HomeState extends State<Home> {
                       showDialog(
                           context: context,
                           builder: (_) {
-                            return StartEndTimePicker();
+                            return GymInTime();
                           });
+
+                      var inTime = context.watch<GymTimeProvider>().gymInTime;
+                      var outTime = context.watch<GymTimeProvider>().gymOutTime;
+
+                      debugPrint("In Time: $inTime, Out Time: $outTime");
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10.w),

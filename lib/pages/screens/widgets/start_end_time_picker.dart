@@ -65,19 +65,7 @@ class _StartEndTimePickerState extends State<StartEndTimePicker> {
                             Text("Start date and end date cannot be the same."),
                       ),
                     );
-                  } else {
-                    GymFirestoreServices()
-                        .upload(startText, endText)
-                        .then((value) {
-                      Navigator.pop(context);
-                    }).onError((error, stackTrace) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text(
-                                "Failed to upload data to Firebase: $error")),
-                      );
-                    });
-                  }
+                  } else {}
                 },
           child: const Text('OK'),
         ),

@@ -1,4 +1,3 @@
-
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,7 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/auth/widgets/gym_out_time.dart';
 import 'package:habit_tracker/auth/widgets/gym_in_time.dart';
 import 'package:habit_tracker/pages/screens/sleep%20wakeup/wakeTime.dart';
+import 'package:habit_tracker/provider/gym_time_provider.dart';
 import 'package:habit_tracker/utils/colors.dart';
+import 'package:provider/provider.dart';
 
 class GymInTime extends StatefulWidget {
   @override
@@ -66,11 +67,13 @@ class _GymInTimeState extends State<GymInTime> {
               child: showPicker(
                 showCancelButton: false,
                 onCancel: () {
+                  Navigator.of(context).pop();
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return GymOutTime(
-                          gymInTime: _gymIntime); // Use the custom dialog
+                          inTime: _gymIntime
+                              .format(context)); // Use the custom dialog
                     },
                   );
                 },

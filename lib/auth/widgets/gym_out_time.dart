@@ -1,24 +1,34 @@
+import 'dart:developer';
+
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/pages/sleep_page/utils.dart';
+import 'package:habit_tracker/provider/gym_time_provider.dart';
+import 'package:habit_tracker/services/gym_firestore_services.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/styles.dart';
+import 'package:provider/provider.dart';
 
 class GymOutTime extends StatefulWidget {
-  final Time gymInTime;
-  const GymOutTime({required this.gymInTime});
+  final String inTime;
+  const GymOutTime({super.key, required this.inTime});
+
   @override
   State<GymOutTime> createState() => _GymOutTimeState();
 }
 
 class _GymOutTimeState extends State<GymOutTime> {
-  Time _gymOuTime = Time(hour: 06, minute: 30, second: 20);
+  Time _gymOutTime = Time(hour: 06, minute: 30, second: 20);
   bool iosStyle = true;
+
+  void gymTimeSet(Time newTime) async {
+    await GymFirestoreServices().upload(widget.inTime, newTime.format(context));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,8 +96,8 @@ class _GymOutTimeState extends State<GymOutTime> {
                 ),
                 isInlinePicker: true,
                 elevation: 0,
-                value: _gymOuTime,
-                onChange: (value) {},
+                value: _gymOutTime,
+                onChange: gymTimeSet,
                 minuteInterval: TimePickerInterval.FIVE,
                 iosStylePicker: iosStyle,
                 minHour: 0,

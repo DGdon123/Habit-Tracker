@@ -20,6 +20,7 @@ import 'package:habit_tracker/pages/friend_searched_page/friend_searched_page.da
 import 'package:habit_tracker/pages/screens/settings/settings.dart';
 import 'package:habit_tracker/services/user_firestore_services.dart';
 import 'package:habit_tracker/services/xp_firestore_services.dart';
+import 'package:habit_tracker/utils/buttons.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -926,6 +927,10 @@ class _EditGoalsState extends State<EditGoals> {
               SizedBox(
                 height: 14.h,
               ),
+              CustomButton(
+                onPressed: () {},
+                text: 'Save',
+              )
             ],
           ),
         ),

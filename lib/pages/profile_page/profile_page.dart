@@ -634,7 +634,10 @@ class ActivityPage extends StatelessWidget {
                             xp.get("timestamp").millisecondsSinceEpoch);
 
                         return AchievmentsContainer(
-                            xp: xp.get("xp").toString(), uploadedDate: date);
+                            increment: xp.get("increment"),
+                            reason: xp.get("reason"),
+                            xp: xp.get("xp").toString(),
+                            uploadedDate: date);
                       },
                     );
                   })),
@@ -645,7 +648,9 @@ class ActivityPage extends StatelessWidget {
 }
 
 Widget AchievmentsContainer({
+  required String reason,
   required String xp,
+  required bool increment,
   required DateTime uploadedDate,
 }) {
   var now = DateTime.now();
@@ -691,7 +696,7 @@ Widget AchievmentsContainer({
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$xp XP Earned',
+                  '$xp XP $reason',
                   style: TextStyle(
                     color: const Color(0xFF040415),
                     fontSize: 16.sp,
@@ -712,13 +717,19 @@ Widget AchievmentsContainer({
             )
           ],
         ),
-        GestureDetector(
-          onTap: () {},
-          child: SvgPicture.asset(
-            AppIcons.achievmentsarrow,
-            height: 32.h,
-          ),
-        ),
+        increment
+            ? GestureDetector(
+                onTap: () {},
+                child: const Icon(
+                  Icons.arrow_upward_rounded,
+                  color: CupertinoColors.systemGreen,
+                ))
+            : GestureDetector(
+                onTap: () {},
+                child: const Icon(
+                  Icons.arrow_downward_rounded,
+                  color: CupertinoColors.destructiveRed,
+                ))
       ],
     ),
   );

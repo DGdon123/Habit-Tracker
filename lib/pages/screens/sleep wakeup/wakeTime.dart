@@ -11,7 +11,7 @@ import 'package:habit_tracker/utils/styles.dart';
 
 class WakeTime extends StatefulWidget {
   final Time sleepTime;
-  const WakeTime({required this.sleepTime});
+  const WakeTime({super.key, required this.sleepTime});
   @override
   State<WakeTime> createState() => _WakeTimeState();
 }
@@ -41,7 +41,10 @@ class _WakeTimeState extends State<WakeTime> {
       difference: SleepPageUtils().roundHourAndMinute(difference.inMinutes),
     );
 
-    await XpFirestoreServices().addXp(xp: difference.inHours, reason: 'Sleep');
+    await XpFirestoreServices().addXp(
+        xp: difference.inHours,
+        reason: 'Earned from Sleep Wake Time',
+        increment: true);
   }
 
   @override
@@ -88,7 +91,7 @@ class _WakeTimeState extends State<WakeTime> {
                 },
                 dialogInsetPadding:
                     EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.h),
-                unselectedColor: Color.fromRGBO(0, 0, 0, 0.75),
+                unselectedColor: const Color.fromRGBO(0, 0, 0, 0.75),
                 hourLabel: 'Hour'.tr(),
                 minuteLabel: 'Minutes'.tr(),
                 // width: 350.w,
@@ -96,7 +99,7 @@ class _WakeTimeState extends State<WakeTime> {
                 // wheelHeight: 300.h,
 
                 cancelStyle: TextStyle(
-                  color: Color.fromARGB(255, 255, 0, 0).withOpacity(0.75),
+                  color: const Color.fromARGB(255, 255, 0, 0).withOpacity(0.75),
                   fontSize: 16.sp,
                   fontFamily: 'SFProText',
                   fontWeight: FontWeight.w500,

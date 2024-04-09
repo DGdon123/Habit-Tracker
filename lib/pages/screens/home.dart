@@ -11,10 +11,13 @@ import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
 import 'package:habit_tracker/location/current_location.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/pages/screens/friends.dart';
+import 'package:habit_tracker/pages/screens/widgets/start_end_time_picker.dart';
 import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.dart';
+import 'package:habit_tracker/pages/sleep_page/widgets/start_end_date_picker.dart';
 import 'package:habit_tracker/pages/usage_page/usage_page.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
+import 'package:habit_tracker/services/local_storage_services.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
@@ -393,65 +396,90 @@ class _HomeState extends State<Home> {
               borderRadius: BorderRadius.circular(16.r),
             ),
           ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      AppIcons.workout,
-                      width: 45,
-                      color: AppColors.lightBlack,
+          child: FutureBuilder<bool>(
+              future: LocalStorageServices().isAutomaticSelected(),
+              builder: (_, data) {
+                debugPrint("Data Home.dart: ${data.data}");
+
+                if (data.hasData && data.data == false) {
+                  return GestureDetector(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (_) {
+                            return StartEndTimePicker();
+                          });
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      child: Center(
+                        child: Text("Click to add today's workout.".tr()),
+                      ),
                     ),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    Column(
+                  );
+                } else if (data.hasData && data.data == true) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          timeString.toString() ?? "00:00:00".tr(),
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontSize: 19.sp,
-                            fontFamily: 'SFProText',
-                            fontWeight: FontWeight.w800,
-                            height: 0,
-                          ),
-                        ),
-                        Text(
-                          'to'.tr(),
-                          style: TextStyle(
-                            color: AppColors.black.withOpacity(0.7),
-                            fontSize: 16.sp,
-                            fontFamily: 'SFProText',
-                            fontWeight: FontWeight.w800,
-                            height: 0,
-                          ),
-                        ),
-                        Text(
-                          timeString1.toString() ?? "00:00:00".tr(),
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontSize: 19.sp,
-                            fontFamily: 'SFProText',
-                            fontWeight: FontWeight.w800,
-                            height: 0,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              AppIcons.workout,
+                              width: 45,
+                              color: AppColors.lightBlack,
+                            ),
+                            const SizedBox(
+                              width: 12,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  timeString.toString(),
+                                  style: TextStyle(
+                                    color: AppColors.black,
+                                    fontSize: 19.sp,
+                                    fontFamily: 'SFProText',
+                                    fontWeight: FontWeight.w800,
+                                    height: 0,
+                                  ),
+                                ),
+                                Text(
+                                  'to'.tr(),
+                                  style: TextStyle(
+                                    color: AppColors.black.withOpacity(0.7),
+                                    fontSize: 16.sp,
+                                    fontFamily: 'SFProText',
+                                    fontWeight: FontWeight.w800,
+                                    height: 0,
+                                  ),
+                                ),
+                                Text(
+                                  timeString1.toString(),
+                                  style: TextStyle(
+                                    color: AppColors.black,
+                                    fontSize: 19.sp,
+                                    fontFamily: 'SFProText',
+                                    fontWeight: FontWeight.w800,
+                                    height: 0,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+                  );
+                }
+                return const SizedBox();
+              }),
         ),
       ],
     );

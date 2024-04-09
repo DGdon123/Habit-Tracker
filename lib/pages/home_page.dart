@@ -70,7 +70,6 @@ class HomePageState extends State<HomePage> {
                 currentIndex: context.watch<IndexProvider>().selectedIndex,
                 onTap: (index) {
                   context.read<IndexProvider>().setSelectedIndex(index);
-                  debugPrint("Index: $index");
                 },
                 items: [
                   BottomNavigationBarItem(

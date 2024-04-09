@@ -3,11 +3,15 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/main.dart';
 import 'package:habit_tracker/pages/screens/settings/settings.dart';
 import 'package:habit_tracker/utils/colors.dart';
+import 'package:habit_tracker/utils/icons.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -81,6 +85,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           color: AppColors.black.withOpacity(0.5),
                         ),
                   ),
+                  Spacer(),
+                  Icon(CupertinoIcons.bell)
                 ],
               ),
               SizedBox(height: 20.h),
@@ -100,20 +106,33 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               .data() as Map<String, dynamic>;
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Row(
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(right: 8.0),
-                                  child: Icon(
-                                    Icons.circle,
-                                    size: 10,
+                            child: Container(
+                              width: MediaQuery.sizeOf(context).width,
+                              height: 70.h,
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  color: AppColors.mainColor,
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                      padding: EdgeInsets.only(right: 8.0),
+                                      child: CircleAvatar(
+                                        child: SvgPicture.asset(
+                                          AppIcons.twogift,
+                                          width: 50.w,
+                                        ),
+                                      )),
+                                  Flexible(
+                                    child: Text(
+                                      userData['message'] ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  userData['message'] ?? '',
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           );
                         },

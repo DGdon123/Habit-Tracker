@@ -270,7 +270,7 @@ class StatsPageState extends State<StatsPage> {
                 maximumDate: DateTime.now().add(const Duration(days: 30)),
                 endDate: endDate,
                 startDate: startDate,
-                backgroundColor: Colors.white,
+                backgroundColor: AppColors.white,
                 primaryColor: AppColors.black,
                 onApplyClick: (start, end) {
                   setState(() {

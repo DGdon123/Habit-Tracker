@@ -16,6 +16,7 @@ class SleepWakeDisplayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: MediaQuery.sizeOf(context).width * 0.45,
       padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.h),
       decoration: ShapeDecoration(
         color: bgColor,

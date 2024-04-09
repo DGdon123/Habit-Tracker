@@ -10,6 +10,7 @@ import 'package:habit_tracker/auth/repositories/gymtime_model.dart';
 import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
 import 'package:habit_tracker/auth/widgets/gym_in_time.dart';
 import 'package:habit_tracker/location/current_location.dart';
+import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/pages/screens/friends.dart';
 import 'package:habit_tracker/pages/screens/widgets/workout_data.dart';
 import 'package:habit_tracker/pages/usage_page/usage_page.dart';

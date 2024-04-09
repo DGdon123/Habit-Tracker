@@ -25,7 +25,7 @@ class ReceivedFriendRequest extends StatelessWidget {
 
               cards.add(FriendRequestCard(
                 token: data["token"],
-                photourl: data["photourl"],
+                photourl: data["photourl"] ?? "",
                 senderID: data["senderID"],
                 name: data['sendername'],
               ));

@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/pages/sleep_page/utils.dart';
-import 'package:habit_tracker/provider/gym_time_provider.dart';
 import 'package:habit_tracker/services/gym_firestore_services.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/services/xp_firestore_services.dart';
@@ -15,7 +14,7 @@ import 'package:habit_tracker/utils/styles.dart';
 import 'package:provider/provider.dart';
 
 class GymOutTime extends StatefulWidget {
-  final String inTime;
+  final Time inTime;
   const GymOutTime({super.key, required this.inTime});
 
   @override
@@ -27,7 +26,8 @@ class _GymOutTimeState extends State<GymOutTime> {
   bool iosStyle = true;
 
   void gymTimeSet(Time newTime) async {
-    await GymFirestoreServices().upload(widget.inTime, newTime.format(context));
+    await GymFirestoreServices()
+        .upload(inTime: widget.inTime, outTime: newTime);
   }
 
   @override

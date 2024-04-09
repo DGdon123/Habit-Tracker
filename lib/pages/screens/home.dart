@@ -3,32 +3,25 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/auth/repositories/gymtime_model.dart';
 import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
 import 'package:habit_tracker/auth/widgets/gym_in_time.dart';
 import 'package:habit_tracker/location/current_location.dart';
-import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/pages/screens/friends.dart';
-import 'package:habit_tracker/pages/screens/widgets/start_end_time_picker.dart';
-import 'package:habit_tracker/pages/sleep_page/widgets/sleep_wake_display_card.dart';
-import 'package:habit_tracker/pages/sleep_page/widgets/start_end_date_picker.dart';
+import 'package:habit_tracker/pages/screens/widgets/workout_data.dart';
 import 'package:habit_tracker/pages/usage_page/usage_page.dart';
-import 'package:habit_tracker/provider/gym_time_provider.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
+import 'package:habit_tracker/services/gym_firestore_services.dart';
 import 'package:habit_tracker/services/local_storage_services.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
-import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
-
-import 'customize character/customizeCharater.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -404,26 +397,39 @@ class _HomeState extends State<Home> {
                 debugPrint("Data Home.dart: ${data.data}");
 
                 if (data.hasData && data.data == false) {
-                  return GestureDetector(
-                    onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (_) {
-                            return GymInTime();
-                          });
-
-                      var inTime = context.watch<GymTimeProvider>().gymInTime;
-                      var outTime = context.watch<GymTimeProvider>().gymOutTime;
-
-                      debugPrint("In Time: $inTime, Out Time: $outTime");
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.w),
-                      child: Center(
-                        child: Text("Click to add today's workout.".tr()),
-                      ),
-                    ),
-                  );
+                  return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                      stream: GymFirestoreServices().listenToTodayGymTime,
+                      builder: (_, snapshot) {
+                        if (snapshot.hasData &&
+                            snapshot.data!.docs.isNotEmpty) {
+                          var doc = snapshot.data!.docs[0];
+                          return WorkoutData(
+                            inTime: doc.get("InTime"),
+                            outTime: doc.get("OutTime"),
+                          );
+                        } else if (snapshot.hasData &&
+                            snapshot.data!.docs.isEmpty) {
+                          return GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return GymInTime();
+                                  });
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10.w),
+                              child: Center(
+                                child:
+                                    Text("Click to add today's workout.".tr()),
+                              ),
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text("Error".tr());
+                        }
+                        return const SizedBox();
+                      });
                 } else if (data.hasData && data.data == true) {
                   return Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10.w),

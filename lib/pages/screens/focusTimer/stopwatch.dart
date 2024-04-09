@@ -319,8 +319,9 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                                       debugPrint("adding to firestore");
                                       XpFirestoreServices()
                                           .addXp(
+                                              increment: true,
                                               xp: (hours * 60) + minutes,
-                                              reason: "Stopwatch")
+                                              reason: "Earned from Stopwatch")
                                           .then((value) =>
                                               Navigator.pop(context));
                                       return;
@@ -351,8 +352,9 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                                       if (hours != 0 || minutes != 0) {
                                         var xp = hours * 60 + minutes;
                                         XpFirestoreServices().addXp(
+                                            increment: true,
                                             xp: xp,
-                                            reason: widget.label.toString());
+                                            reason: "Earned from Stopwatch");
                                       }
                                     });
                                   } else {

@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:habit_tracker/provider/index_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -21,6 +23,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 import '../../main.dart';
 import '../../services/notification_services.dart';
+import '../../services/xp_firestore_services.dart';
+import '../home_page.dart';
 
 class ChatRoom extends StatefulWidget {
   final String chatRoomId;
@@ -171,6 +175,37 @@ class _ChatRoomState extends State<ChatRoom> {
     );
   }
 
+  void onSendMessage1(BuildContext context, String xpValue) async {
+    if (xpValue.isNotEmpty) {
+      Map<String, dynamic> messages = {
+        "sendby": _auth.currentUser!.uid,
+        "message": '$xpValue XP.',
+        "receiver": widget.receiverID,
+        "receiverdevicetoken": widget.receiverDeviceToken,
+        "type": "text",
+        "time": FieldValue.serverTimestamp(),
+      };
+
+      xpController.clear();
+      await _firestore
+          .collection('chatroom')
+          .doc(widget.chatRoomId)
+          .collection('chats')
+          .add(messages);
+      XpFirestoreServices().subtractXp(
+        receiverID: widget.receiverID,
+        increment: false,
+        increment2: true,
+        xp: int.parse(xpValue),
+        reason2: "Gifted by ${_auth.currentUser!.displayName}",
+        reason: "Gifted to ${widget.name}",
+      );
+      Navigator.pop(context);
+    } else {
+      print("Enter Some Text");
+    }
+  }
+
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -196,29 +231,6 @@ class _ChatRoomState extends State<ChatRoom> {
           .doc(widget.chatRoomId)
           .collection('chats')
           .add(messages);
-    } else {
-      print("Enter Some Text");
-    }
-  }
-
-  void onSendMessage1(BuildContext context, String xpValue) async {
-    if (xpValue.isNotEmpty) {
-      Map<String, dynamic> messages = {
-        "sendby": _auth.currentUser!.uid,
-        "message": '$xpValue XP.',
-        "receiver": widget.receiverID,
-        "receiverdevicetoken": widget.receiverDeviceToken,
-        "type": "text",
-        "time": FieldValue.serverTimestamp(),
-      };
-
-      xpController.clear();
-      await _firestore
-          .collection('chatroom')
-          .doc(widget.chatRoomId)
-          .collection('chats')
-          .add(messages);
-      Navigator.pop(context);
     } else {
       print("Enter Some Text");
     }
@@ -289,7 +301,11 @@ class _ChatRoomState extends State<ChatRoom> {
               InkWell(
                 child: const Icon(Icons.arrow_back),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomePage()),
+                      (route) => false);
+                  context.read<IndexProvider>().setSelectedIndex(4);
                 },
               ),
               Container(

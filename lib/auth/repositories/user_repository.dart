@@ -177,15 +177,7 @@ class UserRepository with ChangeNotifier {
       debugPrint("Authenticating user repo");
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String token = prefs.getString('device_token').toString();
-      // Create user with email and password
-      final authResponse = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
 
-      //
-
-      debugPrint("Authenticating user repo: $authResponse");
       // Show loading indicator
       showDialog(
         context: context,
@@ -204,11 +196,13 @@ class UserRepository with ChangeNotifier {
         ),
       );
 
+      var currentUser = FirebaseAuth.instance.currentUser;
+
       // adding details to the firestore
       UserFireStoreServices()
           .addUser(
         devicetoken: token,
-        uid: authResponse.user!.uid,
+        uid: currentUser!.uid,
         email: email,
         name: username,
         latitude: latitude,

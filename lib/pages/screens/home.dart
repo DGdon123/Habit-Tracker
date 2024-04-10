@@ -461,7 +461,7 @@ class _HomeState extends State<Home> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Today\'s Workout',
+          'Today\'s Workout'.tr(),
           style: headingStyle,
         ),
         SizedBox(
@@ -845,15 +845,11 @@ class _HomeState extends State<Home> {
             ],
           ),
           TextButton(
-              onPressed: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const UsagePage(),
-                  ),
-                );
-              },
-              child: Text("Usage".tr())),
+            onPressed: () async {
+              await FirebaseAuth.instance.currentUser!.sendEmailVerification();
+            },
+            child: Text("Usage".tr()),
+          ),
           Container(
             margin: const EdgeInsets.only(top: 10),
             child: Stack(

@@ -258,6 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: CustomButton(
                                 text: 'CONTINUE'.tr(),
                                 onPressed: () async {
+
                                   if (_formKey.currentState!.validate()) {
                                     if (!await user.signIn(
                                         context,

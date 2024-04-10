@@ -6,6 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -173,7 +174,7 @@ class ProfilePageState extends State<ProfilePage>
           Row(
             children: [
               Text(
-                "Goals",
+                "Goals".tr(),
                 style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
@@ -218,14 +219,14 @@ class ProfilePageState extends State<ProfilePage>
                       width: 10.w,
                     ),
                     Text(
-                      "Sleep Time: ",
+                      "Sleep Time".tr(),
                       style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'SfProText'),
                     ),
                     Text(
-                      "$sleep hrs",
+                      ": $sleep hrs",
                       style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
@@ -250,14 +251,14 @@ class ProfilePageState extends State<ProfilePage>
                       width: 10.w,
                     ),
                     Text(
-                      "Screentime: ",
+                      "Screentime".tr(),
                       style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'SfProText'),
                     ),
                     Text(
-                      "$screen hrs",
+                      ": $screen hrs",
                       style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
@@ -291,14 +292,14 @@ class ProfilePageState extends State<ProfilePage>
                       width: 10.w,
                     ),
                     Text(
-                      "Workout: ",
+                      "Workout".tr(),
                       style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'SfProText'),
                     ),
                     Text(
-                      "$workout days",
+                      ": $workout days",
                       style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
@@ -324,14 +325,14 @@ class ProfilePageState extends State<ProfilePage>
                       width: 10.w,
                     ),
                     Text(
-                      "Focus Time: ",
+                      "Focus Time".tr(),
                       style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'SfProText'),
                     ),
                     Text(
-                      "$focus hrs",
+                      ": $focus hrs",
                       style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
@@ -507,7 +508,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                       hintStyle: const TextStyle(
                         color: CupertinoColors.systemGrey,
                       ),
-                      hintText: 'Search Friends',
+                      hintText: 'Search Friends'.tr(),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
                           borderSide: const BorderSide(
@@ -523,7 +524,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                   },
                 )),
                 SizedBox(
-                  width: 20.w,
+                  width: 16.w,
                 ),
                 GestureDetector(
                   onTap: searchText.isEmpty
@@ -545,6 +546,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                                   )));
                         },
                   child: Container(
+                    width: MediaQuery.sizeOf(context).width * .2,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                         boxShadow: [
@@ -557,7 +559,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                         borderRadius: BorderRadius.circular(12)),
                     child: Center(
                         child: Text(
-                      'Search',
+                      'Search'.tr(),
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.sp,
@@ -784,7 +786,7 @@ class _EditGoalsState extends State<EditGoals> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Edit Goals',
+          'Edit Goals'.tr(),
           style: TextStyle(
               fontFamily: 'SFProText',
               fontSize: 22.sp,
@@ -810,13 +812,15 @@ class _EditGoalsState extends State<EditGoals> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      'Set Sleep Goals:',
-                      style: TextStyle(
-                          fontFamily: 'SFProText',
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textBlack),
+                    Flexible(
+                      child: Text(
+                        'Set Sleep Goals'.tr() + ':',
+                        style: TextStyle(
+                            fontFamily: 'SFProText',
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textBlack),
+                      ),
                     ),
                     _buildPicker(
                       itemCount: 13,
@@ -831,7 +835,7 @@ class _EditGoalsState extends State<EditGoals> {
                       },
                     ),
                     Text(
-                      'hours per Day',
+                      'hours per Day'.tr(),
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 15.sp,
@@ -852,13 +856,15 @@ class _EditGoalsState extends State<EditGoals> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      'Set Screentime:',
-                      style: TextStyle(
-                          fontFamily: 'SFProText',
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textBlack),
+                    Flexible(
+                      child: Text(
+                        'Set Screentime'.tr() + ':',
+                        style: TextStyle(
+                            fontFamily: 'SFProText',
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textBlack),
+                      ),
                     ),
                     _buildPicker(
                       itemCount: 25,
@@ -873,7 +879,7 @@ class _EditGoalsState extends State<EditGoals> {
                       },
                     ),
                     Text(
-                      'hours per Day',
+                      'hours per Day'.tr(),
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 15.sp,
@@ -894,13 +900,15 @@ class _EditGoalsState extends State<EditGoals> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      'Set Focus Time:',
-                      style: TextStyle(
-                          fontFamily: 'SFProText',
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textBlack),
+                    Flexible(
+                      child: Text(
+                        'Set Focus Time'.tr() + ':',
+                        style: TextStyle(
+                            fontFamily: 'SFProText',
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textBlack),
+                      ),
                     ),
                     _buildPicker(
                       itemCount: 13,
@@ -915,7 +923,7 @@ class _EditGoalsState extends State<EditGoals> {
                       },
                     ),
                     Text(
-                      'hours per Day',
+                      'hours per Day'.tr(),
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 15.sp,
@@ -936,13 +944,15 @@ class _EditGoalsState extends State<EditGoals> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      'Set Workout:        \nFrequency',
-                      style: TextStyle(
-                          fontFamily: 'SFProText',
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textBlack),
+                    Flexible(
+                      child: Text(
+                        'Set Workout Frequency'.tr() + ':',
+                        style: TextStyle(
+                            fontFamily: 'SFProText',
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textBlack),
+                      ),
                     ),
                     _buildPicker(
                       itemCount: 8,
@@ -957,7 +967,7 @@ class _EditGoalsState extends State<EditGoals> {
                       },
                     ),
                     Text(
-                      'days per Week',
+                      'days per Week'.tr(),
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 15.sp,
@@ -993,7 +1003,7 @@ class _EditGoalsState extends State<EditGoals> {
                     text: 'Goals Updated Successfully!',
                   );
                 },
-                text: 'Save',
+                text: 'Save'.tr(),
               ),
               SizedBox(
                 height: 14.h,

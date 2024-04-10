@@ -407,7 +407,7 @@ class _HomeState extends State<Home> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Today\'s Workout',
+          'Today\'s Workout'.tr(),
           style: headingStyle,
         ),
         SizedBox(

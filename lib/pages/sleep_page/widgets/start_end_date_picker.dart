@@ -2,7 +2,10 @@ import 'dart:developer';
 
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:habit_tracker/utils/colors.dart';
 
 class StartEndDatePicker extends StatefulWidget {
   final DateTime firstDate; // first date from the entered moods
@@ -21,6 +24,14 @@ class _StartEndDatePickerState extends State<StartEndDatePicker> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      title: Text(
+        'Filter Date',
+        style: TextStyle(
+            fontFamily: 'SfProText',
+            color: Colors.black,
+            letterSpacing: 0.5,
+            fontWeight: FontWeight.w500),
+      ),
       content: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -38,6 +49,9 @@ class _StartEndDatePickerState extends State<StartEndDatePicker> {
                   });
                 }
               }),
+          SizedBox(
+            width: 20.w,
+          ),
           DatePicker(
               text: endText,
               onClick: () async {
@@ -59,24 +73,34 @@ class _StartEndDatePickerState extends State<StartEndDatePicker> {
       actions: <Widget>[
         TextButton(
           style: TextButton.styleFrom(
-            backgroundColor: Colors.red.shade600,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+            backgroundColor: CupertinoColors.destructiveRed,
           ),
           onPressed: () => Navigator.pop<Map>(context, {}),
-          child:  Text('Cancel'.tr()),
+          child: Text(
+            'Cancel'.tr(),
+            style: TextStyle(
+                fontFamily: 'SfProText',
+                color: Colors.white,
+                fontWeight: FontWeight.w500),
+          ),
         ),
         TextButton(
           style: TextButton.styleFrom(
-            backgroundColor: Colors.blue,
-            disabledBackgroundColor: Colors.grey,
-          ),
-          onPressed: (startText.contains("Date".tr()) || endText.contains("Date".tr()))
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(7)),
+              backgroundColor: AppColors.widgetColorB,
+              disabledBackgroundColor: AppColors.buttonColorG),
+          onPressed: (startText.contains("Date".tr()) ||
+                  endText.contains("Date".tr()))
               ? null
               : () {
                   if (startText == endText) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                       SnackBar(
-                        content:
-                            Text("Start date and end date cannot be the same.".tr()),
+                      SnackBar(
+                        content: Text(
+                            "Start date and end date cannot be the same.".tr()),
                       ),
                     );
                   } else {
@@ -84,7 +108,13 @@ class _StartEndDatePickerState extends State<StartEndDatePicker> {
                         context, startEndTimes);
                   }
                 },
-          child:  Text('OK'.tr()),
+          child: Text(
+            'OK'.tr(),
+            style: TextStyle(
+                fontFamily: 'SfProText',
+                color: Colors.black,
+                fontWeight: FontWeight.w500),
+          ),
         ),
       ],
     );
@@ -102,7 +132,8 @@ class DatePicker extends StatelessWidget {
       onTap: onClick,
       child: Ink(
         decoration: BoxDecoration(
-          border: Border.all(),
+          color: AppColors.widgetColorG,
+          border: Border.all(width: .1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: InkWell(
@@ -114,7 +145,13 @@ class DatePicker extends StatelessWidget {
               children: [
                 const Icon(Icons.calendar_today),
                 const SizedBox(width: 4),
-                Text(text),
+                Text(
+                  text,
+                  style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           ),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dashed_circular_progress_bar/dashed_circular_progress_bar.dart';
@@ -17,7 +18,7 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your Goals Summary',
+        title: Text('Your Goals Summary'.tr(),
             style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'SfProText',
@@ -44,7 +45,7 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                 children: [
                   Row(
                     children: [
-                      Text('Sleep Goals',
+                      Text('Sleep Goals'.tr(),
                           style: TextStyle(
                               color: Colors.black,
                               fontFamily: 'SfProText',
@@ -113,14 +114,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'Sleep Goal for the Week: ',
+                                text: 'Sleep Goal for the week'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '56 hrs',
+                                text: ': 56 hrs',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -133,14 +134,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'Sleep Hours Completed: ',
+                                text: 'Sleep Hours Completed'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '32 hrs',
+                                text: ': 32 hrs',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -153,14 +154,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'Remaining Sleep Hours: ',
+                                text: 'Remaining Sleep Hours'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '24 hrs',
+                                text: ': 24 hrs',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -173,14 +174,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'XP Collected: ',
+                                text: 'XP Collected'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '32',
+                                text: ': 32',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -215,7 +216,7 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                 children: [
                   Row(
                     children: [
-                      Text('Screentime',
+                      Text('Screentime'.tr(),
                           style: TextStyle(
                               color: Colors.black,
                               fontFamily: 'SfProText',
@@ -284,14 +285,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'Screentime for the Week: ',
+                                text: 'Screentime for the Week'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '18 hrs',
+                                text: ': 18 hrs',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -304,14 +305,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'Screetime Completed: ',
+                                text: 'Screentime Completed'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '12 hrs',
+                                text: ': 12 hrs',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -324,14 +325,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'Remaining Screetime: ',
+                                text: 'Remaining Screentime'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '6 hrs',
+                                text: ': 6 hrs',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -369,7 +370,7 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                 children: [
                   Row(
                     children: [
-                      Text('Focus time',
+                      Text('Focus Time'.tr(),
                           style: TextStyle(
                               color: Colors.black,
                               fontFamily: 'SfProText',
@@ -438,14 +439,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'Focus Goal for the Week: ',
+                                text: 'Focus Goal for the Week'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '24 hrs',
+                                text: ': 24 hrs',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -458,14 +459,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'Focus Hours Completed: ',
+                                text: 'Focus Hours Completed'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '6 hrs',
+                                text: ': 6 hrs',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -478,14 +479,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'Remaining Focus Hours: ',
+                                text: 'Remaining Focus Hours'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '16 hrs',
+                                text: ': 16 hrs',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -498,14 +499,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'XP Collected: ',
+                                text: 'XP Collected'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '32',
+                                text: ': 32',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -540,7 +541,7 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                 children: [
                   Row(
                     children: [
-                      Text('Workout Frequency',
+                      Text('Workout Frequency'.tr(),
                           style: TextStyle(
                               color: Colors.black,
                               fontFamily: 'SfProText',
@@ -609,14 +610,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'Goal Workout Days: ',
+                                text: 'Goal Workout Days'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '5 days/week',
+                                text: ': 5 days/week',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -629,14 +630,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'Completed Workout Days: ',
+                                text: 'Completed Workout Days'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '4 days',
+                                text: ': 4 days',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -649,14 +650,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'Remaining Days: ',
+                                text: 'Remaining Days'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '1',
+                                text: ': 1',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
@@ -669,14 +670,14 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                                text: 'XP Collected: ',
+                                text: 'XP Collected'.tr(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w400)),
                             TextSpan(
-                                text: '4',
+                                text: ': 4',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'SfProText',

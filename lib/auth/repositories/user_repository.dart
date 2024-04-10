@@ -183,7 +183,10 @@ class UserRepository with ChangeNotifier {
         password: password,
       );
 
-      //
+      log("For verification: ${authResponse.user}");
+
+      // send verification email
+      await authResponse.user!.sendEmailVerification();
 
       debugPrint("Authenticating user repo: $authResponse");
       // Show loading indicator

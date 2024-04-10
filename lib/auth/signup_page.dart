@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -7,6 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/auth/accountSetup.dart';
 import 'package:habit_tracker/auth/login_page.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
+import 'package:habit_tracker/auth/verification_page.dart';
 import 'package:habit_tracker/utils/buttons.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
@@ -333,37 +337,44 @@ class _SignUpState extends State<SignUp> {
                         height: 20.h,
                       ),
                       // continue button
-                      InkWell(
-                        onTap: () {
-                          if (_formKey.currentState!.validate()) {
-                            if (passwordController.text !=
-                                confirmpasswordController.text) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                 SnackBar(
-                                  content: Text("Passwords do not match".tr()),
-                                ),
-                              );
-                            } else {
-                              // Navigate only if validation passes and passwords match
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AccountSetup(
-                                    email: emailController.text,
-                                    password: passwordController.text,
-                                    username: usernameController.text,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: CustomButton(
+                          text: 'CONTINUE'.tr(),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              if (passwordController.text !=
+                                  confirmpasswordController.text) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text("Passwords do not match".tr()),
                                   ),
-                                ),
-                              );
+                                );
+                              } else {
+                                await FirebaseAuth.instance
+                                    .createUserWithEmailAndPassword(
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                );
+
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (_) => const VerificationPage()));
+
+                                // Navigate only if validation passes and passwords match
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => AccountSetup(
+                                //       email: emailController.text,
+                                //       password: passwordController.text,
+                                //       username: usernameController.text,
+                                //     ),
+                                //   ),
+                                // );
+                              }
                             }
-                          }
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          child: CustomButton(
-                            text: 'CONTINUE'.tr(),
-                            onPressed: () {},
-                          ),
+                          },
                         ),
                       ),
 

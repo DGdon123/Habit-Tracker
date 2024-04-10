@@ -12,7 +12,68 @@
           "package_name": "com.habit.habit_tracker"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "491013391004-4d5u21qb2eeoc5nrhtnqp8k7v165fg68.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.habit.habit_tracker",
+            "certificate_hash": "2cccf954a2b916463ba661d9cf7c93f218567cf6"
+          }
+        },
+        {
+          "client_id": "491013391004-7s11i5c42sk4o9g3b3mkmhueji5s5m46.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.habit.habit_tracker",
+            "certificate_hash": "ab1110ce7da428ba40a0c8944d50917e39906d7a"
+          }
+        },
+        {
+          "client_id": "491013391004-8o71g7hn08c0diutm9td407lfp17pjb4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.habit.habit_tracker",
+            "certificate_hash": "e8dc5180c9f2731b9fcda6ba040284b23ca640ef"
+          }
+        },
+        {
+          "client_id": "491013391004-j804p5f59mkiq0qg1qclp92fakrsd9pv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.habit.habit_tracker",
+            "certificate_hash": "04c00351e205f2a0849b9ab32ebba11233b185a5"
+          }
+        },
+        {
+          "client_id": "491013391004-ma0pvhuf39mrqoh1ebdbi5e7dg1tpfln.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.habit.habit_tracker",
+            "certificate_hash": "35d890c375f5c1229500b9724062fefead6e52b6"
+          }
+        },
+        {
+          "client_id": "491013391004-tm63epra9gd4rlr5rh05ft1kau4rkm8i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.habit.habit_tracker",
+            "certificate_hash": "71f20106b1481ce3de952da0af85166dcd48f552"
+          }
+        },
+        {
+          "client_id": "491013391004-u1766fbetjf2nbqbiqi16b975nbhrn21.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.habit.habit_tracker",
+            "certificate_hash": "3ea7ba6ad969f4f53644b9df86633975cb015df5"
+          }
+        },
+        {
+          "client_id": "491013391004-76u00epjrvo22cgpsc36scl5mrtggs6f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAr8DTYoxTJ1LA4XM8AhGXHIzhl9TNp0E0"
@@ -20,7 +81,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "491013391004-76u00epjrvo22cgpsc36scl5mrtggs6f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

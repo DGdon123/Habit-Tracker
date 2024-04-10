@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -20,112 +22,103 @@ class BarGraph extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          stream: SleepFireStoreServices().getSleepDataRange(
-              startDate: DateTime.now().subtract(Duration(days: 7)),
-              endDate: DateTime.now()),
-          builder: (context, snapshot) {
-            debugPrint("Snapshot range: ${snapshot.data?.docs}");
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text("Something went wrong".tr()));
-            } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-              return Center(child: Text("No data found".tr()));
-            }
-
-            for (var doc in snapshot.data!.docs) {
-              if (double.parse(doc['difference']) > highestDifference) {
-                highestDifference = double.parse(doc['difference']);
-                sleepSum += double.parse(doc['difference']);
+      child: Consumer<StartEndDateProvider>(
+          builder: (context, startEndProvider, _) {
+        return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            stream: SleepFireStoreServices().getSleepDataRange(
+                startDate: startEndProvider.startDate,
+                endDate: startEndProvider.endDate),
+            builder: (context, snapshot) {
+              debugPrint("Snapshot range: ${snapshot.data?.docs}");
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text("Something went wrong".tr()));
+              } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
+                return Center(child: Text("No data found".tr()));
               }
-            }
 
-            Future.delayed(Duration.zero, () {
-              Provider.of<AvgSleepProvider>(context, listen: false)
-                  .setAvgTime(sleepSum);
-            });
+              for (var doc in snapshot.data!.docs) {
+                if (double.parse(doc['difference']) > highestDifference) {
+                  highestDifference = double.parse(doc['difference']);
+                  sleepSum += double.parse(doc['difference']);
+                }
+              }
 
-            return SizedBox(
-              height: 300,
-              child: BarChart(
-                BarChartData(
-                  borderData: FlBorderData(
-                      border: Border(
-                    top: BorderSide.none,
-                    left: BorderSide.none,
-                    right: BorderSide.none,
-                    bottom: BorderSide(
-                      color: Color(0xFFD0D0D0),
-                      width: 1.w,
-                    ),
-                  )),
-                  gridData: FlGridData(
-                    drawHorizontalLine: true,
-                    drawVerticalLine: false,
-                  ),
-                  maxY: highestDifference,
-                  barGroups: getBarChartGroups(snapshot.data!.docs),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (value, meta) {
-                          return Text(value.toInt().toString(),
-                              style: TextStyles()
-                                  .secondaryTextStyle(16.sp, FontWeight.w600));
-                        },
+              Future.delayed(Duration.zero, () {
+                Provider.of<AvgSleepProvider>(context, listen: false)
+                    .setAvgTime(sleepSum);
+              });
+
+              return SizedBox(
+                height: 300,
+                child: BarChart(
+                  BarChartData(
+                    borderData: FlBorderData(
+                        border: Border(
+                      top: BorderSide.none,
+                      left: BorderSide.none,
+                      right: BorderSide.none,
+                      bottom: BorderSide(
+                        color: Color(0xFFD0D0D0),
+                        width: 1.w,
                       ),
+                    )),
+                    gridData: const FlGridData(
+                      drawHorizontalLine: true,
+                      drawVerticalLine: false,
                     ),
-                    rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    bottomTitles: const AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: getTitles,
+                    maxY: highestDifference,
+                    barGroups: getBarChartGroups(snapshot.data!.docs),
+                    titlesData: FlTitlesData(
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            log("Value: $value");
+                            return Text("${value.round()}".toString(),
+                                style: TextStyles().secondaryTextStyle(
+                                    16.sp, FontWeight.w600));
+                          },
+                        ),
+                      ),
+                      rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      bottomTitles: const AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: getTitles,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            );
-          }),
+              );
+            });
+      }),
     );
   }
-} 
+}
 
+/// bar graph data
 List<BarChartGroupData> getBarChartGroups(
     List<QueryDocumentSnapshot<Map<String, dynamic>>> docs) {
   List<BarChartGroupData> barChartGroups = [];
 
-  var dateRange = SleepPageUtils().findLast7Days();
-
-  for (int index = 0; index < dateRange.length; index++) {
-    String date = dateRange[index];
-
-    double difference = 0;
-
-    // Check if the date is contained in the docs
-    for (var doc in docs) {
-      // Assuming doc contains a field named 'date' which stores the date in the format 'YYYY-MM-DD'
-      if (doc['addedAt'] == date) {
-        difference = double.parse(doc['difference']);
-        break;
-      }
-    }
-
-    debugPrint("Bar graph: $difference");
+  for (var doc in docs) {
+// geeting the day from the date
+    var day = int.parse(doc.get("addedAt").split("-")[2]);
 
     // Add BarChartGroupData with value 10 if the date is contained in docs, otherwise add 0
     barChartGroups.add(
-      BarChartGroupData(x: index, barRods: [
+      BarChartGroupData(x: day, barRods: [
         BarChartRodData(
           width: 10,
-          toY: difference,
+          toY: double.parse(doc.get("difference")),
           color: Color(0xFF004AAD),
         ),
       ]),
@@ -143,11 +136,9 @@ Widget getTitles(double value, TitleMeta meta) {
     fontWeight: FontWeight.w400,
   );
 
-  var dayRange = SleepPageUtils().findDayRange();
-
   return SideTitleWidget(
     axisSide: meta.axisSide,
     space: 4,
-    child: Text(dayRange[value.toInt()], style: style),
+    child: Text("${value.round()}", style: style),
   );
 }

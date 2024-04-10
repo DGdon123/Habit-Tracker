@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -45,9 +47,12 @@ class _SleepDetailsState extends State<SleepDetails> {
                           }).then((value) {
                         if (value == null) return;
                         if (value.isEmpty) return;
-                        context.read<StartEndDateProvider>().setStartDate(
-                            startDate: value["startDate"],
-                            endDate: value["endDate"]);
+
+                        Provider.of<StartEndDateProvider>(context,
+                                listen: false)
+                            .setDate(
+                                startDate: value["startDate"],
+                                endDate: value["endDate"]);
                       });
                     },
                     child: Row(

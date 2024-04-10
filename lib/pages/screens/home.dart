@@ -10,12 +10,14 @@ import 'package:habit_tracker/auth/repositories/gymtime_model.dart';
 import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
 import 'package:habit_tracker/auth/widgets/gym_in_time.dart';
 import 'package:habit_tracker/location/current_location.dart';
+import 'package:habit_tracker/main.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/pages/screens/friends.dart';
 import 'package:habit_tracker/pages/screens/widgets/workout_data.dart';
 import 'package:habit_tracker/pages/usage_page/usage_page.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
+import 'package:habit_tracker/services/goals_services.dart';
 import 'package:habit_tracker/services/gym_firestore_services.dart';
 import 'package:habit_tracker/services/local_storage_services.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
@@ -24,6 +26,7 @@ import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -77,11 +80,47 @@ class _HomeState extends State<Home> {
     }
   }
 
+  String added = "";
+  String day = "";
+
+  Future<void> fetchUsers4() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('goals');
+    String? currentUserUid = getUserID();
+
+    try {
+      QuerySnapshot snapshot = await users
+          .doc(currentUserUid)
+          .collection('screen')
+          .get(); // Use get() instead of snapshots() to fetch a single query snapshot
+
+      for (var doc in snapshot.docs) {
+        Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
+
+        // This user document matches the current user
+        // You can access the user data and do something with it
+        setState(() {
+          added = userData['addedAt'] ?? "";
+          day = userData['day'] ?? "";
+        });
+        logger.d(userData);
+        logger.d("Day: $day");
+        logger.d("Added: $added");
+
+        // Example: Use the latitude and longitude data
+        // SomeFunctionToUseLocation(latitude, longitude);
+      }
+    } catch (error) {
+      print("Failed to fetch users: $error");
+    }
+  }
+
   @override
   void initState() {
     getLastLocationTime();
     getLastLocationTime1();
     fetchUsers();
+    fetchUsers4();
+    updatePieChartSections();
     super.initState();
   }
 
@@ -162,20 +201,12 @@ class _HomeState extends State<Home> {
             height: 100.h,
             decoration: ShapeDecoration(
               color: AppColors.widgetColorV,
-              // gradient: LinearGradient(
-              //   begin: Alignment.bottomLeft,
-              //   end: Alignment.topRight,
-              //   colors: [
-              //     Color(0xFF007566),
-              //     Color(0xFF47EFDA),
-              //   ],
-              // ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.r),
               ),
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              padding: EdgeInsets.symmetric(horizontal: 22.w),
               child: StreamBuilder<QuerySnapshot>(
                   stream: SleepFireStoreServices().listenToTodayAddedSleepTime,
                   builder: (context, snapshot) {
@@ -255,7 +286,23 @@ class _HomeState extends State<Home> {
     );
   }
 
-  // screen time widget
+  int lastAddedDay = 0;
+
+// Define a method to check if it's a new day
+  bool isNewDay(int currentDay) {
+    return lastAddedDay != currentDay;
+  }
+
+  Future<void> addEntryAndCheckScreenTime(
+    int hours,
+    int minutes,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Update SharedPreferences with the current day and date
+    await prefs.setInt('screenhours', hours);
+    await prefs.setInt('screenminutes', minutes);
+  }
 
   Column screenTime() {
     return Column(
@@ -315,6 +362,13 @@ class _HomeState extends State<Home> {
 
                           var hours = duration.inHours % 60;
                           var minutes = duration.inMinutes % 60;
+
+                          // Check if it's a new day before adding new screen time
+
+                          addEntryAndCheckScreenTime(
+                            hours,
+                            minutes,
+                          );
 
                           return Text(
                             '$hours:$minutes h',
@@ -585,14 +639,14 @@ class _HomeState extends State<Home> {
                           color: AppColors.lightBlack,
                         ),
                         const SizedBox(
-                          width: 10,
+                          width: 15,
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              '4:39 h',
+                              '$totalHours:$totalMinutes h',
                               style: TextStyle(
                                 color: AppColors.black,
                                 fontSize: 28.sp,
@@ -601,37 +655,6 @@ class _HomeState extends State<Home> {
                                 height: 0,
                               ),
                             ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10.w, vertical: 5.w),
-                              decoration: ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                      width: 1.w, color: AppColors.black),
-                                  borderRadius: BorderRadius.circular(100.r),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Start Now'.tr(),
-                                    style: TextStyle(
-                                      color: AppColors.black,
-                                      fontSize: 10.sp,
-                                      fontFamily: 'SFProText',
-                                      fontWeight: FontWeight.w600,
-                                      height: 0,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
                           ],
                         ),
                       ],
@@ -644,6 +667,118 @@ class _HomeState extends State<Home> {
         ),
       ],
     );
+  }
+
+  Map<String, dynamic> userLabels = {};
+  Map<String, dynamic> userLabels2 = {};
+  List<Map<String, dynamic>> dataList = [];
+  List<Map<String, dynamic>> dataList2 = [];
+  Future<Map<String, dynamic>> fetchUsers3() async {
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('stopwatch');
+
+    String? userID = getUserID(); // Get the current user's ID
+    // Initialize a list to hold the Text widgets
+
+    if (userID != null) {
+      try {
+        QuerySnapshot snapshot =
+            await users.where('ID', isEqualTo: userID).get();
+        if (snapshot.docs.isNotEmpty) {
+          for (var doc in snapshot.docs) {
+            var data = doc.data()
+                as Map<String, dynamic>; // Cast data to Map<String, dynamic>
+            dataList.add(data); // Add user data to the list
+          }
+          userLabels['data'] = dataList;
+        } else {
+          print('No data found for the current user');
+        }
+      } catch (error) {
+        print("Failed to fetch users: $error");
+      }
+    } else {
+      print('User ID is null');
+    }
+
+    return userLabels; // Return the list of Text widgets
+  }
+
+  Future<Map<String, dynamic>> fetchUsers2() async {
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('focus_timer');
+
+    String? userID = getUserID(); // Get the current user's ID
+    // Initialize a list to hold the Text widgets
+
+    if (userID != null) {
+      try {
+        QuerySnapshot snapshot =
+            await users.where('ID', isEqualTo: userID).get();
+        if (snapshot.docs.isNotEmpty) {
+          for (var doc in snapshot.docs) {
+            var data = doc.data()
+                as Map<String, dynamic>; // Cast data to Map<String, dynamic>
+            dataList2.add(data); // Add user data to the list
+          }
+          userLabels2['data'] = dataList2;
+        } else {
+          print('No data found for the current user');
+        }
+      } catch (error) {
+        print("Failed to fetch users: $error");
+      }
+    } else {
+      print('User ID is null');
+    }
+
+    return userLabels2; // Return the list of Text widgets
+  }
+
+  List<Map<String, dynamic>> labelDataList = [];
+  Map<String, int> labelValues = {};
+  Map<String, int> labelValues1 = {};
+  int totalHours = 0;
+  int totalMinutes = 0;
+
+  Future<void> updatePieChartSections() async {
+    // Fetch user labels from both sources
+    Map<String, dynamic> labels1 = await fetchUsers3();
+    Map<String, dynamic> labels2 = await fetchUsers2();
+
+    // Initialize total hours
+
+    // Iterate over user labels from the first source and aggregate values for each label
+    if (labels1.isNotEmpty) {
+      labels1['data'].forEach((labelData) {
+        int hours = labelData['Hours'];
+        int minutes = labelData['Minutes'];
+
+        totalHours += hours; // Accumulate hours
+        totalMinutes += minutes; // Accumulate minutes
+      });
+    }
+
+    // Iterate over user labels from the second source and aggregate values for each label
+    if (labels2.isNotEmpty) {
+      labels2['data'].forEach((labelData) {
+        int hours = labelData['Hours'];
+        int minutes = labelData['Minutes'];
+
+        totalHours += hours; // Accumulate hours
+        totalMinutes += minutes; // Accumulate minutes
+      });
+    }
+
+    // Update the state with the total hours and minutes
+    // Convert excess minutes to hours
+    totalHours += totalMinutes ~/ 60;
+    totalMinutes %= 60;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('focusHours', totalHours);
+    prefs.setInt('focusMinutes', totalMinutes);
+    // Update the state with the total hours and minutes
+    setState(() {});
   }
 
   Padding appbar() {

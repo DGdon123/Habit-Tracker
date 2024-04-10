@@ -612,44 +612,54 @@ class ActivityPage extends StatelessWidget {
               ],
             ),
           ),
-          Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                  stream: XpFirestoreServices().listenForXpAdded(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (snapshot.hasError) {
-                      return const Center(
-                        child: Text('Something went wrong'),
-                      );
-                    } else if (snapshot.hasData &&
-                        snapshot.data!.docs.isEmpty) {
-                      return const Center(
-                        child: Text('No data found'),
-                      );
-                    }
+       Expanded(
+  child: StreamBuilder<QuerySnapshot>(
+    stream: XpFirestoreServices().listenForXpAdded(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      } else if (snapshot.hasError) {
+        return const Center(
+          child: Text('Something went wrong'),
+        );
+      } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
+        return const Center(
+          child: Text('No data found'),
+        );
+      }
 
-                    final xpDocs = snapshot.data!.docs;
+      final xpDocs = snapshot.data!.docs;
 
-                    debugPrint('xpDocs: ${xpDocs.length}');
-                    return ListView.builder(
-                      itemCount: xpDocs.length,
-                      itemBuilder: (context, index) {
-                        final xp = xpDocs[index];
+      // Sort documents by timestamp in descending order
+      xpDocs.sort((a, b) {
+        var timeA = a.get("timestamp").millisecondsSinceEpoch;
+        var timeB = b.get("timestamp").millisecondsSinceEpoch;
+        return timeB.compareTo(timeA);
+      });
 
-                        var date = DateTime.fromMillisecondsSinceEpoch(
-                            xp.get("timestamp").millisecondsSinceEpoch);
+      debugPrint('xpDocs: ${xpDocs.length}');
+      
+      // Display the latest XP first
+      return ListView.builder(
+        itemCount: xpDocs.length,
+        itemBuilder: (context, index) {
+          final xp = xpDocs[index];
+          var date = DateTime.fromMillisecondsSinceEpoch(
+              xp.get("timestamp").millisecondsSinceEpoch);
+          return AchievmentsContainer(
+            increment: xp.get("increment"),
+            reason: xp.get("reason"),
+            xp: xp.get("xp").toString(),
+            uploadedDate: date,
+          );
+        },
+      );
+    },
+  ),
+)
 
-                        return AchievmentsContainer(
-                            increment: xp.get("increment"),
-                            reason: xp.get("reason"),
-                            xp: xp.get("xp").toString(),
-                            uploadedDate: date);
-                      },
-                    );
-                  })),
         ],
       ),
     );

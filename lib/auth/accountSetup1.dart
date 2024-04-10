@@ -36,6 +36,7 @@ import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/local_storage_services.dart';
 import '../services/user_firestore_services.dart';
 
 class AccountSetup1 extends StatefulWidget {
@@ -1050,7 +1051,7 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
     if (!await isLocationAlwaysGranted()) {
       await askForLocationAlwaysPermission();
     }
-
+ await LocalStorageServices().setAutomatic(true);
     locationSubscription?.cancel();
     locationSubscription = LocationManager().locationStream.listen(onData);
     await LocationManager().start();

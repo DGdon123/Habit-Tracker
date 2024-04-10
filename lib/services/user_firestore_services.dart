@@ -34,7 +34,7 @@ class UserFireStoreServices {
 
     await userCollection.doc(uid).set({
       'email': email,
-      'name': name.toLowerCase().trim(),
+      'name': name,
       'photoUrl': photoUrl,
       'device_token': devicetoken,
       'latitude': latitude,

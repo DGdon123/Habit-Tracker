@@ -1,13 +1,18 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/pages/sleep_page/utils.dart';
+import 'package:habit_tracker/services/goals_services.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/services/xp_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/styles.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WakeTime extends StatefulWidget {
   final Time sleepTime;
@@ -19,7 +24,10 @@ class WakeTime extends StatefulWidget {
 class _WakeTimeState extends State<WakeTime> {
   Time _timeWake = Time(hour: 06, minute: 30, second: 20);
   bool iosStyle = true;
-
+  int screenhours = 0;
+  int screenminutes = 0;
+  int focushours = 0;
+  int focusminutes = 0;
   void sleepTimeSet(Time newTime) async {
     _timeWake = newTime;
 
@@ -45,6 +53,37 @@ class _WakeTimeState extends State<WakeTime> {
         xp: difference.inHours,
         reason: 'Earned from Sleep Wake Time',
         increment: true);
+    int day = DateTime.now().weekday;
+
+    // Add sleep time to GoalServices for the specific day
+    await GoalServices().addNewSleepTime(
+      sleepTime:
+          '${widget.sleepTime.hour}:${widget.sleepTime.minute.toString().padLeft(2, '0')}',
+      wakeTime:
+          '${_timeWake.hour}:${_timeWake.minute.toString().padLeft(2, '0')}',
+      difference: SleepPageUtils().roundHourAndMinute(difference.inMinutes),
+      day: day,
+    );
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    screenhours = prefs.getInt('screenhours')!.toInt();
+    screenminutes = prefs.getInt('screenminutes')!.toInt();
+    focushours = prefs.getInt('focusHours')!.toInt();
+    focusminutes = prefs.getInt('focusMinutes')!.toInt();
+
+    log(screenhours.toString());
+    log(focushours.toString());
+    await GoalServices().addNewScreenTime(
+      minutes: screenminutes,
+      hours: screenhours,
+      day: day,
+    );
+    await GoalServices().addNewFocusTime(
+      minutes: focusminutes,
+      hours: focushours,
+      day: day,
+    );
   }
 
   @override

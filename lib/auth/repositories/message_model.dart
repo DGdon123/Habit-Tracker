@@ -41,5 +41,6 @@ class MessageModel {
       'message': message,
       'timeStamp': timeStamp,
     };
+    
   }
 }

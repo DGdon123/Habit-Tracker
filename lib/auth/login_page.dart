@@ -255,22 +255,18 @@ class _LoginScreenState extends State<LoginScreen> {
                             )
                           : Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20.w),
-                              child: InkWell(
-                                onTap: () async {
+                              child: CustomButton(
+                                text: 'CONTINUE'.tr(),
+                                onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
                                     if (!await user.signIn(
                                         context,
                                         usernameController.text,
                                         passwordController.text)) {}
                                   }
+                                  // Add your button click logic here
+                                  print('Button clicked!');
                                 },
-                                child: CustomButton(
-                                  text: 'CONTINUE'.tr(),
-                                  onPressed: () {
-                                    // Add your button click logic here
-                                    print('Button clicked!');
-                                  },
-                                ),
                               ),
                             ),
                       // or sign in with ....

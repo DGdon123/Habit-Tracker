@@ -333,37 +333,35 @@ class _SignUpState extends State<SignUp> {
                         height: 20.h,
                       ),
                       // continue button
-                      InkWell(
-                        onTap: () {
-                          if (_formKey.currentState!.validate()) {
-                            if (passwordController.text !=
-                                confirmpasswordController.text) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                 SnackBar(
-                                  content: Text("Passwords do not match".tr()),
-                                ),
-                              );
-                            } else {
-                              // Navigate only if validation passes and passwords match
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AccountSetup(
-                                    email: emailController.text,
-                                    password: passwordController.text,
-                                    username: usernameController.text,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: CustomButton(
+                          text: 'CONTINUE'.tr(),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              if (passwordController.text !=
+                                  confirmpasswordController.text) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text("Passwords do not match".tr()),
                                   ),
-                                ),
-                              );
+                                );
+                              } else {
+                                // Navigate only if validation passes and passwords match
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AccountSetup(
+                                      email: emailController.text,
+                                      password: passwordController.text,
+                                      username: usernameController.text,
+                                    ),
+                                  ),
+                                );
+                              }
                             }
-                          }
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          child: CustomButton(
-                            text: 'CONTINUE'.tr(),
-                            onPressed: () {},
-                          ),
+                          },
                         ),
                       ),
 

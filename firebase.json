@@ -1,10 +1,1 @@
-{
-  "hosting": {
-    "public": "build/web",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
-  }
-}
+{"hosting":{"public":"build/web","ignore":["firebase.json","**/.*","**/node_modules/**"]},"flutter":{"platforms":{"android":{"default":{"projectId":"habittracker-51e7f","appId":"1:491013391004:android:9b79b3e1f661ad6e7aa359","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"habittracker-51e7f","configurations":{"android":"1:491013391004:android:9b79b3e1f661ad6e7aa359","ios":"1:491013391004:ios:94c77d0712467db97aa359"}}}}}}

@@ -50,6 +50,9 @@ class SleepFireStoreServices {
     return FirebaseFirestore.instance
         .collection("sleep-time")
         .where("userID", isEqualTo: user!.uid)
+        .where("timestamp",
+            isGreaterThanOrEqualTo: startDate.millisecondsSinceEpoch)
+        .where("timestamp", isLessThanOrEqualTo: endDate.millisecondsSinceEpoch)
         .snapshots();
   }
 }

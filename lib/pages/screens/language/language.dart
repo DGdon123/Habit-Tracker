@@ -76,8 +76,8 @@ class _LanguageSelectionState extends State<LanguageSelection> {
                         width: 28.w,
                         child: const Icon(Icons.arrow_back)),
                   ),
-                  const SizedBox(
-                    width: 10,
+                  SizedBox(
+                    width: 34.w,
                   ),
                   Text(
                     "Change Language".tr(),
@@ -94,6 +94,9 @@ class _LanguageSelectionState extends State<LanguageSelection> {
                     AppImages.usa,
                     height: 25,
                   ),
+                  tileColor: selectedLanguage == 'English'.tr()
+                      ? AppColors.mainColor
+                      : Colors.white,
                   title: Text(
                     'English'.tr(),
                     style: settingsStyle,
@@ -118,6 +121,9 @@ class _LanguageSelectionState extends State<LanguageSelection> {
                   AppImages.china,
                   height: 25,
                 ),
+                tileColor: selectedLanguage == 'Chinese'.tr()
+                    ? AppColors.mainColor
+                    : AppColors.white,
                 title: Text(
                   'Chinese'.tr(),
                   style: settingsStyle,
@@ -143,6 +149,9 @@ class _LanguageSelectionState extends State<LanguageSelection> {
                   AppImages.germany,
                   height: 25,
                 ),
+                tileColor: selectedLanguage == 'German'.tr()
+                    ? AppColors.mainColor
+                    : AppColors.white,
                 title: Text(
                   'German'.tr(),
                   style: settingsStyle,

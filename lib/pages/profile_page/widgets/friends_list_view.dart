@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/pages/chat_room/chat_room.dart';
 import 'package:habit_tracker/pages/profile_page/widgets/friend_container.dart';
@@ -47,13 +49,16 @@ class _ChatRoomState extends State<FriendsListView> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '${friends.length} ${"Friends".tr()}',
-                  style: TextStyle(
-                    color: const Color(0xFF040415),
-                    fontSize: 16.sp,
-                    fontFamily: 'SFProText',
-                    fontWeight: FontWeight.w600,
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0),
+                  child: Text(
+                    '${friends.length} ${"Friends".tr()}',
+                    style: TextStyle(
+                      color: const Color(0xFF040415),
+                      fontSize: 16.sp,
+                      fontFamily: 'SFProText',
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 Expanded(

@@ -776,7 +776,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
             ),
             Center(
               child: Text(
-                'Set Up Goals',
+                'Set Up Goals'.tr(),
                 style: TextStyle(
                     fontFamily: 'SFProText',
                     fontSize: 22.sp,
@@ -795,13 +795,15 @@ class _SetUpGoalsState extends State<SetUpGoals> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(
-                    'Set Sleep Goals:',
-                    style: TextStyle(
-                        fontFamily: 'SFProText',
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textBlack),
+                  Flexible(
+                    child: Text(
+                      'Set Sleep Goals'.tr() + ':',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    ),
                   ),
                   _buildPicker(
                     itemCount: 13,
@@ -815,7 +817,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                     },
                   ),
                   Text(
-                    'hours per Day',
+                    'hours per Day'.tr(),
                     style: TextStyle(
                         fontFamily: 'SFProText',
                         fontSize: 15.sp,
@@ -836,13 +838,15 @@ class _SetUpGoalsState extends State<SetUpGoals> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(
-                    'Set Screentime:',
-                    style: TextStyle(
-                        fontFamily: 'SFProText',
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textBlack),
+                  Flexible(
+                    child: Text(
+                      'Set Screentime'.tr() + ':',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    ),
                   ),
                   _buildPicker(
                     itemCount: 25,
@@ -856,7 +860,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                     },
                   ),
                   Text(
-                    'hours per Day',
+                    'hours per Day'.tr(),
                     style: TextStyle(
                         fontFamily: 'SFProText',
                         fontSize: 15.sp,
@@ -877,13 +881,15 @@ class _SetUpGoalsState extends State<SetUpGoals> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(
-                    'Set Focus Time:',
-                    style: TextStyle(
-                        fontFamily: 'SFProText',
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textBlack),
+                  Flexible(
+                    child: Text(
+                      'Set Focus Time'.tr() + ':',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    ),
                   ),
                   _buildPicker(
                     itemCount: 13,
@@ -897,7 +903,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                     },
                   ),
                   Text(
-                    'hours per Day',
+                    'hours per Day'.tr(),
                     style: TextStyle(
                         fontFamily: 'SFProText',
                         fontSize: 15.sp,
@@ -918,13 +924,15 @@ class _SetUpGoalsState extends State<SetUpGoals> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(
-                    'Set Workout:        \nFrequency',
-                    style: TextStyle(
-                        fontFamily: 'SFProText',
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textBlack),
+                  Flexible(
+                    child: Text(
+                      'Set Workout Frequency'.tr() + ':',
+                      style: TextStyle(
+                          fontFamily: 'SFProText',
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack),
+                    ),
                   ),
                   _buildPicker(
                     itemCount: 8,
@@ -938,7 +946,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                     },
                   ),
                   Text(
-                    'days per Week',
+                    'days per Week'.tr(),
                     style: TextStyle(
                         fontFamily: 'SFProText',
                         fontSize: 15.sp,

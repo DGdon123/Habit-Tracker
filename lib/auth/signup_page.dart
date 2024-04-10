@@ -341,7 +341,9 @@ class _SignUpState extends State<SignUp> {
                         padding: EdgeInsets.symmetric(horizontal: 20.w),
                         child: CustomButton(
                           text: 'CONTINUE'.tr(),
+
                           onPressed: () async {
+
                             if (_formKey.currentState!.validate()) {
                               if (passwordController.text !=
                                   confirmpasswordController.text) {
@@ -352,6 +354,19 @@ class _SignUpState extends State<SignUp> {
                                   ),
                                 );
                               } else {
+
+                                // Navigate only if validation passes and passwords match
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AccountSetup(
+                                      email: emailController.text,
+                                      password: passwordController.text,
+                                      username: usernameController.text,
+                                    ),
+                                  ),
+                                );
+
                                 await FirebaseAuth.instance
                                     .createUserWithEmailAndPassword(
                                   email: emailController.text,
@@ -376,6 +391,7 @@ class _SignUpState extends State<SignUp> {
                                 //     ),
                                 //   ),
                                 // );
+
                               }
                             }
                           },

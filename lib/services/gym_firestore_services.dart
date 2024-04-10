@@ -16,12 +16,6 @@ class GymFirestoreServices {
     String date =
         "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
 
-    // var startTime = DateTime(2024, 1, 1, inTime.hour, inTime.minute);
-    // var endTime = DateTime(2024, 1, 2, outTime.hour, outTime.minute);
-
-    // var difference = endTime.difference(startTime);
-
-    // add difference to inTime
     Duration start = Duration(hours: inTime.hour, minutes: inTime.minute);
 
     Duration end = Duration(hours: outTime.hour, minutes: outTime.minute);

@@ -423,6 +423,8 @@ class UserRepository with ChangeNotifier {
       await _googleSignIn.signOut();
       _status = Status.Unauthenticated;
       _user = null; // Clear the user after sign-out
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.clear();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

@@ -3,9 +3,13 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:habit_tracker/auth/accountSetup.dart';
 
 class VerificationPage extends StatefulWidget {
-  const VerificationPage({super.key});
+  final String password;
+  final String userName;
+  const VerificationPage(
+      {super.key, required this.password, required this.userName});
 
   @override
   State<VerificationPage> createState() => _VerificationPageState();
@@ -28,6 +32,15 @@ class _VerificationPageState extends State<VerificationPage> {
       if (currentUser.emailVerified) {
         debugPrint("Email verified");
         timer.cancel();
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (_) => AccountSetup(
+                      email: currentUser.email,
+                      password: widget.password,
+                      username: widget.userName,
+                    )),
+            (route) => false);
       }
     });
   }
@@ -39,21 +52,7 @@ class _VerificationPageState extends State<VerificationPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Please verify your email'),
-
-            // W
-            TextButton(
-              child: Text("Continue"),
-              onPressed: () async {
-                var currentUser = FirebaseAuth.instance.currentUser;
-                debugPrint(
-                    "Email verified: ${FirebaseAuth.instance.currentUser!.emailVerified}");
-                await currentUser!.reload();
-                if (currentUser.emailVerified) {
-                  debugPrint("Email verified");
-                }
-              },
-            ),
+            Text('Waiting for your email to be verified...'),
           ],
         ),
       ),

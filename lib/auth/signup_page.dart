@@ -358,8 +358,12 @@ class _SignUpState extends State<SignUp> {
                                   password: passwordController.text,
                                 );
 
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (_) => const VerificationPage()));
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (_) => VerificationPage(
+                                          userName: usernameController.text,
+                                          password: passwordController.text)),
+                                );
 
                                 // Navigate only if validation passes and passwords match
                                 // Navigator.push(

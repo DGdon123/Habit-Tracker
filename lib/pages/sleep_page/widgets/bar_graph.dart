@@ -69,7 +69,7 @@ class BarGraph extends StatelessWidget {
                       drawVerticalLine: false,
                     ),
                     maxY: highestDifference,
-                    barGroups: getBarChartGroups(snapshot.data!.docs),
+                    barGroups: getBarChartGroups(snapshot.data!.docs, context),
                     titlesData: FlTitlesData(
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(
@@ -106,22 +106,44 @@ class BarGraph extends StatelessWidget {
 
 /// bar graph data
 List<BarChartGroupData> getBarChartGroups(
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs) {
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+    BuildContext context) {
   List<BarChartGroupData> barChartGroups = [];
 
-  for (var doc in docs) {
-// geeting the day from the date
-    var day = int.parse(doc.get("addedAt").split("-")[2]);
+  var startEndRange = context.watch<StartEndDateProvider>().findDateRange();
+  var dayRange = context.watch<StartEndDateProvider>().findDayRange();
 
-    // Add BarChartGroupData with value 10 if the date is contained in docs, otherwise add 0
+  // populating the bar chart data
+  for (var date in startEndRange) {
+    var day = date.split("-")[2];
+
     barChartGroups.add(
-      BarChartGroupData(x: day, barRods: [
+      BarChartGroupData(
+        x: int.parse(day),
+        barRods: [
+          BarChartRodData(
+            width: 10,
+            toY: 0, // default 0
+            color: Color(0xFF004AAD),
+          ),
+        ],
+      ),
+    );
+  }
+
+  for (var doc in docs) {
+    var day = doc['addedAt'].toString().split("-")[2];
+
+    int index = dayRange.indexOf(day);
+    barChartGroups[index] = BarChartGroupData(
+      x: int.parse(day),
+      barRods: [
         BarChartRodData(
           width: 10,
-          toY: double.parse(doc.get("difference")),
+          toY: double.parse(doc['difference']),
           color: Color(0xFF004AAD),
         ),
-      ]),
+      ],
     );
   }
 

@@ -45,7 +45,45 @@ class UserFireStoreServices {
       'workoutFrequency': workout,
       'longitude': longitude,
       "uid": uid,
-      "xp": 0,
+      "xp": 0
+    });
+  }
+
+  Future<void> manualaddUser({
+    required String uid,
+    required String email,
+    required String devicetoken,
+    required String name,
+    required String photoUrl,
+    required int sleep,
+    required int screen,
+    required int focus,
+    required int workout,
+  }) async {
+    final ifExists =
+        await userCollection.where('email', isEqualTo: email).get();
+
+    debugPrint(
+        "ifExists: ${ifExists.docs.isNotEmpty} ${ifExists.docs} ${ifExists.docs.length}");
+
+    // adding only when the user is not already present
+    if (ifExists.docs.isNotEmpty) {
+      return;
+    }
+
+    debugPrint("Adding info to db: $email $uid");
+
+    await userCollection.doc(uid).set({
+      'email': email,
+      'name': name,
+      'photoUrl': photoUrl,
+      'device_token': devicetoken,
+      'sleepGoals': sleep,
+      'screenTime': screen,
+      'focusTime': focus,
+      'workoutFrequency': workout,
+      "uid": uid,
+      "xp": 0
     });
   }
 

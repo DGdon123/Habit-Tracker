@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,12 +11,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:habit_tracker/auth/forgot_password.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
 import 'package:habit_tracker/auth/signup_page.dart';
+import 'package:habit_tracker/services/notification_services.dart';
 import 'package:habit_tracker/utils/buttons.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/styles.dart';
 import 'package:habit_tracker/utils/textfields.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/images.dart';
 
@@ -30,13 +34,27 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
+  NotificationServices notificationServices = NotificationServices();
   @override
   void dispose() {
     usernameController.dispose();
     passwordController.dispose();
 
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // notificationServices.setupInteractMeassage(context);
+    // notificationServices.isTokenRefresh();
+    notificationServices.getDeviceToken().then((value) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('device_token', value!);
+      log('device_token');
+      log(value);
+    });
   }
 
   @override
@@ -258,7 +276,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: CustomButton(
                                 text: 'CONTINUE'.tr(),
                                 onPressed: () async {
-
                                   if (_formKey.currentState!.validate()) {
                                     if (!await user.signIn(
                                         context,

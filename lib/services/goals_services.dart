@@ -12,7 +12,6 @@ class GoalServices {
     required String sleepTime,
     required String wakeTime,
     required String difference,
-    required int day,
   }) async {
     var userID = FirebaseAuth.instance.currentUser!.uid;
 
@@ -33,14 +32,12 @@ class GoalServices {
       "addedAt": date,
       "difference": difference,
       "timestamp": DateTime.now().millisecondsSinceEpoch,
-      "day": day,
     });
   }
 
   Future<void> addNewScreenTime({
     required int minutes,
     required int hours,
-    required int day,
   }) async {
     var userID = FirebaseAuth.instance.currentUser!.uid;
 
@@ -60,14 +57,12 @@ class GoalServices {
       "minutes": minutes,
       "addedAt": date,
       "timestamp": DateTime.now().millisecondsSinceEpoch,
-      "day": day,
     });
   }
 
-   Future<void> addNewFocusTime({
+  Future<void> addNewFocusTime({
     required int minutes,
     required int hours,
-    required int day,
   }) async {
     var userID = FirebaseAuth.instance.currentUser!.uid;
 
@@ -87,12 +82,13 @@ class GoalServices {
       "minutes": minutes,
       "addedAt": date,
       "timestamp": DateTime.now().millisecondsSinceEpoch,
-      "day": day,
     });
   }
 
-  Future<bool> addNewGymTime(
-      {required Time inTime, required Time outTime, required int day}) async {
+  Future<bool> addNewGymTime({
+    required Time inTime,
+    required Time outTime,
+  }) async {
     var userID = FirebaseAuth.instance.currentUser!.uid;
 
     // Getting today's date, however it's system date
@@ -114,7 +110,7 @@ class GoalServices {
             "${end.inHours.toString().padLeft(2, '0')}:${(end.inMinutes % 60).toString().padLeft(2, '0')}",
         "addedAt": date,
         "timestamp": DateTime.now().millisecondsSinceEpoch,
-        "day": day,
+        "frequency": 1
       });
 
       return true; // Return true if both additions are successful

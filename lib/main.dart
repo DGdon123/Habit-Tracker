@@ -23,6 +23,7 @@ import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/provider/avg_sleep_provider.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/provider/flag_provider.dart';
+import 'package:habit_tracker/provider/friends_provider.dart';
 import 'package:habit_tracker/provider/goals_provider.dart';
 import 'package:habit_tracker/provider/user_state_provider.dart';
 import 'package:habit_tracker/services/local_storage_services.dart';
@@ -70,7 +71,8 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (_) => StartEndDateProvider()),
       ChangeNotifierProvider(create: (_) => AvgSleepProvider()),
       ChangeNotifierProvider(create: (_) => IndexProvider()),
-      ChangeNotifierProvider(create: (_) => UserStateProvider())
+      ChangeNotifierProvider(create: (_) => UserStateProvider()),
+      ChangeNotifierProvider(create: (_) => FriendsProvider()),
     ],
     child: EasyLocalization(
       supportedLocales: const [

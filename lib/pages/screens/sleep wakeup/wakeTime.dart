@@ -53,7 +53,6 @@ class _WakeTimeState extends State<WakeTime> {
         xp: difference.inHours,
         reason: 'Earned from Sleep Wake Time',
         increment: true);
-    int day = DateTime.now().weekday;
 
     // Add sleep time to GoalServices for the specific day
     await GoalServices().addNewSleepTime(
@@ -62,7 +61,6 @@ class _WakeTimeState extends State<WakeTime> {
       wakeTime:
           '${_timeWake.hour}:${_timeWake.minute.toString().padLeft(2, '0')}',
       difference: SleepPageUtils().roundHourAndMinute(difference.inMinutes),
-      day: day,
     );
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -77,12 +75,10 @@ class _WakeTimeState extends State<WakeTime> {
     await GoalServices().addNewScreenTime(
       minutes: screenminutes,
       hours: screenhours,
-      day: day,
     );
     await GoalServices().addNewFocusTime(
       minutes: focusminutes,
       hours: focushours,
-      day: day,
     );
   }
 

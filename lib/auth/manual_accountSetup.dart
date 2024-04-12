@@ -18,12 +18,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:habit_tracker/auth/repositories/gymtime_model.dart';
 import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
+import 'package:habit_tracker/auth/widgets/gym_in_time.dart';
+import 'package:habit_tracker/auth/widgets/gym_out_time.dart';
 import 'package:habit_tracker/location/current_location.dart';
-import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/provider/goals_provider.dart';
 import 'package:habit_tracker/provider/location_provider.dart';
+import 'package:habit_tracker/services/local_storage_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
@@ -35,23 +37,18 @@ import 'package:http/http.dart' as http;
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../services/local_storage_services.dart';
-import '../services/user_firestore_services.dart';
 
-class AccountSetup1 extends StatefulWidget {
+class ManualAccountSetup extends StatefulWidget {
   final String? username;
   final String? email;
-  final String? photoURL;
-  final String? uid;
-
-  const AccountSetup1(
-      {super.key, this.username, this.email, this.photoURL, this.uid});
+  final String? password;
+  const ManualAccountSetup(
+      {super.key, this.username, this.email, this.password});
   @override
-  State<AccountSetup1> createState() => _AccountSetupState();
+  State<ManualAccountSetup> createState() => _AccountSetupState();
 }
 
-class _AccountSetupState extends State<AccountSetup1> {
+class _AccountSetupState extends State<ManualAccountSetup> {
   late final PageController _pageController;
   int currentPage = 0;
 
@@ -121,9 +118,7 @@ class _AccountSetupState extends State<AccountSetup1> {
               },
               children: const [
                 PickCharacterPage(),
-                AccountSetupSetName(),
                 SetUpGoals(),
-                WorkoutTrackType()
               ],
             ),
           ),
@@ -137,7 +132,7 @@ class _AccountSetupState extends State<AccountSetup1> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        4, // Replace with the total number of pages
+                        2, // Replace with the total number of pages
                         (index) => Container(
                           margin: EdgeInsets.symmetric(horizontal: 4.0.w),
                           width: currentPage == index
@@ -169,24 +164,13 @@ class _AccountSetupState extends State<AccountSetup1> {
                       );
                     } else {
                       // You are going forward to the next page
-                      if (currentPage < 3) {
+                      if (currentPage < 1) {
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
                       } else {
-                        if (currentPage == 3) {
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          String token =
-                              prefs.getString('device_token').toString();
-                          final locProvider = Provider.of<LocationProvider>(
-                              context,
-                              listen: false);
-                          var lat = locProvider.latitude;
-                          var longi = locProvider.longitude;
-                          log(lat.toString());
-                          log(longi.toString());
+                        if (currentPage == 1) {
                           final goalProvider = Provider.of<GoalsProvider>(
                               context,
                               listen: false);
@@ -194,54 +178,17 @@ class _AccountSetupState extends State<AccountSetup1> {
                           var screen = goalProvider.goals1;
                           var focus = goalProvider.goals2;
                           var workout = goalProvider.goals3;
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => const AlertDialog(
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  CircularProgressIndicator(
-                                    color: AppColors.mainBlue,
-                                  ),
-                                  SizedBox(height: 16),
-                                  Text(
-                                    'Please wait, your account is creating...',
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                          // Check if lat and longi are not null before using them
-                          if (lat != null && longi != null) {
-                            await UserFireStoreServices().addUser(
-                              latitude: lat.toDouble(),
-                              longitude: longi.toDouble(),
-                              sleep: sleep,
-                              screen: screen,
-                              focus: focus,
-                              workout: workout,
-                              devicetoken: token,
-                              uid: widget.uid?.toString() ??
-                                  "", // Check for null and provide a default value
-                              email: widget.email?.toString() ??
-                                  "", // Check for null and provide a default value
-                              name: widget.username?.toString() ??
-                                  "", // Check for null and provide a default value
-                              photoUrl: widget.photoURL?.toString() ??
-                                  "", // Check for null and provide a default value
-                            );
-                            Navigator.pushReplacement(
+
+                          await user.manualsignUp(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => const HomePage(),
-                              ),
-                            );
-                          } else {
-                            // Handle the case where lat or longi is null
-                            // You can show an error message or handle it as per your application logic
-                            print("Error: lat or longi is null");
-                          }
+                              widget.username.toString(),
+                              dateString,
+                              widget.email.toString(),
+                              widget.password.toString(),
+                              sleep,
+                              screen,
+                              focus,
+                              workout);
                         }
                       }
                     }
@@ -249,7 +196,7 @@ class _AccountSetupState extends State<AccountSetup1> {
                   child: Row(
                     children: [
                       Text(
-                        currentPage == 3 ? 'Finish'.tr() : 'Next'.tr(),
+                        currentPage == 1 ? 'Finish'.tr() : 'Next'.tr(),
                         style: TextStyle(
                           color: AppColors.buttonYellow,
                           fontFamily: 'SFProText',
@@ -334,7 +281,7 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
           places.add(formattedPlace);
         }
       } else {
-        places.add('No results found'.tr());
+        places.add('No results found');
       }
 
       setState(() => _places = places);
@@ -349,6 +296,8 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
     final user = Provider.of<UserRepository>(context);
     final dob = Provider.of<SelectedDateProvider>(context, listen: false);
 
+    final lat = locProvider.latitude;
+    final longi = locProvider.longitude;
     var dobis = dob.selectedDate ?? DateTime.now();
     var dateString = dobis.toString().split(' ')[0]; // Extract date part
     log(dateString);
@@ -798,7 +747,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Sleep Goals'.tr() + ':',
+                      '${'Set Sleep Goals'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -841,7 +790,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Screentime'.tr() + ':',
+                      '${'Set Screentime'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -884,7 +833,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Focus Time'.tr() + ':',
+                      '${'Set Focus Time'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -927,7 +876,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Workout Frequency'.tr() + ':',
+                      '${'Set Workout Frequency'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -1059,7 +1008,11 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
     if (!await isLocationAlwaysGranted()) {
       await askForLocationAlwaysPermission();
     }
- await LocalStorageServices().setAutomatic(true);
+
+    log('setting automatic to true Home.dart');
+
+    await LocalStorageServices().setAutomatic(true);
+
     locationSubscription?.cancel();
     locationSubscription = LocationManager().locationStream.listen(onData);
     await LocationManager().start();
@@ -1149,7 +1102,11 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
     }
   }
 
-  void stop() {
+  void stop() async {
+    await LocalStorageServices().setAutomatic(false);
+
+    log("setting automatic to false Home.dart");
+
     locationSubscription?.cancel();
     LocationManager().stop();
     setState(() {

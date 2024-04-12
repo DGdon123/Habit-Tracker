@@ -119,7 +119,6 @@ class _AccountSetupState extends State<AccountSetup> {
                 PickCharacterPage(),
                 AccountSetupSetName(),
                 SetUpGoals(),
-                WorkoutTrackType()
               ],
             ),
           ),
@@ -133,7 +132,7 @@ class _AccountSetupState extends State<AccountSetup> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        4, // Replace with the total number of pages
+                        3, // Replace with the total number of pages
                         (index) => Container(
                           margin: EdgeInsets.symmetric(horizontal: 4.0.w),
                           width: currentPage == index
@@ -165,13 +164,13 @@ class _AccountSetupState extends State<AccountSetup> {
                       );
                     } else {
                       // You are going forward to the next page
-                      if (currentPage < 3) {
+                      if (currentPage < 2) {
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
                       } else {
-                        if (currentPage == 3) {
+                        if (currentPage == 2) {
                           final locProvider = Provider.of<LocationProvider>(
                               context,
                               listen: false);
@@ -205,7 +204,7 @@ class _AccountSetupState extends State<AccountSetup> {
                   child: Row(
                     children: [
                       Text(
-                        currentPage == 3 ? 'Finish'.tr() : 'Next'.tr(),
+                        currentPage == 2 ? 'Finish'.tr() : 'Next'.tr(),
                         style: TextStyle(
                           color: AppColors.buttonYellow,
                           fontFamily: 'SFProText',
@@ -756,7 +755,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Sleep Goals'.tr() + ':',
+                      '${'Set Sleep Goals'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -799,7 +798,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Screentime'.tr() + ':',
+                      '${'Set Screentime'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -842,7 +841,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Focus Time'.tr() + ':',
+                      '${'Set Focus Time'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -885,7 +884,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Workout Frequency'.tr() + ':',
+                      '${'Set Workout Frequency'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,

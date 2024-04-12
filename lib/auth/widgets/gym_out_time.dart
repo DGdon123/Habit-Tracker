@@ -31,7 +31,7 @@ class _GymOutTimeState extends State<GymOutTime> {
     await GymFirestoreServices()
         .upload(inTime: widget.inTime, outTime: newTime);
     await GoalServices()
-        .addNewGymTime(inTime: widget.inTime, outTime: newTime, day: day);
+        .addNewGymTime(inTime: widget.inTime, outTime: newTime, );
   }
 
   @override

@@ -228,7 +228,7 @@ class _SleepDetailsState extends State<SleepDetails> {
     }
 
     context
-        .read<AvgSleepProvider>()
+        .watch<AvgSleepProvider>()
         .setAvgTime(sleepSum / barChartGroups.length);
 
     for (var doc in docs) {

@@ -34,7 +34,8 @@ class UserFireStoreServices {
 
     await userCollection.doc(uid).set({
       'email': email,
-      'name': name.toLowerCase().trim(),
+      'name': name.trim(),
+      'searchKey': name.toLowerCase().trim(),
       'photoUrl': photoUrl,
       'device_token': devicetoken,
       'latitude': latitude,
@@ -44,6 +45,7 @@ class UserFireStoreServices {
       'workoutFrequency': workout,
       'longitude': longitude,
       "uid": uid,
+      "xp": 0,
     });
   }
 
@@ -65,8 +67,8 @@ class UserFireStoreServices {
     debugPrint("Uid: $uid");
 
     final response = await userCollection
-        .where('name', isGreaterThanOrEqualTo: startTerm)
-        .where('name', isLessThanOrEqualTo: endTerm)
+        .where('searchKey', isGreaterThanOrEqualTo: startTerm)
+        .where('searchKey', isLessThanOrEqualTo: endTerm)
         .get();
 
     List<QueryDocumentSnapshot> searchResults = [];

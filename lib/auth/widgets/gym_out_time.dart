@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/pages/sleep_page/utils.dart';
+import 'package:habit_tracker/services/goals_services.dart';
 import 'package:habit_tracker/services/gym_firestore_services.dart';
 import 'package:habit_tracker/services/sleep_firestore_services.dart';
 import 'package:habit_tracker/services/xp_firestore_services.dart';
@@ -22,12 +23,15 @@ class GymOutTime extends StatefulWidget {
 }
 
 class _GymOutTimeState extends State<GymOutTime> {
-  Time _gymOutTime = Time(hour: 06, minute: 30, second: 20);
+  final Time _gymOutTime = Time(hour: 06, minute: 30, second: 20);
   bool iosStyle = true;
 
   void gymTimeSet(Time newTime) async {
+    int day = DateTime.now().weekday;
     await GymFirestoreServices()
         .upload(inTime: widget.inTime, outTime: newTime);
+    await GoalServices()
+        .addNewGymTime(inTime: widget.inTime, outTime: newTime, day: day);
   }
 
   @override
@@ -74,7 +78,7 @@ class _GymOutTimeState extends State<GymOutTime> {
                 },
                 dialogInsetPadding:
                     EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.h),
-                unselectedColor: Color.fromRGBO(0, 0, 0, 0.75),
+                unselectedColor: const Color.fromRGBO(0, 0, 0, 0.75),
                 hourLabel: 'Hour'.tr(),
                 minuteLabel: 'Minutes'.tr(),
                 // width: 350.w,
@@ -82,7 +86,7 @@ class _GymOutTimeState extends State<GymOutTime> {
                 // wheelHeight: 300.h,
 
                 cancelStyle: TextStyle(
-                  color: Color.fromARGB(255, 255, 0, 0).withOpacity(0.75),
+                  color: const Color.fromARGB(255, 255, 0, 0).withOpacity(0.75),
                   fontSize: 16.sp,
                   fontFamily: 'SFProText',
                   fontWeight: FontWeight.w500,

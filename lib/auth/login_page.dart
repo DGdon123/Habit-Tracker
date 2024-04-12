@@ -258,13 +258,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: CustomButton(
                                 text: 'CONTINUE'.tr(),
                                 onPressed: () async {
-                                  // Add your button click logic here
+
                                   if (_formKey.currentState!.validate()) {
                                     if (!await user.signIn(
                                         context,
                                         usernameController.text,
                                         passwordController.text)) {}
                                   }
+                                  // Add your button click logic here
+                                  print('Button clicked!');
                                 },
                               ),
                             ),

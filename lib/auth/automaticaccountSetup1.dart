@@ -18,14 +18,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:habit_tracker/auth/repositories/gymtime_model.dart';
 import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
-import 'package:habit_tracker/auth/widgets/gym_in_time.dart';
-import 'package:habit_tracker/auth/widgets/gym_out_time.dart';
 import 'package:habit_tracker/location/current_location.dart';
+import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/provider/goals_provider.dart';
 import 'package:habit_tracker/provider/location_provider.dart';
-import 'package:habit_tracker/services/local_storage_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
@@ -37,17 +35,23 @@ import 'package:http/http.dart' as http;
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../services/local_storage_services.dart';
+import '../services/user_firestore_services.dart';
 
-class AccountSetup extends StatefulWidget {
+class AutomaticAccountSetup1 extends StatefulWidget {
   final String? username;
   final String? email;
-  final String? password;
-  const AccountSetup({super.key, this.username, this.email, this.password});
+  final String? photoURL;
+  final String? uid;
+
+  const AutomaticAccountSetup1(
+      {super.key, this.username, this.email, this.photoURL, this.uid});
   @override
-  State<AccountSetup> createState() => _AccountSetupState();
+  State<AutomaticAccountSetup1> createState() => _AccountSetupState();
 }
 
-class _AccountSetupState extends State<AccountSetup> {
+class _AccountSetupState extends State<AutomaticAccountSetup1> {
   late final PageController _pageController;
   int currentPage = 0;
 
@@ -119,7 +123,6 @@ class _AccountSetupState extends State<AccountSetup> {
                 PickCharacterPage(),
                 AccountSetupSetName(),
                 SetUpGoals(),
-                WorkoutTrackType()
               ],
             ),
           ),
@@ -133,7 +136,7 @@ class _AccountSetupState extends State<AccountSetup> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        4, // Replace with the total number of pages
+                        3, // Replace with the total number of pages
                         (index) => Container(
                           margin: EdgeInsets.symmetric(horizontal: 4.0.w),
                           width: currentPage == index
@@ -165,18 +168,24 @@ class _AccountSetupState extends State<AccountSetup> {
                       );
                     } else {
                       // You are going forward to the next page
-                      if (currentPage < 3) {
+                      if (currentPage < 2) {
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
                       } else {
-                        if (currentPage == 3) {
+                        if (currentPage == 2) {
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          String token =
+                              prefs.getString('device_token').toString();
                           final locProvider = Provider.of<LocationProvider>(
                               context,
                               listen: false);
-                          final lat = locProvider.latitude;
-                          final longi = locProvider.longitude;
+                          var lat = locProvider.latitude;
+                          var longi = locProvider.longitude;
+                          log(lat.toString());
+                          log(longi.toString());
                           final goalProvider = Provider.of<GoalsProvider>(
                               context,
                               listen: false);
@@ -184,19 +193,53 @@ class _AccountSetupState extends State<AccountSetup> {
                           var screen = goalProvider.goals1;
                           var focus = goalProvider.goals2;
                           var workout = goalProvider.goals3;
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) =>  AlertDialog(
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  CircularProgressIndicator(
+                                    color: AppColors.mainBlue,
+                                  ),
+                                  SizedBox(height: 16),
+                                  Text(
+                                    'Please wait, your account is creating...'.tr(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                          // Check if lat and longi are not null before using them
                           if (lat != null && longi != null) {
-                            await user.signUp(
-                                context,
-                                widget.username.toString(),
-                                dateString,
-                                widget.email.toString(),
-                                widget.password.toString(),
-                                lat.toDouble(),
-                                longi.toDouble(),
-                                sleep,
-                                screen,
-                                focus,
-                                workout);
+                            await UserFireStoreServices().addUser(
+                              latitude: lat.toDouble(),
+                              longitude: longi.toDouble(),
+                              sleep: sleep,
+                              screen: screen,
+                              focus: focus,
+                              workout: workout,
+                              devicetoken: token,
+                              uid: widget.uid?.toString() ??
+                                  "", // Check for null and provide a default value
+                              email: widget.email?.toString() ??
+                                  "", // Check for null and provide a default value
+                              name: widget.username?.toString() ??
+                                  "", // Check for null and provide a default value
+                              photoUrl: widget.photoURL?.toString() ??
+                                  "", // Check for null and provide a default value
+                            );
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const HomePage(),
+                              ),
+                            );
+                          } else {
+                            // Handle the case where lat or longi is null
+                            // You can show an error message or handle it as per your application logic
+                            print("Error: lat or longi is null");
                           }
                         }
                       }
@@ -205,7 +248,7 @@ class _AccountSetupState extends State<AccountSetup> {
                   child: Row(
                     children: [
                       Text(
-                        currentPage == 3 ? 'Finish'.tr() : 'Next'.tr(),
+                        currentPage == 2 ? 'Finish'.tr() : 'Next'.tr(),
                         style: TextStyle(
                           color: AppColors.buttonYellow,
                           fontFamily: 'SFProText',
@@ -290,7 +333,7 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
           places.add(formattedPlace);
         }
       } else {
-        places.add('No results found');
+        places.add('No results found'.tr());
       }
 
       setState(() => _places = places);
@@ -305,8 +348,6 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
     final user = Provider.of<UserRepository>(context);
     final dob = Provider.of<SelectedDateProvider>(context, listen: false);
 
-    final lat = locProvider.latitude;
-    final longi = locProvider.longitude;
     var dobis = dob.selectedDate ?? DateTime.now();
     var dateString = dobis.toString().split(' ')[0]; // Extract date part
     log(dateString);
@@ -515,73 +556,7 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
   }
 }
 
-class AccountSetupBirthdate extends StatefulWidget {
-  const AccountSetupBirthdate({super.key});
 
-  @override
-  State<AccountSetupBirthdate> createState() => _AccountSetupBirthdateState();
-}
-
-class _AccountSetupBirthdateState extends State<AccountSetupBirthdate> {
-  DateTime? _selectedDate;
-
-  @override
-  Widget build(BuildContext context) {
-    final dobProvider =
-        Provider.of<SelectedDateProvider>(context, listen: false);
-    final dobis = dobProvider.selectedDate;
-    return Scaffold(
-      backgroundColor: AppColors.primaryColor,
-      body: Column(
-        children: [
-          SizedBox(
-            height: 15.h,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Text(
-              'What’s your date of birth?',
-              style: AppTextStyles.accountSetup,
-              maxLines: 2,
-            ),
-          ),
-          SizedBox(
-            height: 50.h,
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 40.w),
-            child: DatePickerWidget(
-              // default is not looping
-              lastDate: DateTime(2020, 4, 4),
-              initialDate: DateTime(1995, 4, 4), // DateTime(1994),
-              dateFormat:
-                  // "MM-dd(E)",
-                  "MMMM/dd/yyyy",
-              locale: DatePicker.localeFromString('en'),
-              onChange: (DateTime newDate, _) {
-                setState(() {
-                  _selectedDate = newDate;
-                });
-                dobProvider.setSelectedDate(_selectedDate!);
-                log(dobis.toString());
-              },
-              pickerTheme: DateTimePickerTheme(
-                backgroundColor: Colors.transparent,
-                showTitle: true,
-                itemTextStyle: TextStyle(
-                    fontFamily: 'SFProText',
-                    fontWeight: FontWeight.w600,
-                    color: const Color.fromARGB(255, 0, 0, 0),
-                    fontSize: 25.sp),
-                dividerColor: const Color.fromARGB(255, 0, 0, 0),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class AccountSetupSleeptime extends StatefulWidget {
   const AccountSetupSleeptime({super.key});
@@ -756,7 +731,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Sleep Goals'.tr() + ':',
+                      '${'Set Sleep Goals'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -799,7 +774,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Screentime'.tr() + ':',
+                      '${'Set Screentime'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -842,7 +817,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Focus Time'.tr() + ':',
+                      '${'Set Focus Time'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -885,7 +860,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Workout Frequency'.tr() + ':',
+                      '${'Set Workout Frequency'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -950,384 +925,4 @@ Widget _buildPicker({
       }),
     ),
   );
-}
-
-class WorkoutTrackType extends StatefulWidget {
-  const WorkoutTrackType({super.key});
-
-  @override
-  State<WorkoutTrackType> createState() => _WorkoutTrackTypeState();
-}
-
-bool isManualSelected = false;
-bool isAutomaticSelected = false;
-
-class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
-  String logStr = '';
-  LocationDto? _lastLocation;
-  StreamSubscription<LocationDto>? locationSubscription;
-  LocationStatus _status = LocationStatus.UNKNOWN;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  @override
-  void initState() {
-    super.initState();
-    LocationManager().interval = 60;
-    LocationManager().distanceFilter = 0;
-    LocationManager().notificationTitle = 'Tracking Your Location'.tr();
-    LocationManager().notificationMsg =
-        'Habit Tracker is tracking your location'.tr();
-    LocationManager().notificationBigMsg =
-        'Habit Tracker is tracking your location'.tr();
-    _status = LocationStatus.INITIALIZED;
-  }
-
-  void getCurrentLocation() async =>
-      onData(await LocationManager().getCurrentLocation());
-
-  void onData(LocationDto location) {
-    print('>> $location');
-    setState(() {
-      _lastLocation = location;
-    });
-  }
-
-  /// Is "location always" permission granted?
-  Future<bool> isLocationAlwaysGranted() async =>
-      await Permission.locationAlways.isGranted;
-
-  /// Tries to ask for "location always" permissions from the user.
-  /// Returns `true` if successful, `false` otherwise.
-  Future<bool> askForLocationAlwaysPermission() async {
-    bool granted = await Permission.locationAlways.isGranted;
-    PermissionStatus? granted2; // Added.
-    if (!granted) {
-      granted2 = await Permission.location.request(); // Added.
-      if (granted2 == PermissionStatus.granted) {
-        granted = await Permission.locationAlways.request() ==
-            PermissionStatus.granted;
-      }
-    }
-
-    return granted;
-  }
-
-  void start() async {
-    // ask for location permissions, if not already granted
-    if (!await isLocationAlwaysGranted()) {
-      await askForLocationAlwaysPermission();
-    }
-
-    log('setting automatic to true Home.dart');
-
-    await LocalStorageServices().setAutomatic(true);
-
-    locationSubscription?.cancel();
-    locationSubscription = LocationManager().locationStream.listen(onData);
-    await LocationManager().start();
-    setState(() {
-      _status = LocationStatus.RUNNING;
-      locationWidget();
-    });
-  }
-
-  double latitude = 0;
-  double longitude = 0;
-  double distance = 0;
-  // Function to calculate distance between two sets of latitude and longitude
-  double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    return Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
-  }
-
-  // locationWidget function to add data to Hive
-  Future<Widget> locationWidget() async {
-    if (_lastLocation == null) {
-      return Text("No location yet".tr());
-    } else {
-      final locProvider = Provider.of<LocationProvider>(context, listen: false);
-      var lat = locProvider.latitude;
-      var longi = locProvider.longitude;
-
-      if (lat != null && longi != null) {
-        distance = calculateDistance(
-          lat,
-          longi,
-          _lastLocation!.latitude,
-          _lastLocation!.longitude,
-        );
-      }
-
-      log(distance.toString());
-      if (distance <= 300) {
-        // Open the Hive box where user location times are stored
-        var box = await Hive.openBox<DataModel>('hive_box');
-
-        // Create a DataModel instance with current date and time
-        var currentDate = DateTime.now().toString().split(' ')[0];
-        var currentTime = _lastLocation!.time.toString();
-        DateTime time =
-            DateTime.fromMillisecondsSinceEpoch(_lastLocation!.time ~/ 1);
-
-// Format the DateTime object to a desired string format
-        String formattedTime = DateFormat('HH:mm:ss').format(time);
-        DataModel dataModel = DataModel(date: currentDate, time: formattedTime);
-
-        // Add the dataModel instance to the Hive box
-        await box.add(dataModel);
-
-        await box.close();
-      }
-      if (distance > 300) {
-        // Open the Hive box where user location times are stored
-        var box = await Hive.openBox<DataModel1>('hive_box1');
-
-        // Create a DataModel instance with current date and time
-        var currentDate = DateTime.now().toString().split(' ')[0];
-        var currentTime = _lastLocation!.time.toString();
-        DateTime time =
-            DateTime.fromMillisecondsSinceEpoch(_lastLocation!.time ~/ 1);
-
-// Format the DateTime object to a desired string format
-        String formattedTime = DateFormat('HH:mm:ss').format(time);
-        DataModel1 dataModel1 =
-            DataModel1(date: currentDate, time: formattedTime);
-
-        // Add the dataModel instance to the Hive box
-        await box.add(dataModel1);
-
-        await box.close();
-      }
-      return Column(
-        children: <Widget>[
-          Text(
-            '${_lastLocation!.latitude}, ${_lastLocation!.longitude}',
-          ),
-          const Text('@'),
-          Text(
-            '${DateTime.fromMillisecondsSinceEpoch(_lastLocation!.time ~/ 1)}',
-          ),
-        ],
-      );
-    }
-  }
-
-  void stop() async {
-    await LocalStorageServices().setAutomatic(false);
-
-    log("setting automatic to false Home.dart");
-
-    locationSubscription?.cancel();
-    LocationManager().stop();
-    setState(() {
-      _status = LocationStatus.STOPPED;
-      getLastLocationTime();
-      getLastLocationTime1();
-    });
-  }
-
-  Widget stopButton() => SizedBox(
-        width: double.maxFinite,
-        child: ElevatedButton(
-          onPressed: stop,
-          child: Text('STOP'.tr()),
-        ),
-      );
-
-  Widget startButton() => SizedBox(
-        width: double.maxFinite,
-        child: ElevatedButton(
-          onPressed: start,
-          child: Text('START'.tr()),
-        ),
-      );
-
-  Widget statusText() =>
-      Text("${"Status:".tr()} ${_status.toString().split('.').last}");
-
-  Widget currentLocationButton() => SizedBox(
-        width: double.maxFinite,
-        child: ElevatedButton(
-          onPressed: getCurrentLocation,
-          child: Text('CURRENT LOCATION'.tr()),
-        ),
-      );
-
-  @override
-  void dispose() => super.dispose();
-
-  // getLastLocationTime function to retrieve data from Hive
-  Future<DateTime?> getLastLocationTime() async {
-    try {
-      // Initialize Hive
-
-      // Open the Hive box where user location times are stored
-      var box = await Hive.openBox<DataModel>('hive_box');
-
-      // Get the last added dataModel instance from the box
-      DataModel? lastDataModel =
-          box.isNotEmpty ? box.getAt(box.length - 1) : null;
-
-      // Extract the date and time from the lastDataModel instance
-      if (lastDataModel != null) {
-        var dateString = lastDataModel.date;
-        var timeString = lastDataModel.time;
-        var dateTimeString = '$dateString $timeString';
-        log('DataModel1: $dateTimeString');
-        return DateTime.parse(dateTimeString);
-      }
-      // Close the Hive box
-      await box.close();
-    } catch (error) {
-      print('Failed to retrieve last location time: $error');
-    }
-    return null;
-  }
-
-  Future<DateTime?> getLastLocationTime1() async {
-    try {
-      // Initialize Hive
-
-      // Open the Hive box where user location times are stored
-      var box = await Hive.openBox<DataModel1>('hive_box1');
-
-      // Get the last added dataModel instance from the box
-      DataModel1? lastDataModel =
-          box.isNotEmpty ? box.getAt(box.length - 1) : null;
-
-      // Extract the date and time from the lastDataModel instance
-      if (lastDataModel != null) {
-        var dateString = lastDataModel.date;
-        var timeString = lastDataModel.time;
-        var dateTimeString = '$dateString $timeString';
-        log('DataModel2: $dateTimeString');
-        return DateTime.parse(dateTimeString);
-      }
-      // Close the Hive box
-      await box.close();
-    } catch (error) {
-      print('Failed to retrieve last location time: $error');
-    }
-    return null;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-        child: Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Column(
-        children: [
-          Text(
-            'How do you want to track your workout?',
-            style: TextStyle(
-                fontFamily: 'SFProText',
-                fontSize: 22.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textBlack),
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                isAutomaticSelected = !isAutomaticSelected;
-                isManualSelected = false;
-                start();
-              });
-            },
-            child: Card(
-              color: AppColors.mainColor,
-              elevation: 0,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: [
-                    RoundCheckBox(
-                      checkedColor: AppColors.widgetColorR,
-                      isChecked: isAutomaticSelected,
-                      size: 27,
-                      onTap: (selected) {
-                        setState(() {
-                          isAutomaticSelected = !isAutomaticSelected;
-                          isManualSelected = false;
-                        });
-                      },
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      'Automatic',
-                      style: TextStyle(
-                          fontFamily: 'SFProText',
-                          fontSize: 22.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textBlack),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                isManualSelected = !isManualSelected;
-                isAutomaticSelected = false;
-                stop();
-              });
-              // isManualSelected
-              //     ? showDialog(
-              //         context: context,
-              //         builder: (BuildContext context) {
-              //           return GymInTime(); // Use the custom dialog
-              //         },
-              //       )
-              //     : Container();
-            },
-            child: Card(
-              elevation: 0,
-              color: AppColors.mainColor,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: [
-                    RoundCheckBox(
-                      checkedColor: AppColors.widgetColorR,
-                      isChecked: isManualSelected,
-                      size: 27,
-                      onTap: (selected) {
-                        setState(() {
-                          isManualSelected = !isManualSelected;
-                          isAutomaticSelected = false;
-                        });
-                      },
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      'Manual',
-                      style: TextStyle(
-                          fontFamily: 'SFProText',
-                          fontSize: 22.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textBlack),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-        ],
-      ),
-    ));
-  }
 }

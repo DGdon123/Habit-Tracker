@@ -10,8 +10,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:habit_tracker/auth/accountSetup.dart';
-import 'package:habit_tracker/auth/accountSetup1.dart';
+import 'package:habit_tracker/auth/automatic_accountSetup.dart';
+import 'package:habit_tracker/auth/automaticaccountSetup1.dart';
 import 'package:habit_tracker/auth/forgot_password.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/profile_page/widgets/friends_list_view.dart';
@@ -51,6 +51,11 @@ class ProfilePageState extends State<ProfilePage>
   String? getUsername() {
     User? user = _auth.currentUser;
     return user?.displayName;
+  }
+
+  String? getPhoto() {
+    User? user = _auth.currentUser;
+    return user?.photoURL;
   }
 
   String? getUserID() {
@@ -393,11 +398,22 @@ class ProfilePageState extends State<ProfilePage>
             children: [
               Column(
                 children: [
-                  Image.asset(
-                    AppImages.profileavatar,
-                    height: 70.h,
-                    width: 70.w,
-                  ),
+                  getPhoto() == null ||
+                          getPhoto().toString() ==
+                              "No host specified in URI file:///null"
+                      ? Image.asset(
+                          AppImages.profileavatar,
+                          height: 70.h,
+                          width: 70.w,
+                        )
+                      : SizedBox(
+                          height: 70.h,
+                          width: 70.w,
+                          child: CircleAvatar(
+                              radius: 35.0,
+                              backgroundImage:
+                                  NetworkImage(getPhoto().toString())),
+                        ),
                 ],
               ),
               SizedBox(
@@ -535,8 +551,8 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
 
                           if (users.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text("User not found")));
+                                 SnackBar(
+                                    content: Text("User not found".tr())));
                             return;
                           }
 
@@ -614,54 +630,53 @@ class ActivityPage extends StatelessWidget {
               ],
             ),
           ),
-       Expanded(
-  child: StreamBuilder<QuerySnapshot>(
-    stream: XpFirestoreServices().listenForXpAdded(),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      } else if (snapshot.hasError) {
-        return const Center(
-          child: Text('Something went wrong'),
-        );
-      } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-        return const Center(
-          child: Text('No data found'),
-        );
-      }
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: XpFirestoreServices().listenForXpAdded(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  return  Center(
+                    child: Text('Something went wrong'.tr()),
+                  );
+                } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
+                  return  Center(
+                    child: Text('No data found'.tr()),
+                  );
+                }
 
-      final xpDocs = snapshot.data!.docs;
+                final xpDocs = snapshot.data!.docs;
 
-      // Sort documents by timestamp in descending order
-      xpDocs.sort((a, b) {
-        var timeA = a.get("timestamp").millisecondsSinceEpoch;
-        var timeB = b.get("timestamp").millisecondsSinceEpoch;
-        return timeB.compareTo(timeA);
-      });
+                // Sort documents by timestamp in descending order
+                xpDocs.sort((a, b) {
+                  var timeA = a.get("timestamp").millisecondsSinceEpoch;
+                  var timeB = b.get("timestamp").millisecondsSinceEpoch;
+                  return timeB.compareTo(timeA);
+                });
 
-      debugPrint('xpDocs: ${xpDocs.length}');
-      
-      // Display the latest XP first
-      return ListView.builder(
-        itemCount: xpDocs.length,
-        itemBuilder: (context, index) {
-          final xp = xpDocs[index];
-          var date = DateTime.fromMillisecondsSinceEpoch(
-              xp.get("timestamp").millisecondsSinceEpoch);
-          return AchievmentsContainer(
-            increment: xp.get("increment"),
-            reason: xp.get("reason"),
-            xp: xp.get("xp").toString(),
-            uploadedDate: date,
-          );
-        },
-      );
-    },
-  ),
-)
+                debugPrint('xpDocs: ${xpDocs.length}');
 
+                // Display the latest XP first
+                return ListView.builder(
+                  itemCount: xpDocs.length,
+                  itemBuilder: (context, index) {
+                    final xp = xpDocs[index];
+                    var date = DateTime.fromMillisecondsSinceEpoch(
+                        xp.get("timestamp").millisecondsSinceEpoch);
+                    return AchievmentsContainer(
+                      increment: xp.get("increment"),
+                      reason: xp.get("reason"),
+                      xp: xp.get("xp").toString(),
+                      uploadedDate: date,
+                    );
+                  },
+                );
+              },
+            ),
+          )
         ],
       ),
     );
@@ -773,10 +788,10 @@ class EditGoals extends StatefulWidget {
 }
 
 class _EditGoalsState extends State<EditGoals> {
-  int sleep = 0;
-  int screen = 0;
-  int focus = 0;
-  int workout = 0;
+  int? sleep;
+  int? screen;
+  int? focus;
+  int? workout;
   var userID = FirebaseAuth.instance.currentUser!.uid;
   CollectionReference userRef = FirebaseFirestore.instance.collection('users');
   @override
@@ -814,7 +829,7 @@ class _EditGoalsState extends State<EditGoals> {
                   children: [
                     Flexible(
                       child: Text(
-                        'Set Sleep Goals'.tr() + ':',
+                        '${'Set Sleep Goals'.tr()}:',
                         style: TextStyle(
                             fontFamily: 'SFProText',
                             fontSize: 20.sp,
@@ -858,7 +873,7 @@ class _EditGoalsState extends State<EditGoals> {
                   children: [
                     Flexible(
                       child: Text(
-                        'Set Screentime'.tr() + ':',
+                        '${'Set Screentime'.tr()}:',
                         style: TextStyle(
                             fontFamily: 'SFProText',
                             fontSize: 20.sp,
@@ -902,7 +917,7 @@ class _EditGoalsState extends State<EditGoals> {
                   children: [
                     Flexible(
                       child: Text(
-                        'Set Focus Time'.tr() + ':',
+                        '${'Set Focus Time'.tr()}:',
                         style: TextStyle(
                             fontFamily: 'SFProText',
                             fontSize: 20.sp,
@@ -946,7 +961,7 @@ class _EditGoalsState extends State<EditGoals> {
                   children: [
                     Flexible(
                       child: Text(
-                        'Set Workout Frequency'.tr() + ':',
+                        '${'Set Workout Frequency'.tr()}:',
                         style: TextStyle(
                             fontFamily: 'SFProText',
                             fontSize: 20.sp,
@@ -983,10 +998,10 @@ class _EditGoalsState extends State<EditGoals> {
               CustomButton(
                 onPressed: () async {
                   await userRef.doc(userID).update({
-                    'focusTime': focus,
-                    'screenTime': screen,
-                    'sleepGoals': sleep,
-                    'workoutFrequency': workout
+                    'focusTime': focus ?? widget.focus,
+                    'screenTime': screen ?? widget.screen,
+                    'sleepGoals': sleep ?? widget.sleep,
+                    'workoutFrequency': workout ?? widget.workout
                   });
                   QuickAlert.show(
                     context: context,
@@ -1000,7 +1015,7 @@ class _EditGoalsState extends State<EditGoals> {
                           (route) => false);
                       context.read<IndexProvider>().setSelectedIndex(4);
                     },
-                    text: 'Goals Updated Successfully!',
+                    text: 'Goals Updated Successfully!'.tr(),
                   );
                 },
                 text: 'Save'.tr(),

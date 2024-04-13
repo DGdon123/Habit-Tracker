@@ -18,12 +18,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:habit_tracker/auth/repositories/gymtime_model.dart';
 import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
 import 'package:habit_tracker/auth/repositories/user_repository.dart';
+import 'package:habit_tracker/auth/widgets/gym_in_time.dart';
+import 'package:habit_tracker/auth/widgets/gym_out_time.dart';
 import 'package:habit_tracker/location/current_location.dart';
-import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/provider/goals_provider.dart';
 import 'package:habit_tracker/provider/location_provider.dart';
+import 'package:habit_tracker/services/local_storage_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
@@ -35,23 +37,17 @@ import 'package:http/http.dart' as http;
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../services/local_storage_services.dart';
-import '../services/user_firestore_services.dart';
 
-class AccountSetup1 extends StatefulWidget {
+class AccountSetup extends StatefulWidget {
   final String? username;
   final String? email;
-  final String? photoURL;
-  final String? uid;
-
-  const AccountSetup1(
-      {super.key, this.username, this.email, this.photoURL, this.uid});
+  final String? password;
+  const AccountSetup({super.key, this.username, this.email, this.password});
   @override
-  State<AccountSetup1> createState() => _AccountSetupState();
+  State<AccountSetup> createState() => _AccountSetupState();
 }
 
-class _AccountSetupState extends State<AccountSetup1> {
+class _AccountSetupState extends State<AccountSetup> {
   late final PageController _pageController;
   int currentPage = 0;
 
@@ -123,7 +119,6 @@ class _AccountSetupState extends State<AccountSetup1> {
                 PickCharacterPage(),
                 AccountSetupSetName(),
                 SetUpGoals(),
-                WorkoutTrackType()
               ],
             ),
           ),
@@ -137,7 +132,7 @@ class _AccountSetupState extends State<AccountSetup1> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        4, // Replace with the total number of pages
+                        3, // Replace with the total number of pages
                         (index) => Container(
                           margin: EdgeInsets.symmetric(horizontal: 4.0.w),
                           width: currentPage == index
@@ -169,24 +164,18 @@ class _AccountSetupState extends State<AccountSetup1> {
                       );
                     } else {
                       // You are going forward to the next page
-                      if (currentPage < 3) {
+                      if (currentPage < 2) {
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
                       } else {
-                        if (currentPage == 3) {
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          String token =
-                              prefs.getString('device_token').toString();
+                        if (currentPage == 2) {
                           final locProvider = Provider.of<LocationProvider>(
                               context,
                               listen: false);
-                          var lat = locProvider.latitude;
-                          var longi = locProvider.longitude;
-                          log(lat.toString());
-                          log(longi.toString());
+                          final lat = locProvider.latitude;
+                          final longi = locProvider.longitude;
                           final goalProvider = Provider.of<GoalsProvider>(
                               context,
                               listen: false);
@@ -194,53 +183,19 @@ class _AccountSetupState extends State<AccountSetup1> {
                           var screen = goalProvider.goals1;
                           var focus = goalProvider.goals2;
                           var workout = goalProvider.goals3;
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => const AlertDialog(
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  CircularProgressIndicator(
-                                    color: AppColors.mainBlue,
-                                  ),
-                                  SizedBox(height: 16),
-                                  Text(
-                                    'Please wait, your account is creating...',
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                          // Check if lat and longi are not null before using them
                           if (lat != null && longi != null) {
-                            await UserFireStoreServices().addUser(
-                              latitude: lat.toDouble(),
-                              longitude: longi.toDouble(),
-                              sleep: sleep,
-                              screen: screen,
-                              focus: focus,
-                              workout: workout,
-                              devicetoken: token,
-                              uid: widget.uid?.toString() ??
-                                  "", // Check for null and provide a default value
-                              email: widget.email?.toString() ??
-                                  "", // Check for null and provide a default value
-                              name: widget.username?.toString() ??
-                                  "", // Check for null and provide a default value
-                              photoUrl: widget.photoURL?.toString() ??
-                                  "", // Check for null and provide a default value
-                            );
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const HomePage(),
-                              ),
-                            );
-                          } else {
-                            // Handle the case where lat or longi is null
-                            // You can show an error message or handle it as per your application logic
-                            print("Error: lat or longi is null");
+                            await user.signUp(
+                                context,
+                                widget.username.toString(),
+                                dateString,
+                                widget.email.toString(),
+                                widget.password.toString(),
+                                lat.toDouble(),
+                                longi.toDouble(),
+                                sleep,
+                                screen,
+                                focus,
+                                workout);
                           }
                         }
                       }
@@ -249,7 +204,7 @@ class _AccountSetupState extends State<AccountSetup1> {
                   child: Row(
                     children: [
                       Text(
-                        currentPage == 3 ? 'Finish'.tr() : 'Next'.tr(),
+                        currentPage == 2 ? 'Finish'.tr() : 'Next'.tr(),
                         style: TextStyle(
                           color: AppColors.buttonYellow,
                           fontFamily: 'SFProText',
@@ -349,6 +304,8 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
     final user = Provider.of<UserRepository>(context);
     final dob = Provider.of<SelectedDateProvider>(context, listen: false);
 
+    final lat = locProvider.latitude;
+    final longi = locProvider.longitude;
     var dobis = dob.selectedDate ?? DateTime.now();
     var dateString = dobis.toString().split(' ')[0]; // Extract date part
     log(dateString);
@@ -557,73 +514,6 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
   }
 }
 
-class AccountSetupBirthdate extends StatefulWidget {
-  const AccountSetupBirthdate({super.key});
-
-  @override
-  State<AccountSetupBirthdate> createState() => _AccountSetupBirthdateState();
-}
-
-class _AccountSetupBirthdateState extends State<AccountSetupBirthdate> {
-  DateTime? _selectedDate;
-
-  @override
-  Widget build(BuildContext context) {
-    final dobProvider =
-        Provider.of<SelectedDateProvider>(context, listen: false);
-    final dobis = dobProvider.selectedDate;
-    return Scaffold(
-      backgroundColor: AppColors.primaryColor,
-      body: Column(
-        children: [
-          SizedBox(
-            height: 15.h,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Text(
-              'What’s your date of birth?',
-              style: AppTextStyles.accountSetup,
-              maxLines: 2,
-            ),
-          ),
-          SizedBox(
-            height: 50.h,
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 40.w),
-            child: DatePickerWidget(
-              // default is not looping
-              lastDate: DateTime(2020, 4, 4),
-              initialDate: DateTime(1995, 4, 4), // DateTime(1994),
-              dateFormat:
-                  // "MM-dd(E)",
-                  "MMMM/dd/yyyy",
-              locale: DatePicker.localeFromString('en'),
-              onChange: (DateTime newDate, _) {
-                setState(() {
-                  _selectedDate = newDate;
-                });
-                dobProvider.setSelectedDate(_selectedDate!);
-                log(dobis.toString());
-              },
-              pickerTheme: DateTimePickerTheme(
-                backgroundColor: Colors.transparent,
-                showTitle: true,
-                itemTextStyle: TextStyle(
-                    fontFamily: 'SFProText',
-                    fontWeight: FontWeight.w600,
-                    color: const Color.fromARGB(255, 0, 0, 0),
-                    fontSize: 25.sp),
-                dividerColor: const Color.fromARGB(255, 0, 0, 0),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class AccountSetupSleeptime extends StatefulWidget {
   const AccountSetupSleeptime({super.key});
@@ -798,7 +688,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Sleep Goals'.tr() + ':',
+                      '${'Set Sleep Goals'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -841,7 +731,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Screentime'.tr() + ':',
+                      '${'Set Screentime'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -884,7 +774,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Focus Time'.tr() + ':',
+                      '${'Set Focus Time'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -927,7 +817,7 @@ class _SetUpGoalsState extends State<SetUpGoals> {
                 children: [
                   Flexible(
                     child: Text(
-                      'Set Workout Frequency'.tr() + ':',
+                      '${'Set Workout Frequency'.tr()}:',
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 20.sp,
@@ -1059,7 +949,11 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
     if (!await isLocationAlwaysGranted()) {
       await askForLocationAlwaysPermission();
     }
- await LocalStorageServices().setAutomatic(true);
+
+    log('setting automatic to true Home.dart');
+
+    await LocalStorageServices().setAutomatic(true);
+
     locationSubscription?.cancel();
     locationSubscription = LocationManager().locationStream.listen(onData);
     await LocationManager().start();
@@ -1149,7 +1043,11 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
     }
   }
 
-  void stop() {
+  void stop() async {
+    await LocalStorageServices().setAutomatic(false);
+
+    log("setting automatic to false Home.dart");
+
     locationSubscription?.cancel();
     LocationManager().stop();
     setState(() {
@@ -1252,7 +1150,7 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
       child: Column(
         children: [
           Text(
-            'How do you want to track your workout?',
+            'How do you want to track your workout?'.tr(),
             style: TextStyle(
                 fontFamily: 'SFProText',
                 fontSize: 22.sp,
@@ -1292,7 +1190,7 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
                       width: 20,
                     ),
                     Text(
-                      'Automatic',
+                      'Automatic'.tr(),
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 22.sp,
@@ -1345,7 +1243,7 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
                       width: 20,
                     ),
                     Text(
-                      'Manual',
+                      'Manual'.tr(),
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 22.sp,

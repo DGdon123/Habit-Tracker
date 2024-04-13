@@ -9,11 +9,13 @@ import 'package:habit_tracker/utils/images.dart';
 class FriendContainer extends StatelessWidget {
   final String name;
   final String uid;
+  final int xp;
   final String photoUrl;
   final void Function() onPressed;
   const FriendContainer(
       {super.key,
       required this.name,
+      required this.xp,
       required this.uid,
       required this.onPressed,
       required this.photoUrl});
@@ -73,7 +75,7 @@ class FriendContainer extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '912 XP',
+                      xp.toString(),
                       style: TextStyle(
                         color: const Color(0xFF9B9BA1),
                         fontSize: 14.sp,

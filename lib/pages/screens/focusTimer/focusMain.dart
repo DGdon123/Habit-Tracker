@@ -60,8 +60,10 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
         _progressValue = remainingMilliseconds / milli;
         setState(() {});
         if (_progressValue == 0) {
+          addUser(widget.hour, widget.minute, widget.second);
           if (widget.hour != 0 || widget.minute != 0) {
             var xp = widget.hour * 60 + widget.minute;
+            // audioPlayer.stop();
             XpFirestoreServices().addXp(
                 xp: xp, reason: "Earned from Focus Timer", increment: true);
             Navigator.push(
@@ -75,6 +77,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                           xp: xp,
                         )));
           } else {
+            // audioPlayer.stop();
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -158,12 +161,15 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
   Future<void> addUser(int hours, int minutes, int seconds) {
     CollectionReference users =
         FirebaseFirestore.instance.collection('focus_timer');
-
+    var today = DateTime.now();
+    String date =
+        "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
     return users
         .add({
           'Label': widget.label ?? 'Meditate',
           'Hours': hours,
           'Minutes': minutes,
+          "addedAt": date,
           'Seconds': seconds,
           'ID': getUserID(),
           'Name': getUserName(),
@@ -173,6 +179,10 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
         .catchError((error) => print("Failed to add user: $error"));
   }
 
+  bool s1 = false;
+  bool s2 = false;
+  bool s3 = false;
+  bool s4 = false;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -203,7 +213,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                                   confirmBtnColor: AppColors.mainBlue,
                                   type: QuickAlertType.error,
                                   title: 'Error...'.tr(),
-                                  text: 'Please stop the timer!',
+                                  text: 'Please stop the timer!'.tr(),
                                 );
                               }
                             },
@@ -217,7 +227,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                           ),
                           Center(
                             child: Text(
-                              "Focus Timer",
+                              "Focus Timer".tr(),
                               style: TextStyle(
                                   fontFamily: 'SFProText',
                                   fontSize: 24.sp,
@@ -288,7 +298,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                                           MainAxisAlignment.spaceAround,
                                       children: [
                                         Text(
-                                          'HOURS',
+                                          'HOURS'.tr(),
                                           style: TextStyle(
                                             color:
                                                 Colors.black.withOpacity(0.5),
@@ -299,7 +309,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                                           ),
                                         ),
                                         Text(
-                                          'MINUTES',
+                                          'MINUTES'.tr(),
                                           style: TextStyle(
                                             color:
                                                 Colors.black.withOpacity(0.5),
@@ -310,7 +320,7 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                                           ),
                                         ),
                                         Text(
-                                          'SECONDS',
+                                          'SECONDS'.tr(),
                                           style: TextStyle(
                                             color:
                                                 Colors.black.withOpacity(0.5),
@@ -471,29 +481,85 @@ class _FocusMainScreenState extends State<FocusMainScreen> {
                   backgroundColor: Colors.white,
                   options: [
                     TooltipOption(
-                        icon: AppIcons.lofi,
-                        label: 'Lofi'.tr(),
-                        onPressed: () {
+                      status: s1,
+                      icon: AppIcons.lofi,
+                      label: 'Lofi'.tr(),
+                      onPressed: () {
+                        setState(() {
+                          s1 = !s1;
+                          if (s1) {
+                            s2 = false;
+                            s3 = false;
+                            s4 = false;
+                          }
+                        });
+                        if (s1) {
                           // playMusic(de.AssetSource('lofi.mp3'));
-                        }),
+                        } else {
+                          // audioPlayer.stop();
+                        }
+                      },
+                    ),
                     TooltipOption(
-                        icon: AppIcons.paino,
-                        label: 'Piano',
-                        onPressed: () {
+                      status: s2,
+                      icon: AppIcons.paino,
+                      label: 'Piano'.tr(),
+                      onPressed: () {
+                        setState(() {
+                          s2 = !s2;
+                          if (s2) {
+                            s1 = false;
+                            s3 = false;
+                            s4 = false;
+                          }
+                        });
+                        if (s2) {
                           // playMusic(de.AssetSource('piano.mp3'));
-                        }),
+                        } else {
+                          // audioPlayer.stop();
+                        }
+                      },
+                    ),
                     TooltipOption(
-                        icon: AppIcons.jazz,
-                        label: 'Jazz',
-                        onPressed: () {
+                      status: s3,
+                      icon: AppIcons.jazz,
+                      label: 'Jazz'.tr(),
+                      onPressed: () {
+                        setState(() {
+                          s3 = !s3;
+                          if (s3) {
+                            s1 = false;
+                            s2 = false;
+                            s4 = false;
+                          }
+                        });
+                        if (s3) {
                           // playMusic(de.AssetSource('jazz.mp3'));
-                        }),
+                        } else {
+                          // audioPlayer.stop();
+                        }
+                      },
+                    ),
                     TooltipOption(
-                        icon: AppIcons.zen,
-                        label: 'Zen',
-                        onPressed: () {
+                      status: s4,
+                      icon: AppIcons.zen,
+                      label: 'Zen'.tr(),
+                      onPressed: () {
+                        setState(() {
+                          s4 = !s4;
+                          if (s4) {
+                            s1 = false;
+                            s2 = false;
+                            s3 = false;
+                          }
+                        });
+                        if (s4) {
                           // playMusic(de.AssetSource('zen.mp3'));
-                        }),
+                        } else {
+                          // audioPlayer.stop();
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),

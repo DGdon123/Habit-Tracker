@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:habit_tracker/services/xp_firestore_services.dart';
 
 class GymFirestoreServices {
   var user = FirebaseAuth.instance.currentUser;
@@ -21,7 +22,7 @@ class GymFirestoreServices {
     Duration end = Duration(hours: outTime.hour, minutes: outTime.minute);
 
     Duration diff = end - start;
-
+    int xpEarned = diff.inMinutes;
     try {
       gymRef.add({
         'ID': user!.uid,
@@ -32,6 +33,8 @@ class GymFirestoreServices {
             "${end.inHours.toString().padLeft(2, '0')}:${(end.inMinutes % 60).toString().padLeft(2, '0')}",
         'Date': date,
       });
+      await XpFirestoreServices()
+          .addXp(xp: xpEarned, reason: 'Earned from Workout', increment: true);
 
       return true; // Return true if both additions are successful
     } catch (e) {

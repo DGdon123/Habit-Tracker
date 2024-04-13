@@ -19,6 +19,8 @@ import 'package:habit_tracker/widgets/tooltip.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:quickalert/quickalert.dart';
 
+import 'focus_page_completion.dart';
+
 class StopWatchScreen extends StatefulWidget {
   int? hour;
   int? minute;
@@ -82,20 +84,18 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
   }
 
   //Future<void> playMusic(de.Source filename) async {
-
-   // if(Platform.isAndroid){
     // Stop any currently playing music
 
     // Calculate the total duration in seconds
 
     // Play the specified music file at the specified position
-    // await audioPlayer.play(filename,
+    
+    //await audioPlayer.play(filename,
     //    volume: 100, mode: de.PlayerMode.mediaPlayer);
     // audioPlayer.setReleaseMode(de.ReleaseMode.loop);
     // Indicate that the music playback has started
-   // print('Music playback started');
-  //  }
-  // }
+    // print('Music playback started');
+  //}
 
   @override
   void dispose() async {
@@ -122,7 +122,9 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
     logger.d(hours);
     logger.d(minutes);
     logger.d(seconds);
-
+    var today = DateTime.now();
+    String date =
+        "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
     return users
         .add({
           'Label': widget.label ?? 'Meditate',
@@ -130,6 +132,7 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
           'Minutes': minutes,
           'Seconds': seconds,
           'ID': getUserID(),
+          "addedAt": date,
           'Name': getUserName(),
           'Timestamp': FieldValue.serverTimestamp(),
         })
@@ -137,6 +140,10 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
         .catchError((error) => print("Failed to add user: $error"));
   }
 
+  bool s1 = false;
+  bool s2 = false;
+  bool s3 = false;
+  bool s4 = false;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -159,7 +166,7 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                           GestureDetector(
                             onTap: () {
                               if (started == false) {
-                                // audioPlayer.stop();
+                                //audioPlayer.stop();
                                 Navigator.pop(context);
                               } else {
                                 QuickAlert.show(
@@ -316,7 +323,7 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                                     debugPrint(
                                         "Close tapped $hours, $minutes, $seconds");
 
-                                    // audioPlayer.stop();
+                                    //audioPlayer.stop();
 
                                     if (hours != 0 || minutes != 0) {
                                       debugPrint("adding to firestore");
@@ -353,11 +360,23 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                                       started = false;
                                       addUser(hours, minutes, seconds);
                                       if (hours != 0 || minutes != 0) {
+                                        //audioPlayer.stop();
                                         var xp = hours * 60 + minutes;
                                         XpFirestoreServices().addXp(
                                             increment: true,
                                             xp: xp,
                                             reason: "Earned from Stopwatch");
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    FocusTimerComplete(
+                                                      hour: widget.hour,
+                                                      minute: widget.minute,
+                                                      seconds: widget.second,
+                                                      label: widget.label,
+                                                      xp: xp,
+                                                    )));
                                       }
                                     });
                                   } else {
@@ -393,29 +412,85 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                   backgroundColor: Colors.white,
                   options: [
                     TooltipOption(
-                        icon: AppIcons.lofi,
-                        label: 'Lofi'.tr(),
-                        onPressed: () {
+                      status: s1,
+                      icon: AppIcons.lofi,
+                      label: 'Lofi'.tr(),
+                      onPressed: () {
+                        setState(() {
+                          s1 = !s1;
+                          if (s1) {
+                            s2 = false;
+                            s3 = false;
+                            s4 = false;
+                          }
+                        });
+                        if (s1) {
                           // playMusic(de.AssetSource('lofi.mp3'));
-                        }),
+                        } else {
+                          // audioPlayer.stop();
+                        }
+                      },
+                    ),
                     TooltipOption(
-                        icon: AppIcons.paino,
-                        label: 'Piano'.tr(),
-                        onPressed: () {
-                         // playMusic(de.AssetSource('piano.mp3'));
-                        }),
+                      status: s2,
+                      icon: AppIcons.paino,
+                      label: 'Piano'.tr(),
+                      onPressed: () {
+                        setState(() {
+                          s2 = !s2;
+                          if (s2) {
+                            s1 = false;
+                            s3 = false;
+                            s4 = false;
+                          }
+                        });
+                        if (s2) {
+                          // playMusic(de.AssetSource('piano.mp3'));
+                        } else {
+                          // audioPlayer.stop();
+                        }
+                      },
+                    ),
                     TooltipOption(
-                        icon: AppIcons.jazz,
-                        label: 'Jazz'.tr(),
-                        onPressed: () {
+                      status: s3,
+                      icon: AppIcons.jazz,
+                      label: 'Jazz'.tr(),
+                      onPressed: () {
+                        setState(() {
+                          s3 = !s3;
+                          if (s3) {
+                            s1 = false;
+                            s2 = false;
+                            s4 = false;
+                          }
+                        });
+                        if (s3) {
                           // playMusic(de.AssetSource('jazz.mp3'));
-                        }),
+                        } else {
+                          // audioPlayer.stop();
+                        }
+                      },
+                    ),
                     TooltipOption(
-                        icon: AppIcons.zen,
-                        label: 'Zen'.tr(),
-                        onPressed: () {
+                      status: s4,
+                      icon: AppIcons.zen,
+                      label: 'Zen'.tr(),
+                      onPressed: () {
+                        setState(() {
+                          s4 = !s4;
+                          if (s4) {
+                            s1 = false;
+                            s2 = false;
+                            s3 = false;
+                          }
+                        });
+                        if (s4) {
                           // playMusic(de.AssetSource('zen.mp3'));
-                        }),
+                        } else {
+                          // audioPlayer.stop();
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),

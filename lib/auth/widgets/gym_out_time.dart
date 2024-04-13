@@ -27,11 +27,28 @@ class _GymOutTimeState extends State<GymOutTime> {
   bool iosStyle = true;
 
   void gymTimeSet(Time newTime) async {
-    int day = DateTime.now().weekday;
+
+    // if newTime is less then inTime print error
+
+    log("Gym Time: ${newTime.hour * 60 + newTime.minute}, In Time: ${(widget.inTime.hour * 60 + widget.inTime.minute)}, difference: ${(newTime.hour * 60 + newTime.minute) > (widget.inTime.hour * 60 + widget.inTime.minute)}");
+
+    if ((newTime.hour * 60 + newTime.minute) <
+        (widget.inTime.hour * 60 + widget.inTime.minute)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gym out time should be greater than gym in time'.tr()),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      return;
+    }
+
     await GymFirestoreServices()
         .upload(inTime: widget.inTime, outTime: newTime);
-    await GoalServices()
-        .addNewGymTime(inTime: widget.inTime, outTime: newTime, day: day);
+    await GoalServices().addNewGymTime(
+      inTime: widget.inTime,
+      outTime: newTime,
+    );
   }
 
   @override

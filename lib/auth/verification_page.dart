@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:habit_tracker/auth/accountSetup.dart';
+import 'package:habit_tracker/auth/automatic_accountSetup.dart';
+import 'package:habit_tracker/auth/normal_workout_setup.dart';
 
 class VerificationPage extends StatefulWidget {
   final String password;
@@ -32,10 +34,11 @@ class _VerificationPageState extends State<VerificationPage> {
       if (currentUser.emailVerified) {
         debugPrint("Email verified");
         timer.cancel();
+
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (_) => AccountSetup(
+                builder: (_) => NormalWorkoutSetUp(
                       email: currentUser.email,
                       password: widget.password,
                       username: widget.userName,
@@ -52,7 +55,7 @@ class _VerificationPageState extends State<VerificationPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Waiting for your email to be verified...'),
+            Text('Waiting for your email to be verified...'.tr()),
           ],
         ),
       ),

@@ -6,9 +6,10 @@ import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:habit_tracker/auth/accountSetup.dart';
-import 'package:habit_tracker/auth/accountSetup1.dart';
+import 'package:habit_tracker/auth/automatic_accountSetup.dart';
+import 'package:habit_tracker/auth/automaticaccountSetup1.dart';
 import 'package:habit_tracker/auth/signup_page.dart';
+import 'package:habit_tracker/auth/workout_setup.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/home.dart';
 import 'package:habit_tracker/provider/goals_provider.dart';
@@ -159,6 +160,103 @@ class UserRepository with ChangeNotifier {
     }
   }
 
+  Future<bool> manualsignUp(
+      BuildContext context,
+      String username,
+      String dob,
+      String email,
+      String password,
+      int sleep,
+      int screen,
+      int focus,
+      int workout) async {
+    try {
+      _status = Status.Authenticating;
+      notifyListeners();
+
+      debugPrint("Authenticating user repo");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('device_token').toString();
+      log(token);
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) =>  AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CircularProgressIndicator(
+                color: AppColors.mainBlue,
+              ),
+              SizedBox(height: 16),
+              Text('Please wait, your account is creating...'.tr()),
+            ],
+          ),
+        ),
+      );
+
+      var currentUser = FirebaseAuth.instance.currentUser;
+
+      // adding details to the firestore
+      UserFireStoreServices()
+          .manualaddUser(
+        devicetoken: token,
+        uid: currentUser!.uid,
+        email: email,
+        name: username,
+        sleep: sleep,
+        screen: screen,
+        focus: focus,
+        workout: workout,
+        photoUrl: "",
+      )
+          .then((_) {
+        // Get the current user
+        User? user = _auth.currentUser;
+
+        // Update user profile with username
+        user?.updateDisplayName(username);
+
+        // If createUserWithEmailAndPassword succeeds, update status and return true
+        _status = Status.Authenticated;
+        notifyListeners();
+
+        // Navigate to the next screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+        );
+      });
+
+      return true;
+    } catch (e) {
+      // Handle errors
+      if (e is FirebaseAuthException) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message.toString()),
+          ),
+        );
+        log(e.message.toString());
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+          ),
+        );
+        log(e.toString());
+      }
+
+      // Update status and return false
+      _status = Status.Unauthenticated;
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<bool> signUp(
       BuildContext context,
       String username,
@@ -183,7 +281,7 @@ class UserRepository with ChangeNotifier {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const AlertDialog(
+        builder: (context) =>  AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -191,7 +289,7 @@ class UserRepository with ChangeNotifier {
                 color: AppColors.mainBlue,
               ),
               SizedBox(height: 16),
-              Text('Please wait, your account is creating...'),
+              Text('Please wait, your account is creating...'.tr()),
             ],
           ),
         ),
@@ -346,7 +444,7 @@ class UserRepository with ChangeNotifier {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AccountSetup1(
+            builder: (context) => WorkoutSetUp(
               email: authResponse.user!.email.toString(),
               username: authResponse.user!.displayName.toString(),
               uid: authResponse.user!.uid.toString(),
@@ -424,7 +522,7 @@ context}) async {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AccountSetup1(
+            builder: (context) => WorkoutSetUp(
               email: authResponse.user!.email.toString(),
               username: authResponse.user!.displayName.toString(),
               uid: authResponse.user!.uid.toString(),

@@ -9,7 +9,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/pages/chat_room/chat_room.dart';
 import 'package:habit_tracker/pages/profile_page/widgets/friend_container.dart';
+import 'package:habit_tracker/provider/friends_provider.dart';
 import 'package:habit_tracker/services/friend_firestore_services.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FriendsListView extends StatefulWidget {
@@ -46,6 +48,11 @@ class _ChatRoomState extends State<FriendsListView> {
             var data = snapshot.data!.docs.first;
             var friends = data["friends"] as List<dynamic>;
 
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              Provider.of<FriendsProvider>(context, listen: false)
+                  .addAllFriends(friends);
+            });
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -75,6 +82,7 @@ class _ChatRoomState extends State<FriendsListView> {
                                   snapshot.data!.data() as Map<String, dynamic>;
                               return FriendContainer(
                                 name: data["name"],
+                                xp: data["xp"],
                                 photoUrl: data["photoUrl"],
                                 uid: data["uid"],
                                 onPressed: () {

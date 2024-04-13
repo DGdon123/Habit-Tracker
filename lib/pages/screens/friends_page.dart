@@ -78,6 +78,7 @@ class FriendsPageState extends State<FriendsPage> {
                                 var data = snapshot.data!.data()
                                     as Map<String, dynamic>;
                                 return FriendContainer(
+                                  xp: data["xp"],
                                   name: data["name"],
                                   photoUrl: data["photoUrl"],
                                   uid: data["uid"],
@@ -111,80 +112,6 @@ class FriendsPageState extends State<FriendsPage> {
             }
             return const SizedBox();
           }),
-    );
-  }
-
-  Widget FriendsContainer() {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10.h),
-      padding: const EdgeInsets.all(16),
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(width: 1, color: Color(0xFFEAECF0)),
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        shadows: [
-          BoxShadow(
-            color: Color(0x0F222C5C),
-            blurRadius: 68,
-            offset: Offset(58, 26),
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Row(
-            children: [
-              Column(
-                children: [
-                  Image.asset(
-                    AppImages.profileavatar,
-                    height: 36.h,
-                    width: 36.w,
-                  ),
-                ],
-              ),
-              SizedBox(
-                width: 10.w,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'User Name'.tr(),
-                    style: TextStyle(
-                      color: Color(0xFF040415),
-                      fontSize: 16.sp,
-                      fontFamily: 'SFProText',
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    '912 XP',
-                    style: TextStyle(
-                      color: Color(0xFF9B9BA1),
-                      fontSize: 14.sp,
-                      fontFamily: 'SF Pro Text',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-          GestureDetector(
-            onTap: () {},
-            child: SvgPicture.asset(
-              AppIcons.unfriend,
-              height: 32.h,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

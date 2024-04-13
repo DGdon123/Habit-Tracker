@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -39,6 +40,7 @@ class _PickCharacterPageState extends State<FocusTimerCompleteSeconds> {
                     children: [
                       GestureDetector(
                         onTap: () {
+                          // audioPlayer.stop();
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
@@ -62,7 +64,7 @@ class _PickCharacterPageState extends State<FocusTimerCompleteSeconds> {
                   height: 70.h,
                 ),
                 Text(
-                  'Good Job!',
+                  'Good Job!'.tr(),
                   style: TextStyle(
                       fontFamily: 'SfProText',
                       fontSize: 65.sp,

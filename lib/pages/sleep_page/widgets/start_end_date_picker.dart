@@ -25,7 +25,7 @@ class _StartEndDatePickerState extends State<StartEndDatePicker> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
-        'Filter Date',
+        'Filter Date'.tr(),
         style: TextStyle(
             fontFamily: 'SfProText',
             color: Colors.black,

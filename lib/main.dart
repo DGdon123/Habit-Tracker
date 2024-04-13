@@ -21,9 +21,11 @@ import 'package:habit_tracker/onboarding/onboardingScreen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart' as img;
 import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/pages/screens/settings/goal_completetion_screen.dart';
 import 'package:habit_tracker/provider/avg_sleep_provider.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
 import 'package:habit_tracker/provider/flag_provider.dart';
+import 'package:habit_tracker/provider/friends_provider.dart';
 import 'package:habit_tracker/provider/goals_provider.dart';
 import 'package:habit_tracker/provider/user_state_provider.dart';
 import 'package:habit_tracker/services/health_app_services.dart';
@@ -76,7 +78,8 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (_) => StartEndDateProvider()),
       ChangeNotifierProvider(create: (_) => AvgSleepProvider()),
       ChangeNotifierProvider(create: (_) => IndexProvider()),
-      ChangeNotifierProvider(create: (_) => UserStateProvider())
+      ChangeNotifierProvider(create: (_) => UserStateProvider()),
+      ChangeNotifierProvider(create: (_) => FriendsProvider()),
     ],
     child: EasyLocalization(
       supportedLocales: const [
@@ -269,7 +272,8 @@ class _OnBoardingScreenState extends State<HomePage1> {
   }
 
   NotificationServices notificationServices = NotificationServices();
-
+  int day = 7;
+  int day1 = DateTime.now().weekday;
   @override
   void initState() {
     super.initState();
@@ -283,6 +287,14 @@ class _OnBoardingScreenState extends State<HomePage1> {
       prefs.setString('device_token', value!);
       log('device_token');
       log(value);
+    });
+    log(day1.toString());
+    // Use Future.delayed to ensure navigation is performed after build context is available
+    Future.delayed(Duration.zero, () {
+      if (day1 == day) {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (_) => const GoalCompletionScreen()));
+      }
     });
   }
 

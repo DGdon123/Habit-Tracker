@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -303,6 +302,8 @@ class _HomeState extends State<Home> {
     await prefs.setInt('screenhours', hours);
     await prefs.setInt('screenminutes', minutes);
   }
+
+ 
 
   Column screenTime() {
     return Column(
@@ -691,6 +692,13 @@ class _HomeState extends State<Home> {
             dataList.add(data); // Add user data to the list
           }
           userLabels['data'] = dataList;
+          userLabels['data'].forEach((labelData) {
+            int hours = labelData['Hours'];
+            int minutes = labelData['Minutes'];
+
+            totalHours += hours; // Accumulate hours
+            totalMinutes += minutes; // Accumulate minutes
+          });
         } else {
           print('No data found for the current user');
         }
@@ -722,6 +730,13 @@ class _HomeState extends State<Home> {
             dataList2.add(data); // Add user data to the list
           }
           userLabels2['data'] = dataList2;
+          userLabels2['data'].forEach((labelData) {
+            int hours = labelData['Hours'];
+            int minutes = labelData['Minutes'];
+
+            totalHours += hours; // Accumulate hours
+            totalMinutes += minutes; // Accumulate minutes
+          });
         } else {
           print('No data found for the current user');
         }
@@ -743,32 +758,6 @@ class _HomeState extends State<Home> {
 
   Future<void> updatePieChartSections() async {
     // Fetch user labels from both sources
-    Map<String, dynamic> labels1 = await fetchUsers3();
-    Map<String, dynamic> labels2 = await fetchUsers2();
-
-    // Initialize total hours
-
-    // Iterate over user labels from the first source and aggregate values for each label
-    if (labels1.isNotEmpty) {
-      labels1['data'].forEach((labelData) {
-        int hours = labelData['Hours'];
-        int minutes = labelData['Minutes'];
-
-        totalHours += hours; // Accumulate hours
-        totalMinutes += minutes; // Accumulate minutes
-      });
-    }
-
-    // Iterate over user labels from the second source and aggregate values for each label
-    if (labels2.isNotEmpty) {
-      labels2['data'].forEach((labelData) {
-        int hours = labelData['Hours'];
-        int minutes = labelData['Minutes'];
-
-        totalHours += hours; // Accumulate hours
-        totalMinutes += minutes; // Accumulate minutes
-      });
-    }
 
     // Update the state with the total hours and minutes
     // Convert excess minutes to hours

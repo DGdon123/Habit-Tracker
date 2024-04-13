@@ -11,7 +11,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title:  Text('Confirm Deletion'.tr()),
-      content: const Text('Are you sure you want to delete?'),
+      content:  Text('Are you sure you want to delete?'.tr()),
       actions: [
         TextButton(
           onPressed: () {

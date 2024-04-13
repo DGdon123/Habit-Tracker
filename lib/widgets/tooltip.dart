@@ -6,8 +6,11 @@ class TriangleTooltip extends StatelessWidget {
   final List<TooltipOption> options;
   final Color backgroundColor;
 
-  const TriangleTooltip(
-      {super.key, required this.options, required this.backgroundColor});
+  const TriangleTooltip({
+    super.key,
+    required this.options,
+    required this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,11 @@ class TriangleTooltip extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              option.status
+                                  ? const Icon(Icons.pause)
+                                  : // Play icon
+                                  const Icon(Icons.play_arrow), // Pause icon
+                              const SizedBox(width: 8),
                               Image.asset(
                                 option.icon,
                                 height: 18,
@@ -101,9 +109,11 @@ class TrianglePainter extends CustomPainter {
 class TooltipOption {
   final String icon;
   final String label;
+  final bool status;
   final void Function() onPressed; // Specify the function type correctly
 
   TooltipOption({
+    required this.status,
     required this.icon,
     required this.onPressed, // Corrected function definition
     required this.label,

@@ -181,7 +181,7 @@ class UserRepository with ChangeNotifier {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const AlertDialog(
+        builder: (context) =>  AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -189,7 +189,7 @@ class UserRepository with ChangeNotifier {
                 color: AppColors.mainBlue,
               ),
               SizedBox(height: 16),
-              Text('Please wait, your account is creating...'),
+              Text('Please wait, your account is creating...'.tr()),
             ],
           ),
         ),
@@ -280,7 +280,7 @@ class UserRepository with ChangeNotifier {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const AlertDialog(
+        builder: (context) =>  AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -288,7 +288,7 @@ class UserRepository with ChangeNotifier {
                 color: AppColors.mainBlue,
               ),
               SizedBox(height: 16),
-              Text('Please wait, your account is creating...'),
+              Text('Please wait, your account is creating...'.tr()),
             ],
           ),
         ),

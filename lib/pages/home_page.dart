@@ -90,12 +90,12 @@ class HomePageState extends State<HomePage> {
                             : Colors.white),
                     label: 'Stats'.tr(),
                   ),
-                  const BottomNavigationBarItem(
+                   BottomNavigationBarItem(
                     icon: Icon(
                       Icons.home,
                       color: Colors.transparent,
                     ),
-                    label: 'Home',
+                    label: 'Home'.tr(),
                   ),
                   BottomNavigationBarItem(
                     icon: Image.asset(AppIcons.time,

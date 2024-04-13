@@ -317,7 +317,7 @@ class _WorkoutTrackTypeState extends State<WorkoutSetUp> {
         child: Column(
           children: [
             Text(
-              'How do you want to track your workout?',
+              'How do you want to track your workout?'.tr(),
               style: TextStyle(
                   fontFamily: 'SFProText',
                   fontSize: 22.sp,
@@ -357,7 +357,7 @@ class _WorkoutTrackTypeState extends State<WorkoutSetUp> {
                         width: 20,
                       ),
                       Text(
-                        'Automatic',
+                        'Automatic'.tr(),
                         style: TextStyle(
                             fontFamily: 'SFProText',
                             fontSize: 22.sp,
@@ -410,7 +410,7 @@ class _WorkoutTrackTypeState extends State<WorkoutSetUp> {
                         width: 20,
                       ),
                       Text(
-                        'Manual',
+                        'Manual'.tr(),
                         style: TextStyle(
                             fontFamily: 'SFProText',
                             fontSize: 22.sp,

@@ -82,6 +82,7 @@ class _ChatRoomState extends State<FriendsListView> {
                                   snapshot.data!.data() as Map<String, dynamic>;
                               return FriendContainer(
                                 name: data["name"],
+                                xp: data["xp"],
                                 photoUrl: data["photoUrl"],
                                 uid: data["uid"],
                                 onPressed: () {

@@ -551,8 +551,8 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
 
                           if (users.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text("User not found")));
+                                 SnackBar(
+                                    content: Text("User not found".tr())));
                             return;
                           }
 
@@ -639,12 +639,12 @@ class ActivityPage extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text('Something went wrong'),
+                  return  Center(
+                    child: Text('Something went wrong'.tr()),
                   );
                 } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-                  return const Center(
-                    child: Text('No data found'),
+                  return  Center(
+                    child: Text('No data found'.tr()),
                   );
                 }
 
@@ -1015,7 +1015,7 @@ class _EditGoalsState extends State<EditGoals> {
                           (route) => false);
                       context.read<IndexProvider>().setSelectedIndex(4);
                     },
-                    text: 'Goals Updated Successfully!',
+                    text: 'Goals Updated Successfully!'.tr(),
                   );
                 },
                 text: 'Save'.tr(),

@@ -27,6 +27,7 @@ class _GymOutTimeState extends State<GymOutTime> {
   bool iosStyle = true;
 
   void gymTimeSet(Time newTime) async {
+
     // if newTime is less then inTime print error
 
     log("Gym Time: ${newTime.hour * 60 + newTime.minute}, In Time: ${(widget.inTime.hour * 60 + widget.inTime.minute)}, difference: ${(newTime.hour * 60 + newTime.minute) > (widget.inTime.hour * 60 + widget.inTime.minute)}");

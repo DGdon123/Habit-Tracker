@@ -87,57 +87,76 @@ class StatsPageState extends State<StatsPage> {
   List<Map<String, dynamic>> labelDataList =
       []; // Create a map to aggregate values for each unique label
   // Create a map to aggregate values for each unique label
-  Map<String, int> labelValues = {};
-  Map<String, int> labelValues1 = {};
-  Future<void> updatePieChartSections() async {
-    // Clear the pieChartSections list before updating it
+  Map<String, double> labelValues = {};
+  Map<String, double> labelValues1 = {};
+  Future<void> updatePieChartSections(
+      DateTime? startDate, DateTime? endDate) async {
+    // Clear existing data
+    labelValues.clear();
+    labelValues1.clear();
     labelDataList.clear();
+    pieChartSections.clear();
+    barChartGroups.clear();
 
-// Fetch user labels from both sources
+    // Fetch user labels from both sources
     Map<String, dynamic> labels1 = await fetchUsers();
     Map<String, dynamic> labels2 = await fetchUsers2();
 
-// Iterate over user labels from the first source and aggregate values for each label
+    // Iterate over user labels from the first source and aggregate values for each label
     if (labels1.isNotEmpty) {
       labels1['data'].forEach((labelData) {
-        String label = labelData['Label'].toString();
-        int hours = labelData['Hours'];
-        int minutes = labelData['Minutes'];
-        int seconds = labelData['Seconds'];
-        int totalSeconds = hours;
-        int value = 1; // Set the default value
-        labelValues[label] = (labelValues[label] ?? 0) + value;
-        labelValues1[label] = (labelValues1[label] ?? 0) + totalSeconds.toInt();
-        labelDataList.add({
-          'Label': label,
-          'Hours': hours,
-          'Minutes': minutes,
-          'Seconds': seconds,
-        });
+        DateTime timestamp =
+            DateTime.parse(labelData['addedAt']); // Parse timestamp
+        if (startDate == null ||
+            endDate == null ||
+            (timestamp.isAfter(startDate) && timestamp.isBefore(endDate))) {
+          String label = labelData['Label'].toString();
+          int hours = labelData['Hours'];
+          int minutes = labelData['Minutes'];
+          int seconds = labelData['Seconds'];
+          int totalSeconds = hours;
+          double value = 0.5; // Set the default value
+          labelValues[label] = (labelValues[label] ?? 0) + value;
+          labelValues1[label] =
+              (labelValues1[label] ?? 0) + totalSeconds.toInt();
+          labelDataList.add({
+            'Label': label,
+            'Hours': hours,
+            'Minutes': minutes,
+            'Seconds': seconds,
+          });
+        }
       });
     }
 
+    // Iterate over user labels from the second source and aggregate values for each label
     if (labels2.isNotEmpty) {
-// Iterate over user labels from the second source and aggregate values for each label
       labels2['data'].forEach((labelData) {
-        String label = labelData['Label'].toString();
-        int hours = labelData['Hours'];
-        int minutes = labelData['Minutes'];
-        int seconds = labelData['Seconds'];
-        int totalSeconds = hours;
-        int value = 1; // Set the default value
-        labelValues[label] = (labelValues[label] ?? 0) + value;
-        labelValues1[label] = (labelValues1[label] ?? 0) + totalSeconds.toInt();
-        labelDataList.add({
-          'Label': label,
-          'Hours': hours,
-          'Minutes': minutes,
-          'Seconds': seconds,
-        });
+        DateTime timestamp =
+            DateTime.parse(labelData['addedAt']); // Parse timestamp
+        if (startDate == null ||
+            endDate == null ||
+            (timestamp.isAfter(startDate) && timestamp.isBefore(endDate))) {
+          String label = labelData['Label'].toString();
+          int hours = labelData['Hours'];
+          int minutes = labelData['Minutes'];
+          int seconds = labelData['Seconds'];
+          int totalSeconds = hours;
+          double value = 0.5; // Set the default value
+          labelValues[label] = (labelValues[label] ?? 0) + value;
+          labelValues1[label] =
+              (labelValues1[label] ?? 0) + totalSeconds.toInt();
+          labelDataList.add({
+            'Label': label,
+            'Hours': hours,
+            'Minutes': minutes,
+            'Seconds': seconds,
+          });
+        }
       });
     }
 
-// Create PieChartSectionData objects based on the aggregated values
+    // Create PieChartSectionData objects based on the aggregated values
     labelValues.forEach((label, value) {
       PieChartSectionData section = PieChartSectionData(
         color: getColorForLabel(label),
@@ -159,9 +178,9 @@ class StatsPageState extends State<StatsPage> {
 // Create BarChartGroupData objects based on the aggregated values
     barChartGroups = labelValues1.entries.map((entry) {
       String label = entry.key;
-      int value = entry.value;
+      double value = entry.value;
       logger.d(value);
-      return BarChartGroupData(x: value, barRods: [
+      return BarChartGroupData(x: value.toInt(), barRods: [
         BarChartRodData(
           borderRadius: BorderRadius.circular(100.r),
           width: 40.w,
@@ -172,7 +191,7 @@ class StatsPageState extends State<StatsPage> {
       ]);
     }).toList();
     maxValue = labelValues1.values
-        .fold(0, (prev, value) => value > prev! ? value : prev);
+        .fold<int?>(0, (prev, value) => value > (prev)! ? value as int? : prev);
 
 // Calculate maxY by adding a constant offset to the maximum value
     maxY = maxValue!.toDouble() + 4;
@@ -183,7 +202,7 @@ class StatsPageState extends State<StatsPage> {
         FirebaseFirestore.instance.collection('stopwatch');
 
     String? userID = getUserID(); // Get the current user's ID
-    // Initialize a list to hold the Text widgets
+    dataList.clear(); // Clear dataList before fetching new data
 
     if (userID != null) {
       try {
@@ -191,9 +210,15 @@ class StatsPageState extends State<StatsPage> {
             await users.where('ID', isEqualTo: userID).get();
         if (snapshot.docs.isNotEmpty) {
           for (var doc in snapshot.docs) {
-            var data = doc.data()
-                as Map<String, dynamic>; // Cast data to Map<String, dynamic>
-            dataList.add(data); // Add user data to the list
+            var data = doc.data() as Map<String, dynamic>;
+            // Parse the "addedAt" field into DateTime
+            DateTime addedAt = DateTime.parse(data['addedAt']);
+            // Check if the addedAt date is within the selected date range
+            if ((startDate == null || addedAt.isAfter(startDate!)) &&
+                (endDate == null ||
+                    addedAt.isBefore(endDate!.add(const Duration(days: 1))))) {
+              dataList.add(data);
+            }
           }
           userLabels['data'] = dataList;
           logger.d(userLabels);
@@ -207,7 +232,7 @@ class StatsPageState extends State<StatsPage> {
       print('User ID is null');
     }
 
-    return userLabels; // Return the list of Text widgets
+    return userLabels;
   }
 
   Future<Map<String, dynamic>> fetchUsers2() async {
@@ -215,7 +240,7 @@ class StatsPageState extends State<StatsPage> {
         FirebaseFirestore.instance.collection('focus_timer');
 
     String? userID = getUserID(); // Get the current user's ID
-    // Initialize a list to hold the Text widgets
+    dataList2.clear(); // Clear dataList2 before fetching new data
 
     if (userID != null) {
       try {
@@ -223,9 +248,15 @@ class StatsPageState extends State<StatsPage> {
             await users.where('ID', isEqualTo: userID).get();
         if (snapshot.docs.isNotEmpty) {
           for (var doc in snapshot.docs) {
-            var data = doc.data()
-                as Map<String, dynamic>; // Cast data to Map<String, dynamic>
-            dataList2.add(data); // Add user data to the list
+            var data = doc.data() as Map<String, dynamic>;
+            // Parse the "addedAt" field into DateTime
+            DateTime addedAt = DateTime.parse(data['addedAt']);
+            // Check if the addedAt date is within the selected date range
+            if ((startDate == null || addedAt.isAfter(startDate!)) &&
+                (endDate == null ||
+                    addedAt.isBefore(endDate!.add(const Duration(days: 1))))) {
+              dataList2.add(data);
+            }
           }
           userLabels2['data'] = dataList2;
           logger.d(userLabels2);
@@ -239,8 +270,11 @@ class StatsPageState extends State<StatsPage> {
       print('User ID is null');
     }
 
-    return userLabels2; // Return the list of Text widgets
+    return userLabels2;
   }
+
+  DateTime? selectedStartDate;
+  DateTime? selectedEndDate;
 
   Padding datePicker(String formattedDate, BuildContext context) {
     return Padding(
@@ -259,9 +293,6 @@ class StatsPageState extends State<StatsPage> {
           ),
           GestureDetector(
             onTap: () async {
-              DateTime? selectedStartDate;
-              DateTime? selectedEndDate;
-
               showCustomDateRangePicker(
                 fontFamily: "SFProText",
                 context,
@@ -277,12 +308,16 @@ class StatsPageState extends State<StatsPage> {
                     endDate = end;
                     startDate = start;
                   });
+                  updatePieChartSections(selectedStartDate,
+                      selectedEndDate); // Update charts when date range changes
                 },
                 onCancelClick: () {
                   setState(() {
                     endDate = null;
                     startDate = null;
                   });
+                  updatePieChartSections(selectedStartDate,
+                      selectedEndDate); // Update charts when date range changes
                 },
               );
 
@@ -295,11 +330,11 @@ class StatsPageState extends State<StatsPage> {
                       endDate!.isAfter(timestamp)) {
                     // If the timestamp falls within the selected date range
                     if (selectedStartDate == null ||
-                        selectedStartDate.isAfter(timestamp)) {
+                        selectedStartDate!.isAfter(timestamp)) {
                       selectedStartDate = timestamp;
                     }
                     if (selectedEndDate == null ||
-                        selectedEndDate.isBefore(timestamp)) {
+                        selectedEndDate!.isBefore(timestamp)) {
                       selectedEndDate = timestamp;
                     }
                   }
@@ -381,7 +416,7 @@ class StatsPageState extends State<StatsPage> {
     super.initState();
     fetchUsers();
     fetchUsers2();
-    updatePieChartSections();
+    updatePieChartSections(selectedStartDate, selectedEndDate);
   }
 
   @override
@@ -432,14 +467,13 @@ class StatsPageState extends State<StatsPage> {
               SizedBox(
                 height: 30.h,
               ),
-
+              datePicker(formattedDate, context),
+              SizedBox(
+                height: 50.h,
+              ),
               labelValues.isNotEmpty
                   ? Column(
                       children: [
-                        datePicker(formattedDate, context),
-                        SizedBox(
-                          height: 50.h,
-                        ),
                         SizedBox(
                           height: 300.h,
                           width: 300.w,
@@ -458,7 +492,7 @@ class StatsPageState extends State<StatsPage> {
                         SizedBox(height: 30.h),
                       ],
                     )
-                  : Container(),
+                  : Container(child:  Text("No Data Found".tr())),
               labelValues1.isNotEmpty
                   ? Column(
                       children: [

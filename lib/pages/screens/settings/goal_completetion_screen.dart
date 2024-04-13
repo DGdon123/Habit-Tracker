@@ -505,6 +505,23 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
             return IconButton(
               icon: const Icon(Icons.arrow_back_rounded),
               onPressed: () async {
+                // Show loading indicator
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) =>  AlertDialog(
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        CircularProgressIndicator(
+                          color: AppColors.mainBlue,
+                        ),
+                        SizedBox(height: 16),
+                        Text('Please wait, your goals data is clearing...'.tr()),
+                      ],
+                    ),
+                  ),
+                );
                 // Delete the entire collection
                 await goals
                     .doc(getUserID())
@@ -574,8 +591,8 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
             SizedBox(
               height: 5.h,
             ),
-            const Text(
-              "Kindly note that your Weekly Goals Summary will be cleared upon pressing the back button. To retain the data, we suggest taking a screenshot of the screen.",
+             Text(
+              "Kindly note that your Weekly Goals Summary will be cleared upon pressing the back button. To retain the data, we suggest taking a screenshot of the screen.".tr(),
               textAlign: TextAlign.justify,
             ),
             SizedBox(
@@ -651,8 +668,8 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                                               fontSize: 12),
                                         ),
                                         sleepprogress >= 70
-                                            ? const Text(
-                                                'Great!',
+                                            ?  Text(
+                                                'Great!'.tr(),
                                                 style: TextStyle(
                                                     color:
                                                         CupertinoColors.black,
@@ -661,8 +678,8 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                                               )
                                             : sleepprogress >= 40 &&
                                                     sleepprogress <= 70
-                                                ? const Text(
-                                                    'Good!',
+                                                ?  Text(
+                                                    'Good!'.tr(),
                                                     style: TextStyle(
                                                         color: CupertinoColors
                                                             .black,
@@ -670,8 +687,8 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                                                             FontWeight.w400,
                                                         fontSize: 16),
                                                   )
-                                                : const Text(
-                                                    'Worst!',
+                                                :  Text(
+                                                    'Worst!'.tr(),
                                                     style: TextStyle(
                                                         color: CupertinoColors
                                                             .black,
@@ -849,8 +866,8 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                                               fontSize: 12),
                                         ),
                                         screenprogress >= 70
-                                            ? const Text(
-                                                'Great!',
+                                            ?  Text(
+                                                'Great!'.tr(),
                                                 style: TextStyle(
                                                     color:
                                                         CupertinoColors.black,
@@ -859,8 +876,8 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                                               )
                                             : screenprogress >= 40 &&
                                                     screenprogress <= 70
-                                                ? const Text(
-                                                    'Good!',
+                                                ?  Text(
+                                                    'Good!'.tr(),
                                                     style: TextStyle(
                                                         color: CupertinoColors
                                                             .black,
@@ -868,8 +885,8 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                                                             FontWeight.w400,
                                                         fontSize: 16),
                                                   )
-                                                : const Text(
-                                                    'Worst!',
+                                                :  Text(
+                                                    'Worst!'.tr(),
                                                     style: TextStyle(
                                                         color: CupertinoColors
                                                             .black,
@@ -1030,8 +1047,8 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                                               fontSize: 12),
                                         ),
                                         focusprogress >= 70
-                                            ? const Text(
-                                                'Great!',
+                                            ?  Text(
+                                                'Great!'.tr(),
                                                 style: TextStyle(
                                                     color:
                                                         CupertinoColors.black,
@@ -1040,8 +1057,8 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                                               )
                                             : focusprogress >= 40 &&
                                                     focusprogress <= 70
-                                                ? const Text(
-                                                    'Good!',
+                                                ?  Text(
+                                                    'Good!'.tr(),
                                                     style: TextStyle(
                                                         color: CupertinoColors
                                                             .black,
@@ -1049,8 +1066,8 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                                                             FontWeight.w400,
                                                         fontSize: 16),
                                                   )
-                                                : const Text(
-                                                    'Worst!',
+                                                :  Text(
+                                                    'Worst!'.tr(),
                                                     style: TextStyle(
                                                         color: CupertinoColors
                                                             .black,
@@ -1228,8 +1245,8 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                                               fontSize: 12),
                                         ),
                                         workoutprogress >= 70
-                                            ? const Text(
-                                                'Great!',
+                                            ?  Text(
+                                                'Great!'.tr(),
                                                 style: TextStyle(
                                                     color:
                                                         CupertinoColors.black,
@@ -1238,8 +1255,8 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                                               )
                                             : workoutprogress >= 40 &&
                                                     workoutprogress <= 70
-                                                ? const Text(
-                                                    'Good!',
+                                                ?  Text(
+                                                    'Good!'.tr(),
                                                     style: TextStyle(
                                                         color: CupertinoColors
                                                             .black,
@@ -1247,8 +1264,8 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
                                                             FontWeight.w400,
                                                         fontSize: 16),
                                                   )
-                                                : const Text(
-                                                    'Worst!',
+                                                :  Text(
+                                                    'Worst!'.tr(),
                                                     style: TextStyle(
                                                         color: CupertinoColors
                                                             .black,

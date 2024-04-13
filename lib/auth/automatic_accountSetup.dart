@@ -289,7 +289,7 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
           places.add(formattedPlace);
         }
       } else {
-        places.add('No results found');
+        places.add('No results found'.tr());
       }
 
       setState(() => _places = places);
@@ -514,73 +514,6 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
   }
 }
 
-class AccountSetupBirthdate extends StatefulWidget {
-  const AccountSetupBirthdate({super.key});
-
-  @override
-  State<AccountSetupBirthdate> createState() => _AccountSetupBirthdateState();
-}
-
-class _AccountSetupBirthdateState extends State<AccountSetupBirthdate> {
-  DateTime? _selectedDate;
-
-  @override
-  Widget build(BuildContext context) {
-    final dobProvider =
-        Provider.of<SelectedDateProvider>(context, listen: false);
-    final dobis = dobProvider.selectedDate;
-    return Scaffold(
-      backgroundColor: AppColors.primaryColor,
-      body: Column(
-        children: [
-          SizedBox(
-            height: 15.h,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Text(
-              'What’s your date of birth?',
-              style: AppTextStyles.accountSetup,
-              maxLines: 2,
-            ),
-          ),
-          SizedBox(
-            height: 50.h,
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 40.w),
-            child: DatePickerWidget(
-              // default is not looping
-              lastDate: DateTime(2020, 4, 4),
-              initialDate: DateTime(1995, 4, 4), // DateTime(1994),
-              dateFormat:
-                  // "MM-dd(E)",
-                  "MMMM/dd/yyyy",
-              locale: DatePicker.localeFromString('en'),
-              onChange: (DateTime newDate, _) {
-                setState(() {
-                  _selectedDate = newDate;
-                });
-                dobProvider.setSelectedDate(_selectedDate!);
-                log(dobis.toString());
-              },
-              pickerTheme: DateTimePickerTheme(
-                backgroundColor: Colors.transparent,
-                showTitle: true,
-                itemTextStyle: TextStyle(
-                    fontFamily: 'SFProText',
-                    fontWeight: FontWeight.w600,
-                    color: const Color.fromARGB(255, 0, 0, 0),
-                    fontSize: 25.sp),
-                dividerColor: const Color.fromARGB(255, 0, 0, 0),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class AccountSetupSleeptime extends StatefulWidget {
   const AccountSetupSleeptime({super.key});
@@ -1217,7 +1150,7 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
       child: Column(
         children: [
           Text(
-            'How do you want to track your workout?',
+            'How do you want to track your workout?'.tr(),
             style: TextStyle(
                 fontFamily: 'SFProText',
                 fontSize: 22.sp,
@@ -1257,7 +1190,7 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
                       width: 20,
                     ),
                     Text(
-                      'Automatic',
+                      'Automatic'.tr(),
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 22.sp,
@@ -1310,7 +1243,7 @@ class _WorkoutTrackTypeState extends State<WorkoutTrackType> {
                       width: 20,
                     ),
                     Text(
-                      'Manual',
+                      'Manual'.tr(),
                       style: TextStyle(
                           fontFamily: 'SFProText',
                           fontSize: 22.sp,

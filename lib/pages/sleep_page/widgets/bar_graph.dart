@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -18,12 +20,13 @@ class BarGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var startEndProvider = context.watch<StartEndDateProvider>();
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
           stream: SleepFireStoreServices().getSleepDataRange(
-              startDate: DateTime.now().subtract(Duration(days: 7)),
-              endDate: DateTime.now()),
+              startDate: startEndProvider.startDate,
+              endDate: startEndProvider.endDate),
           builder: (context, snapshot) {
             debugPrint("Snapshot range: ${snapshot.data?.docs}");
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -41,11 +44,6 @@ class BarGraph extends StatelessWidget {
               }
             }
 
-            Future.delayed(Duration.zero, () {
-              Provider.of<AvgSleepProvider>(context, listen: false)
-                  .setAvgTime(sleepSum);
-            });
-
             return SizedBox(
               height: 300,
               child: BarChart(
@@ -60,18 +58,23 @@ class BarGraph extends StatelessWidget {
                       width: 1.w,
                     ),
                   )),
-                  gridData: FlGridData(
+                  gridData: const FlGridData(
                     drawHorizontalLine: true,
                     drawVerticalLine: false,
                   ),
                   maxY: highestDifference,
-                  barGroups: getBarChartGroups(snapshot.data!.docs),
+                  barGroups: getBarChartGroups(
+                      docs: snapshot.data!.docs,
+                      context: context,
+                      dayRange: startEndProvider.findDayRange(),
+                      startEndRange: startEndProvider.findDateRange()),
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
-                          return Text(value.toInt().toString(),
+                          log("Value: $value");
+                          return Text("${value.round()}".toString(),
                               style: TextStyles()
                                   .secondaryTextStyle(16.sp, FontWeight.w600));
                         },
@@ -83,7 +86,7 @@ class BarGraph extends StatelessWidget {
                     topTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
                     ),
-                    bottomTitles: const AxisTitles(
+                    bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: getTitles,
@@ -96,58 +99,69 @@ class BarGraph extends StatelessWidget {
           }),
     );
   }
-} 
 
-List<BarChartGroupData> getBarChartGroups(
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs) {
-  List<BarChartGroupData> barChartGroups = [];
+  /// bar graph data
+  List<BarChartGroupData> getBarChartGroups({
+    required List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+    required BuildContext context,
+    required List<String> dayRange,
+    required List<String> startEndRange,
+  }) {
+    List<BarChartGroupData> barChartGroups = [];
 
-  var dateRange = SleepPageUtils().findLast7Days();
+    // populating the bar chart data
+    for (var date in startEndRange) {
+      var day = date.split("-")[2];
 
-  for (int index = 0; index < dateRange.length; index++) {
-    String date = dateRange[index];
-
-    double difference = 0;
-
-    // Check if the date is contained in the docs
-    for (var doc in docs) {
-      // Assuming doc contains a field named 'date' which stores the date in the format 'YYYY-MM-DD'
-      if (doc['addedAt'] == date) {
-        difference = double.parse(doc['difference']);
-        break;
-      }
+      barChartGroups.add(
+        BarChartGroupData(
+          x: int.parse(day),
+          barRods: [
+            BarChartRodData(
+              width: 10,
+              toY: 0, // default 0
+              color: Color(0xFF004AAD),
+            ),
+          ],
+        ),
+      );
     }
 
-    debugPrint("Bar graph: $difference");
+    context
+        .watch<AvgSleepProvider>()
+        .setAvgTime(sleepSum / barChartGroups.length);
 
-    // Add BarChartGroupData with value 10 if the date is contained in docs, otherwise add 0
-    barChartGroups.add(
-      BarChartGroupData(x: index, barRods: [
-        BarChartRodData(
-          width: 10,
-          toY: difference,
-          color: Color(0xFF004AAD),
-        ),
-      ]),
-    );
+    for (var doc in docs) {
+      var day = doc['addedAt'].toString().split("-")[2];
+
+      int index = dayRange.indexOf(day);
+      barChartGroups[index] = BarChartGroupData(
+        x: int.parse(day),
+        barRods: [
+          BarChartRodData(
+            width: 10,
+            toY: double.parse(doc['difference']),
+            color: Color(0xFF004AAD),
+          ),
+        ],
+      );
+    }
+
+    return barChartGroups;
   }
 
-  return barChartGroups;
-}
+  Widget getTitles(double value, TitleMeta meta) {
+    final style = TextStyle(
+      color: Colors.black.withOpacity(0.75),
+      fontSize: 14.sp,
+      fontFamily: 'SFProText',
+      fontWeight: FontWeight.w400,
+    );
 
-Widget getTitles(double value, TitleMeta meta) {
-  final style = TextStyle(
-    color: Colors.black.withOpacity(0.75),
-    fontSize: 14.sp,
-    fontFamily: 'SFProText',
-    fontWeight: FontWeight.w400,
-  );
-
-  var dayRange = SleepPageUtils().findDayRange();
-
-  return SideTitleWidget(
-    axisSide: meta.axisSide,
-    space: 4,
-    child: Text(dayRange[value.toInt()], style: style),
-  );
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      space: 4,
+      child: Text("${value.round()}", style: style),
+    );
+  }
 }

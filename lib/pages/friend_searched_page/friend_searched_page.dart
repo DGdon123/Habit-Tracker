@@ -6,10 +6,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:habit_tracker/main.dart';
+import 'package:habit_tracker/provider/friends_provider.dart';
 import 'package:habit_tracker/services/friend_firestore_services.dart';
 import 'package:habit_tracker/services/notification_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class FriendSearchedPage extends StatefulWidget {
   final List<QueryDocumentSnapshot> searchResults;
@@ -103,6 +105,7 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
   Widget build(BuildContext context) {
     NotificationServices notificationServices = NotificationServices();
     logger.d(token);
+    final friendsProvider = context.read<FriendsProvider>();
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -110,6 +113,9 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
         itemCount: widget.searchResults.length,
         itemBuilder: (context, index) {
           var data = widget.searchResults[index].data() as Map<String, dynamic>;
+
+          log("Data Friends: $data, AllFriends : ${context.read<FriendsProvider>().allFriends}");
+
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListTile(
@@ -139,65 +145,68 @@ class _AccountSetupSetNameState extends State<FriendSearchedPage> {
                     letterSpacing: 0.01,
                     fontSize: 13.sp),
               ),
-              trailing: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  stream: FriendFirestoreServices()
-                      .listenForFriendRequestSend(receiverID: data["uid"]),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-                      return const Icon(Icons.check);
-                    }
-                    return Container(
-                      decoration: BoxDecoration(boxShadow: [
-                        BoxShadow(
-                            spreadRadius: 0.3,
-                            offset: const Offset(0, .5),
-                            color: Colors.black.withOpacity(0.5))
-                      ], shape: BoxShape.circle, color: AppColors.white),
-                      height: 46,
-                      child: IconButton(
-                        icon: const Icon(Icons.person_add),
-                        onPressed: () {
-                          FriendFirestoreServices()
-                              .sendFriendRequestNotification(
-                                  receiverID: data["uid"],
-                                  photourl: getPhoto().toString(),
-                                  token: token.toString(),
-                                  name: getUsername().toString());
-                          notificationServices
-                              .getDeviceToken()
-                              .then((value) async {
-                            log(data.toString());
-                            var data1 = {
-                              'to': data["device_token"],
-                              'priority': 'high',
-                              'notification': {
-                                'title': 'Habit Tracker',
-                                'body':
-                                    '${getUsername()} has sent you a friend request.'
-                              },
-                              'data': {'type': 'msg'}
-                            };
-                            await http.post(
-                                Uri.parse(
-                                    'https://fcm.googleapis.com/fcm/send'),
-                                body: jsonEncode(data1),
-                                headers: {
-                                  'Content-Type':
-                                      'application/json; charset=UTF-8',
-                                  'Authorization':
-                                      'key=AAAAclKtwpw:APA91bE40rUSq6qXigGzh_3Y6D4mtkr1vjbkZt2_7HDJMzYWB9r53AXdxnWeOue5ZEwSXb_xQnhtJjh3y5AnkApfWJPmicHaIUdbJ2LDs47EhcBQQmk0FhN8sy_vW-b1AEgVxva7lu0n'
-                                });
-                          });
-                          addNotifications(
-                              getUserName().toString(),
-                              data["uid"],
-                              getPhoto().toString(),
-                              data["device_token"],
-                              '${getUsername()} has sent you a friend request.');
-                        },
-                      ),
-                    );
-                  }),
+              trailing: friendsProvider.allFriends.contains(data["uid"])
+                  ? const Text("Added")
+                  : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                      stream: FriendFirestoreServices()
+                          .listenForFriendRequestSend(receiverID: data["uid"]),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData &&
+                            snapshot.data!.docs.isNotEmpty) {
+                          return const Icon(Icons.check);
+                        }
+                        return Container(
+                          decoration: BoxDecoration(boxShadow: [
+                            BoxShadow(
+                                spreadRadius: 0.3,
+                                offset: const Offset(0, .5),
+                                color: Colors.black.withOpacity(0.5))
+                          ], shape: BoxShape.circle, color: AppColors.white),
+                          height: 46,
+                          child: IconButton(
+                            icon: const Icon(Icons.person_add),
+                            onPressed: () {
+                              FriendFirestoreServices()
+                                  .sendFriendRequestNotification(
+                                      receiverID: data["uid"],
+                                      photourl: getPhoto().toString(),
+                                      token: token.toString(),
+                                      name: getUsername().toString());
+                              notificationServices
+                                  .getDeviceToken()
+                                  .then((value) async {
+                                log(data.toString());
+                                var data1 = {
+                                  'to': data["device_token"],
+                                  'priority': 'high',
+                                  'notification': {
+                                    'title': 'Habit Tracker',
+                                    'body':
+                                        '${getUsername()} has sent you a friend request.'
+                                  },
+                                  'data': {'type': 'msg'}
+                                };
+                                await http.post(
+                                    Uri.parse(
+                                        'https://fcm.googleapis.com/fcm/send'),
+                                    body: jsonEncode(data1),
+                                    headers: {
+                                      'Content-Type':
+                                          'application/json; charset=UTF-8',
+                                      'Authorization':
+                                          'key=AAAAclKtwpw:APA91bE40rUSq6qXigGzh_3Y6D4mtkr1vjbkZt2_7HDJMzYWB9r53AXdxnWeOue5ZEwSXb_xQnhtJjh3y5AnkApfWJPmicHaIUdbJ2LDs47EhcBQQmk0FhN8sy_vW-b1AEgVxva7lu0n'
+                                    });
+                              });
+                              addNotifications(
+                                  getUserName().toString(),
+                                  data["uid"],
+                                  getPhoto().toString(),
+                                  data["device_token"],
+                                  '${getUsername()} has sent you a friend request.');
+                            },
+                          ),
+                        );
+                      }),
             ),
           );
         },

@@ -77,7 +77,7 @@ class _StartEndDatePickerState extends State<StartEndDatePicker> {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
             backgroundColor: CupertinoColors.destructiveRed,
           ),
-          onPressed: () => Navigator.pop<Map>(context, {}),
+          onPressed: () => Navigator.pop(context),
           child: Text(
             'Cancel'.tr(),
             style: TextStyle(

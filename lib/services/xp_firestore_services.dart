@@ -42,7 +42,8 @@ class XpFirestoreServices {
       {required int xp,
       required String receiverID,
       required String reason,
-      required String reason2,required bool increment2,
+      required String reason2,
+      required bool increment2,
       required bool increment}) async {
     try {
       var userID = FirebaseAuth.instance.currentUser!
@@ -77,7 +78,7 @@ class XpFirestoreServices {
 
       log(reason);
     } catch (error) {
-      print('Error adding XP: $error');
+      print('Error subtracting XP: $error');
       // Handle error accordingly
     }
   }

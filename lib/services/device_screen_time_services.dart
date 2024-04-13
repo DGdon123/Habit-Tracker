@@ -20,8 +20,6 @@ class DeviceScreenTimeServices {
       for (var info in infoList) {
         usageDuration += info.usage;
         usageList.add(info);
-
-        debugPrint("App: ${info.packageName}, Usage: ${info.usage}");
       }
 
       debugPrint("Total Usage: $usageDuration");

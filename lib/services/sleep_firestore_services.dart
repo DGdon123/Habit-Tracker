@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -47,9 +49,14 @@ class SleepFireStoreServices {
       {required DateTime startDate, required DateTime endDate}) {
     var user = FirebaseAuth.instance.currentUser;
 
+    log("Start date: $startDate, End date: $endDate");
+
     return FirebaseFirestore.instance
         .collection("sleep-time")
         .where("userID", isEqualTo: user!.uid)
+        .where("timestamp",
+            isGreaterThanOrEqualTo: startDate.millisecondsSinceEpoch)
+        .where("timestamp", isLessThanOrEqualTo: endDate.millisecondsSinceEpoch)
         .snapshots();
   }
 }

@@ -27,7 +27,7 @@ class _GymOutTimeState extends State<GymOutTime> {
   bool iosStyle = true;
 
   void gymTimeSet(Time newTime) async {
-    int day = DateTime.now().weekday;
+   
     await GymFirestoreServices()
         .upload(inTime: widget.inTime, outTime: newTime);
     await GoalServices()

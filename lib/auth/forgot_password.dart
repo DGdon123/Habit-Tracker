@@ -100,7 +100,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   : Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 14.0),
                       child: CustomButton(
-                          text: 'Send',
+                          text: 'Send'.tr(),
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               if (!await user.resetPassword(

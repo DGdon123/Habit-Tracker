@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
@@ -102,9 +103,9 @@ class _ChatRoomState extends State<ChatRoom> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Center(
+          title:  Center(
             child: Text(
-              'Gift XP to your friend',
+              'Gift XP to your friend'.tr(),
               style: TextStyle(
                 color: AppColors.textBlack,
                 fontSize: 19,
@@ -133,7 +134,7 @@ class _ChatRoomState extends State<ChatRoom> {
                   contentPadding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                   hintStyle: const TextStyle(color: CupertinoColors.systemGrey),
-                  labelText: 'XP',
+                  labelText: 'XP'.tr(),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
                     borderSide:
@@ -150,7 +151,7 @@ class _ChatRoomState extends State<ChatRoom> {
           ),
           actions: [
             CustomButton(
-              text: 'Send Gift',
+              text: 'Send Gift'.tr(),
               onPressed: () {
                 if (int.parse(xpController.text) > xp) {
                   QuickAlert.show(
@@ -161,7 +162,7 @@ class _ChatRoomState extends State<ChatRoom> {
                       xpController.clear();
                       Navigator.pop(context);
                     },
-                    title: 'Oops...',
+                    title: 'Oops...'.tr(),
                     text: 'Sorry, you have only $xp xp.',
                   );
                 } else {
@@ -459,8 +460,8 @@ class _ChatRoomState extends State<ChatRoom> {
                         color: Colors.black,
                       ),
                       controller: _message,
-                      decoration: const InputDecoration(
-                          hintText: "Write message...",
+                      decoration:  InputDecoration(
+                          hintText: "Write message...".tr(),
                           hintStyle: TextStyle(color: Colors.black54),
                           border: InputBorder.none),
                     ),

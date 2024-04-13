@@ -358,7 +358,7 @@ class FocusPageState extends State<FocusPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child: Text('Cancel'.tr()),
             ),
             TextButton(
               onPressed: () {
@@ -569,8 +569,8 @@ class FocusPageState extends State<FocusPage> {
                         });
                       },
                     ),
-                    const Text(
-                      'hr :',
+                     Text(
+                      'hr :'.tr(),
                       style: TextStyle(fontSize: 28),
                     ),
                     // Minutes
@@ -584,8 +584,8 @@ class FocusPageState extends State<FocusPage> {
                         });
                       },
                     ),
-                    const Text(
-                      'min :',
+                     Text(
+                      'min :'.tr(),
                       style: TextStyle(fontSize: 28),
                     ),
                     // Seconds
@@ -599,8 +599,8 @@ class FocusPageState extends State<FocusPage> {
                         });
                       },
                     ),
-                    const Text(
-                      'sec',
+                     Text(
+                      'sec'.tr(),
                       style: TextStyle(fontSize: 28),
                     ),
                   ],

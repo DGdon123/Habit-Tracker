@@ -16,6 +16,7 @@ import 'package:habit_tracker/services/user_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:the_apple_sign_in/the_apple_sign_in.dart';
 
 import '../../provider/location_provider.dart';
 import '../login_page.dart';
@@ -365,6 +366,31 @@ class UserRepository with ChangeNotifier {
       return false;
     }
   }
+
+  
+
+Future<void> signInWithApple({required BuildContext 
+
+context}) async {
+    // 1. perform the sign-in request
+    final result = await TheAppleSignIn.performRequests(
+        [AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])]);
+    // 2. check the result
+    switch (result.status) {
+      case AuthorizationStatus.authorized:
+        final appleIdCredential = result.credential!;
+        final oAuthProvider = OAuthProvider('apple.com');
+        final credential = oAuthProvider.credential(
+          idToken: String.fromCharCodes(appleIdCredential.identityToken!),
+          accessToken:
+              String.fromCharCodes(appleIdCredential.authorizationCode!),
+        );
+        final userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+        final firebaseUser = userCredential.user!;
+            }
+  }
+
 
   Future<bool> signInWithFacebook(BuildContext context) async {
     try {

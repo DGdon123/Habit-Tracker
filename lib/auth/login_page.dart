@@ -427,23 +427,28 @@ class _LoginScreenState extends State<LoginScreen> {
           width: 35.w,
         ),
         // button login with apple
-        Container(
-          width: 65.w,
-          height: 65.h,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100.r),
-            border: Border.all(
-              width: 1.w,
-              color: AppColors.seperatorColor,
+        GestureDetector(
+          onTap: () async{
+            await context.read<UserRepository>().signInWithApple(context: context);
+          },
+          child: Container(
+            width: 65.w,
+            height: 65.h,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100.r),
+              border: Border.all(
+                width: 1.w,
+                color: AppColors.seperatorColor,
+              ),
             ),
-          ),
-          child: SizedBox(
-            height: 26.h,
-            width: 26.w,
-            child: SvgPicture.asset(
-              AppIcons.apple,
-              fit: BoxFit.contain,
+            child: SizedBox(
+              height: 26.h,
+              width: 26.w,
+              child: SvgPicture.asset(
+                AppIcons.apple,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ),

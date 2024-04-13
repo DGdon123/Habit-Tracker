@@ -61,6 +61,8 @@ android {
         multiDexEnabled true
     }
 
+    Sulabh Shrestha
+
      signingConfigs {
        release {
            keyAlias keystoreProperties['keyAlias']

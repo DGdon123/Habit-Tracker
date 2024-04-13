@@ -9,7 +9,7 @@ import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
 import 'package:hive/hive.dart';
-import 'package:audioplayers/audioplayers.dart' as de;
+// import 'package:audioplayers/audioplayers.dart' as de;
 import 'package:provider/provider.dart';
 
 class FocusTimerComplete extends StatefulWidget {
@@ -27,7 +27,7 @@ class FocusTimerComplete extends StatefulWidget {
 }
 
 class _PickCharacterPageState extends State<FocusTimerComplete> {
-  de.AudioPlayer audioPlayer = de.AudioPlayer();
+  // de.AudioPlayer audioPlayer = de.AudioPlayer();
   @override
   Widget build(BuildContext context) {
     return SafeArea(

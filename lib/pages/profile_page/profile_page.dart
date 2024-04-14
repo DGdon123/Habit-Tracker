@@ -18,6 +18,7 @@ import 'package:habit_tracker/pages/profile_page/widgets/friends_list_view.dart'
 import 'package:habit_tracker/pages/profile_page/widgets/received_friend_request.dart';
 
 import 'package:habit_tracker/pages/friend_searched_page/friend_searched_page.dart';
+import 'package:habit_tracker/pages/qr_screen/qr_screen.dart';
 
 import 'package:habit_tracker/pages/screens/settings/settings.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
@@ -401,19 +402,34 @@ class ProfilePageState extends State<ProfilePage>
                   getPhoto() == null ||
                           getPhoto().toString() ==
                               "No host specified in URI file:///null"
-                      ? Image.asset(
-                          AppImages.profileavatar,
-                          height: 70.h,
-                          width: 70.w,
+                      ? InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const QRscreen()));
+                          },
+                          child: Image.asset(
+                            AppImages.profileavatar,
+                            height: 70.h,
+                            width: 70.w,
+                          ),
                         )
-                      : SizedBox(
-                          height: 70.h,
-                          width: 70.w,
-                          child: CircleAvatar(
-                              radius: 35.0,
-                              backgroundImage:
-                                  NetworkImage(getPhoto().toString())),
-                        ),
+                      : InkWell( onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const QRscreen()));
+                          },
+                        child: SizedBox(
+                            height: 70.h,
+                            width: 70.w,
+                            child: CircleAvatar(
+                                radius: 35.0,
+                                backgroundImage:
+                                    NetworkImage(getPhoto().toString())),
+                          ),
+                      ),
                 ],
               ),
               SizedBox(
@@ -551,8 +567,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
 
                           if (users.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                                 SnackBar(
-                                    content: Text("User not found".tr())));
+                                SnackBar(content: Text("User not found".tr())));
                             return;
                           }
 
@@ -639,11 +654,11 @@ class ActivityPage extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 } else if (snapshot.hasError) {
-                  return  Center(
+                  return Center(
                     child: Text('Something went wrong'.tr()),
                   );
                 } else if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-                  return  Center(
+                  return Center(
                     child: Text('No data found'.tr()),
                   );
                 }

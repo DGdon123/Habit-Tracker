@@ -467,15 +467,14 @@ class UserRepository with ChangeNotifier {
 
   
 
-Future<void> signInWithApple({required BuildContext 
+Future<void> signInWithApple({required BuildContext context}) async {
+try{
 
-context}) async {
     // 1. perform the sign-in request
     final result = await TheAppleSignIn.performRequests(
         [AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])]);
     // 2. check the result
-    switch (result.status) {
-      case AuthorizationStatus.authorized:
+    
         final appleIdCredential = result.credential!;
         final oAuthProvider = OAuthProvider('apple.com');
         final credential = oAuthProvider.credential(
@@ -485,8 +484,41 @@ context}) async {
         );
         final userCredential =
             await FirebaseAuth.instance.signInWithCredential(credential);
-        final firebaseUser = userCredential.user!;
-            }
+        _status = Status.Authenticated;
+      notifyListeners();
+
+      final isOldUser = await UserFireStoreServices()
+          .checkIfUserExists(userCredential.user!.email.toString());
+
+      log("Is old user: $isOldUser");
+      if (isOldUser) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WorkoutSetUp(
+              email: userCredential.user?.email ?? "",
+              username: userCredential.user!.displayName.toString(),
+              uid: userCredential.user!.uid.toString(),
+              photoURL: userCredential.user?.photoURL ?? "",
+            ),
+          ),
+        );
+      }
+    }catch(e){
+      print(e);
+      _status = Status.Unauthenticated;
+      notifyListeners();
+      
+     
+    }
+            
   }
 
 

@@ -61,7 +61,7 @@ android {
         multiDexEnabled true
     }
 
-    Sulabh Shrestha
+   
 
      signingConfigs {
        release {

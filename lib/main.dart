@@ -16,6 +16,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:habit_tracker/auth/login_page.dart';
 import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
+import 'package:habit_tracker/firebase_options.dart';
 import 'package:habit_tracker/onboarding/onboardingScreen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart' as img;
@@ -27,6 +28,7 @@ import 'package:habit_tracker/provider/flag_provider.dart';
 import 'package:habit_tracker/provider/friends_provider.dart';
 import 'package:habit_tracker/provider/goals_provider.dart';
 import 'package:habit_tracker/provider/user_state_provider.dart';
+import 'package:habit_tracker/services/health_app_services.dart';
 import 'package:habit_tracker/services/local_storage_services.dart';
 import 'package:habit_tracker/services/notification_services.dart';
 import 'package:http/http.dart' as http;
@@ -53,7 +55,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await EasyLocalization.ensureInitialized();
-  await pre.Firebase.initializeApp();
+  await pre.Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   Directory directory = await getApplicationDocumentsDirectory();
   Hive.init(directory.path);
@@ -61,6 +65,8 @@ Future<void> main() async {
   Hive.registerAdapter(DataModel1Adapter());
   await Hive.openBox<DataModel>('hive_box');
   await Hive.openBox<DataModel1>('hive_box1');
+
+  await HealthAppServices().connect(); 
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => UserRepository.instance()),

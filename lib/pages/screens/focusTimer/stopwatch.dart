@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:audioplayers/audioplayers.dart' as de;
+// import 'package:audioplayers/audioplayers.dart' as de;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -34,7 +34,7 @@ class StopWatchScreen extends StatefulWidget {
 
 class _FocusMainScreenState extends State<StopWatchScreen> {
   final _isHours = true;
-  de.AudioPlayer audioPlayer = de.AudioPlayer();
+  // de.AudioPlayer audioPlayer = de.AudioPlayer();
 
   bool started = false;
   double _progressValue = 1;
@@ -83,18 +83,19 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
     milli = hoursInMillis + minutesInMillis + secondsInMillis;
   }
 
-  Future<void> playMusic(de.Source filename) async {
+  //Future<void> playMusic(de.Source filename) async {
     // Stop any currently playing music
 
     // Calculate the total duration in seconds
 
     // Play the specified music file at the specified position
-    await audioPlayer.play(filename,
-        volume: 100, mode: de.PlayerMode.mediaPlayer);
-    audioPlayer.setReleaseMode(de.ReleaseMode.loop);
+    
+    //await audioPlayer.play(filename,
+    //    volume: 100, mode: de.PlayerMode.mediaPlayer);
+    // audioPlayer.setReleaseMode(de.ReleaseMode.loop);
     // Indicate that the music playback has started
-    print('Music playback started');
-  }
+    // print('Music playback started');
+  //}
 
   @override
   void dispose() async {
@@ -165,7 +166,7 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                           GestureDetector(
                             onTap: () {
                               if (started == false) {
-                                audioPlayer.stop();
+                                //audioPlayer.stop();
                                 Navigator.pop(context);
                               } else {
                                 QuickAlert.show(
@@ -322,7 +323,7 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                                     debugPrint(
                                         "Close tapped $hours, $minutes, $seconds");
 
-                                    audioPlayer.stop();
+                                    //audioPlayer.stop();
 
                                     if (hours != 0 || minutes != 0) {
                                       debugPrint("adding to firestore");
@@ -359,7 +360,7 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                                       started = false;
                                       addUser(hours, minutes, seconds);
                                       if (hours != 0 || minutes != 0) {
-                                        audioPlayer.stop();
+                                        //audioPlayer.stop();
                                         var xp = hours * 60 + minutes;
                                         XpFirestoreServices().addXp(
                                             increment: true,
@@ -424,9 +425,9 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                           }
                         });
                         if (s1) {
-                          playMusic(de.AssetSource('lofi.mp3'));
+                          // playMusic(de.AssetSource('lofi.mp3'));
                         } else {
-                          audioPlayer.stop();
+                          // audioPlayer.stop();
                         }
                       },
                     ),
@@ -444,9 +445,9 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                           }
                         });
                         if (s2) {
-                          playMusic(de.AssetSource('piano.mp3'));
+                          // playMusic(de.AssetSource('piano.mp3'));
                         } else {
-                          audioPlayer.stop();
+                          // audioPlayer.stop();
                         }
                       },
                     ),
@@ -464,9 +465,9 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                           }
                         });
                         if (s3) {
-                          playMusic(de.AssetSource('jazz.mp3'));
+                          // playMusic(de.AssetSource('jazz.mp3'));
                         } else {
-                          audioPlayer.stop();
+                          // audioPlayer.stop();
                         }
                       },
                     ),
@@ -484,9 +485,9 @@ class _FocusMainScreenState extends State<StopWatchScreen> {
                           }
                         });
                         if (s4) {
-                          playMusic(de.AssetSource('zen.mp3'));
+                          // playMusic(de.AssetSource('zen.mp3'));
                         } else {
-                          audioPlayer.stop();
+                          // audioPlayer.stop();
                         }
                       },
                     ),

@@ -16,6 +16,16 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>habit_tracker</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs access to location when open and in the background.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs access to location when in the background.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to location when open.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+	<string>location</string>
+	</array>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -40,7 +50,7 @@
 	<key>FacebookDisplayName</key>
 	<string>Habit Tracker</string>
 	<key>GIDClientID</key>
-	<string>491013391004-aqrjsqdpadnb3l577nid6ulfkgfkikvc.apps.googleusercontent.com</string>
+	<string>491013391004-1a5ocpuoue0lnhmkn4n4a7rqqfu8a97a.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSHealthShareUsageDescription</key>

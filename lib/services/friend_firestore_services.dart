@@ -22,7 +22,7 @@ class FriendFirestoreServices {
       "senderID": userID,
       "sendername": name,
       "receiverID": receiverID,
-      "photourl":photourl,
+      "photourl": photourl,
       "token": token,
       "timestamp": DateTime.now().millisecondsSinceEpoch
     });
@@ -43,6 +43,22 @@ class FriendFirestoreServices {
   void acceptFriendRequest({required String senderID}) {
     // first removingwe
     removeFriendRequest(senderID: senderID);
+
+    // adding to friends collection
+    friendsRef.doc(userID).set({
+      "uid": userID,
+      "friends": FieldValue.arrayUnion([senderID])
+    }, SetOptions(merge: true));
+
+    // adding to friends collection of sender
+    friendsRef.doc(senderID).set({
+      "uid": senderID,
+      "friends": FieldValue.arrayUnion([userID])
+    }, SetOptions(merge: true));
+  }
+
+  void qracceptFriendRequest({required String senderID}) {
+    // first removingwe
 
     // adding to friends collection
     friendsRef.doc(userID).set({

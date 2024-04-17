@@ -1,15 +1,18 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
+import 'package:rive/rive.dart';
 
 class CustomizeCharacter extends StatefulWidget {
   const CustomizeCharacter({super.key});
@@ -19,6 +22,41 @@ class CustomizeCharacter extends StatefulWidget {
 }
 
 class _CustomizeCharacterState extends State<CustomizeCharacter> {
+  Artboard? riveArtboard;
+  SMINumber? num;
+
+  @override
+  void initState() {
+    super.initState();
+    rootBundle.load('assets/character.riv').then(
+      (data) async {
+        try {
+          final file = RiveFile.import(data);
+          final artboard = file.mainArtboard;
+
+          var controller =
+              StateMachineController.fromArtboard(artboard, 'State Machine 2');
+
+          log("Controller: $controller");
+
+          if (controller != null) {
+            artboard.addController(controller);
+
+            controller.inputs.forEach((element) {
+              log("Element: $element, ${element.name}, ${element.runtimeType}");
+              if (element.name == "clothing") {
+                num = element as SMINumber;
+              }
+            });
+          }
+          setState(() => riveArtboard = artboard);
+        } catch (e) {
+          print(e);
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -43,6 +81,33 @@ class _CustomizeCharacterState extends State<CustomizeCharacter> {
               Expanded(
                 child: ListView(
                   children: [
+                    TextField(
+                      onChanged: (value) {
+                        num?.change(double.parse(value));
+                      },
+                    ),
+
+                    // when clicking change sminumber value
+                    GestureDetector(
+                      onTap: () {
+                        num?.change(12);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20.w, vertical: 15.h),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                                width: 1.w, color: Color(0xFFD0D0D0)),
+                          ),
+                        ),
+                        child: Image.asset(
+                          "assets/images/eyebrow.png",
+                          height: 20.h,
+                        ),
+                      ),
+                    ),
+
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -324,14 +389,17 @@ class _CustomizeCharacterState extends State<CustomizeCharacter> {
                           ),
                         ),
                         SizedBox(
-                          width: 40.w,
+                          width: 4.w,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Image.asset(
-                              AppImages.characterFull,
-                              height: 450.h,
+                            SizedBox(
+                              width: 240.w,
+                              height: 520.h,
+                              child: Rive(
+                                artboard: riveArtboard!,
+                              ),
                             ),
                             SizedBox(
                               height: 20.h,

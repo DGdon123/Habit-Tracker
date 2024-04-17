@@ -44,6 +44,8 @@ class _CustomizeCharacterState extends State<CustomizeCharacter> {
 
             controller.inputs.forEach((element) {
               log("Element: $element, ${element.name}, ${element.runtimeType}");
+
+              // adding as per name, without this it wont change the value
               if (element.name == "clothing") {
                 num = element as SMINumber;
               }
@@ -56,6 +58,25 @@ class _CustomizeCharacterState extends State<CustomizeCharacter> {
       },
     );
   }
+
+  List<String> iconsPath = [
+    AppIcons.eye,
+    AppIcons.eyebrow,
+    AppIcons.nose,
+    AppIcons.hairstyle,
+    AppIcons.glasses,
+    AppIcons.mouth,
+    AppIcons.people,
+    AppIcons.shoes,
+    AppIcons.mustache,
+    AppIcons.tshirt,
+    AppIcons.pant,
+    AppIcons.lipstick,
+    AppIcons.headband,
+    AppIcons.beard,
+  ];
+
+  String selectedIconPath = AppIcons.eye; // for selected icon path
 
   @override
   Widget build(BuildContext context) {
@@ -81,33 +102,11 @@ class _CustomizeCharacterState extends State<CustomizeCharacter> {
               Expanded(
                 child: ListView(
                   children: [
-                    TextField(
-                      onChanged: (value) {
-                        num?.change(double.parse(value));
-                      },
-                    ),
-
-                    // when clicking change sminumber value
-                    GestureDetector(
-                      onTap: () {
-                        num?.change(12);
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 20.w, vertical: 15.h),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                                width: 1.w, color: Color(0xFFD0D0D0)),
-                          ),
-                        ),
-                        child: Image.asset(
-                          "assets/images/eyebrow.png",
-                          height: 20.h,
-                        ),
-                      ),
-                    ),
-
+                    // TextField(
+                    //   onChanged: (value) {
+                    //     num?.change(double.parse(value));
+                    //   },
+                    // ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -128,232 +127,38 @@ class _CustomizeCharacterState extends State<CustomizeCharacter> {
                               )),
                           child: Column(
                             children: [
-                              // eye
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
+                              for (var path in iconsPath)
+                                GestureDetector(
+                                  onTap: () {
+                                    log("clicked");
+                                    setState(() {
+                                      selectedIconPath = path;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20.w, vertical: 15.h),
+                                    decoration: BoxDecoration(
+                                      color: path == selectedIconPath
+                                          ? Colors.grey
+                                          : Colors.white,
+                                      border: Border(
+                                        bottom: BorderSide(
+                                            width: 1.w,
+                                            color: Color(0xFFD0D0D0)),
+                                      ),
+                                    ),
+                                    child: SvgPicture.asset(
+                                      path,
+                                      height: 30.h,
+                                    ),
                                   ),
                                 ),
-                                child: SvgPicture.asset(
-                                  AppIcons.eye,
-                                  height: 30.h,
-                                ),
-                              ),
-                              // eyebrow
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primaryColor,
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.eyebrow,
-                                  height: 30.h,
-                                ),
-                              ),
-                              // nose
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.nose,
-                                  height: 30.h,
-                                ),
-                              ),
-
-                              // hairstyle
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.hairstyle,
-                                  height: 30.h,
-                                ),
-                              ),
-
-                              // glasses
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.glasses,
-                                  height: 30.h,
-                                ),
-                              ),
-
-                              // mouth
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.mouth,
-                                  height: 30.h,
-                                ),
-                              ),
-
-                              // people
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.people,
-                                  height: 30.h,
-                                ),
-                              ),
-                              // shoes
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.shoes,
-                                  height: 30.h,
-                                ),
-                              ),
-
-                              // mustache
-
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.mustache,
-                                  height: 30.h,
-                                ),
-                              ),
-                              // tshirt
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.tshirt,
-                                  height: 30.h,
-                                ),
-                              ),
-                              // pant
-
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.pant,
-                                  height: 30.h,
-                                ),
-                              ),
-                              // lipstick
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.lipstick,
-                                  height: 30.h,
-                                ),
-                              ),
-
-                              // headband
-
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.headband,
-                                  height: 30.h,
-                                ),
-                              ),
-                              // beard
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 15.h),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1.w, color: Color(0xFFD0D0D0)),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.beard,
-                                  height: 30.h,
-                                ),
-                              ),
                             ],
                           ),
                         ),
 
-                        // next section
-
+                        // adjacent section
                         Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.only(
@@ -380,9 +185,9 @@ class _CustomizeCharacterState extends State<CustomizeCharacter> {
                                         width: 1.w, color: Color(0xFFD0D0D0)),
                                   ),
                                 ),
-                                child: Image.asset(
-                                  "assets/images/eyebrow.png",
-                                  height: 20.h,
+                                child: SvgPicture.asset(
+                                  selectedIconPath,
+                                  height: 30.h,
                                 ),
                               ),
                             ],

@@ -21,6 +21,7 @@ import 'package:habit_tracker/onboarding/onboardingScreen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart' as img;
 import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/pages/screens/settings/goal_completetion_screen.dart';
 import 'package:habit_tracker/provider/avg_sleep_provider.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
@@ -247,7 +248,7 @@ class MyApp extends StatelessWidget {
             locale: context.locale,
             debugShowCheckedModeBanner: false,
             // home: const HomePage1(),
-            home: const CustomizeCharacter(),
+            home: const PickCharacterPage(),
           );
         });
   }

@@ -15,7 +15,8 @@ import 'package:habit_tracker/utils/images.dart';
 import 'package:rive/rive.dart';
 
 class CustomizeCharacter extends StatefulWidget {
-  const CustomizeCharacter({super.key});
+  final String filePath;
+  const CustomizeCharacter({super.key, required this.filePath});
 
   @override
   State<CustomizeCharacter> createState() => _CustomizeCharacterState();
@@ -28,14 +29,18 @@ class _CustomizeCharacterState extends State<CustomizeCharacter> {
   @override
   void initState() {
     super.initState();
-    rootBundle.load('assets/character.riv').then(
+    rootBundle.load(widget.filePath).then(
       (data) async {
         try {
           final file = RiveFile.import(data);
           final artboard = file.mainArtboard;
 
+          var machineCode = widget.filePath.contains("character")
+              ? 'State Machine 2'
+              : 'State Machine 1';
+
           var controller =
-              StateMachineController.fromArtboard(artboard, 'State Machine 2');
+              StateMachineController.fromArtboard(artboard, machineCode);
 
           log("Controller: $controller");
 
@@ -43,7 +48,7 @@ class _CustomizeCharacterState extends State<CustomizeCharacter> {
             artboard.addController(controller);
 
             controller.inputs.forEach((element) {
-              log("Element: $element, ${element.name}, ${element.runtimeType}");
+              // log("Element: $element, ${element.name}, ${element.runtimeType}");
 
               // adding as per name, without this it wont change the value
               if (element.name == "clothing") {

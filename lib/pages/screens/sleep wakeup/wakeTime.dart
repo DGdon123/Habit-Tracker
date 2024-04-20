@@ -35,10 +35,6 @@ class _WakeTimeState extends State<WakeTime> {
         DateTime(2024, 1, 1, widget.sleepTime.hour, widget.sleepTime.minute);
     var endTime = DateTime(2024, 1, 2, _timeWake.hour, _timeWake.minute);
 
-    // if (endTime.isBefore(startTime)) {
-    //   endTime = endTime.add(Duration(days: 1));
-    // }
-
     var difference = endTime.difference(startTime);
 
     await SleepFireStoreServices().addNewSleepTime(

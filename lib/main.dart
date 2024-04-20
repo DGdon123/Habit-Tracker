@@ -21,6 +21,7 @@ import 'package:habit_tracker/onboarding/onboardingScreen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart' as img;
 import 'package:habit_tracker/pages/home_page.dart';
+import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
 import 'package:habit_tracker/pages/screens/settings/goal_completetion_screen.dart';
 import 'package:habit_tracker/provider/avg_sleep_provider.dart';
 import 'package:habit_tracker/provider/dob_provider.dart';
@@ -44,9 +45,11 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 
 import 'package:provider/provider.dart';
 import 'package:logger/logger.dart';
+import 'package:rive/rive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth/repositories/gymtime_model.dart';
 import 'auth/repositories/user_repository.dart';
+import 'pages/screens/customize character/customizeCharater.dart';
 
 var logger = Logger(
   printer: PrettyPrinter(),
@@ -56,8 +59,7 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await EasyLocalization.ensureInitialized();
   await pre.Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
-  );
+      options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   Directory directory = await getApplicationDocumentsDirectory();
   Hive.init(directory.path);
@@ -66,7 +68,7 @@ Future<void> main() async {
   await Hive.openBox<DataModel>('hive_box');
   await Hive.openBox<DataModel1>('hive_box1');
 
-  await HealthAppServices().connect(); 
+  // await HealthAppServices().connect();
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => UserRepository.instance()),
@@ -245,7 +247,8 @@ class MyApp extends StatelessWidget {
             supportedLocales: context.supportedLocales,
             locale: context.locale,
             debugShowCheckedModeBanner: false,
-            home: const HomePage1(),
+            // home: const HomePage1(),
+            home: const PickCharacterPage(),
           );
         });
   }

@@ -75,7 +75,7 @@ class FriendContainer extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      xp.toString(),
+                      '${xp.toString()} XP',
                       style: TextStyle(
                         color: const Color(0xFF9B9BA1),
                         fontSize: 14.sp,

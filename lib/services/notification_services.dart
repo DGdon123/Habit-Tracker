@@ -1,8 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
+
 import 'dart:math' as re;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -40,7 +42,8 @@ class NotificationServices {
       BuildContext context, RemoteMessage message) async {
     var androidInitializationSettings =
         const AndroidInitializationSettings('@mipmap/ic_launcher');
-    var iosInitializationSettings = const DarwinInitializationSettings();
+    var iosInitializationSettings =  DarwinInitializationSettings(onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+    
     var initializationSetting = InitializationSettings(
         android: androidInitializationSettings, iOS: iosInitializationSettings);
     await _flutterLocalNotificationPlugin.initialize(initializationSetting,
@@ -56,6 +59,9 @@ class NotificationServices {
         log(message.notification!.body.toString());
         log(message.data.toString());
         log(message.data["type"]);
+      }
+      if(Platform.isIOS){
+        foregroundMessage();
       }
       if (Platform.isAndroid) {
         initLocalNotifications(context, message);
@@ -119,6 +125,26 @@ class NotificationServices {
     });
   }
 
+  void onDidReceiveLocalNotification(
+    int id, String? title, String? body, String? payload) async {
+  // display a dialog with the notification details, tap ok to go to another page
+ CupertinoAlertDialog(
+      title: Text(title??''),
+      content: Text(body??''),
+      actions: [
+        CupertinoDialogAction(
+          isDefaultAction: true,
+          child: Text('Ok'),
+          onPressed: () async {
+           
+           
+          },
+        )
+      ],
+    
+  );
+}
+
   Future<void> handleMessage(
       BuildContext context, RemoteMessage message) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -151,4 +177,8 @@ class NotificationServices {
                   name: name)));
     }
   }
-}
+
+  Future foregroundMessage() async{ 
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true,badge: true,sound: true);
+  }
+} 

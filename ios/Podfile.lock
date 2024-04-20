@@ -821,6 +821,8 @@ PODS:
   - AppAuth/Core (1.7.4)
   - AppAuth/ExternalUserAgent (1.7.4):
     - AppAuth/Core
+  - audioplayers_darwin (0.0.1):
+    - Flutter
   - background_fetch (1.3.2):
     - Flutter
   - background_locator_2 (0.0.1):
@@ -934,6 +936,8 @@ PODS:
     - FirebaseCoreExtension (~> 10.0)
     - GTMSessionFetcher/Core (< 4.0, >= 2.1)
   - Flutter (1.0.0)
+  - flutter_barcode_scanner (2.0.0):
+    - Flutter
   - flutter_compass (0.0.1):
     - Flutter
   - flutter_facebook_auth (6.2.0):
@@ -987,10 +991,10 @@ PODS:
   - GoogleUtilities/UserDefaults (7.13.0):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
-  - "gRPC-C++ (1.62.1)":
-    - "gRPC-C++/Implementation (= 1.62.1)"
-    - "gRPC-C++/Interface (= 1.62.1)"
-  - "gRPC-C++/Implementation (1.62.1)":
+  - "gRPC-C++ (1.62.4)":
+    - "gRPC-C++/Implementation (= 1.62.4)"
+    - "gRPC-C++/Interface (= 1.62.4)"
+  - "gRPC-C++/Implementation (1.62.4)":
     - abseil/algorithm/container (= 1.20240116.1)
     - abseil/base/base (= 1.20240116.1)
     - abseil/base/config (= 1.20240116.1)
@@ -1021,15 +1025,15 @@ PODS:
     - abseil/types/span (= 1.20240116.1)
     - abseil/types/variant (= 1.20240116.1)
     - abseil/utility/utility (= 1.20240116.1)
-    - "gRPC-C++/Interface (= 1.62.1)"
-    - "gRPC-C++/Privacy (= 1.62.1)"
-    - gRPC-Core (= 1.62.1)
-  - "gRPC-C++/Interface (1.62.1)"
-  - "gRPC-C++/Privacy (1.62.1)"
-  - gRPC-Core (1.62.1):
-    - gRPC-Core/Implementation (= 1.62.1)
-    - gRPC-Core/Interface (= 1.62.1)
-  - gRPC-Core/Implementation (1.62.1):
+    - "gRPC-C++/Interface (= 1.62.4)"
+    - "gRPC-C++/Privacy (= 1.62.4)"
+    - gRPC-Core (= 1.62.4)
+  - "gRPC-C++/Interface (1.62.4)"
+  - "gRPC-C++/Privacy (1.62.4)"
+  - gRPC-Core (1.62.4):
+    - gRPC-Core/Implementation (= 1.62.4)
+    - gRPC-Core/Interface (= 1.62.4)
+  - gRPC-Core/Implementation (1.62.4):
     - abseil/algorithm/container (= 1.20240116.1)
     - abseil/base/base (= 1.20240116.1)
     - abseil/base/config (= 1.20240116.1)
@@ -1061,10 +1065,10 @@ PODS:
     - abseil/types/variant (= 1.20240116.1)
     - abseil/utility/utility (= 1.20240116.1)
     - BoringSSL-GRPC (= 0.0.32)
-    - gRPC-Core/Interface (= 1.62.1)
-    - gRPC-Core/Privacy (= 1.62.1)
-  - gRPC-Core/Interface (1.62.1)
-  - gRPC-Core/Privacy (1.62.1)
+    - gRPC-Core/Interface (= 1.62.4)
+    - gRPC-Core/Privacy (= 1.62.4)
+  - gRPC-Core/Interface (1.62.4)
+  - gRPC-Core/Privacy (1.62.4)
   - GTMAppAuth (2.0.0):
     - AppAuth/Core (~> 1.6)
     - GTMSessionFetcher/Core (< 4.0, >= 1.5)
@@ -1098,6 +1102,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - audioplayers_darwin (from `.symlinks/plugins/audioplayers_darwin/ios`)
   - background_fetch (from `.symlinks/plugins/background_fetch/ios`)
   - background_locator_2 (from `.symlinks/plugins/background_locator_2/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
@@ -1107,6 +1112,7 @@ DEPENDENCIES:
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
+  - flutter_barcode_scanner (from `.symlinks/plugins/flutter_barcode_scanner/ios`)
   - flutter_compass (from `.symlinks/plugins/flutter_compass/ios`)
   - flutter_facebook_auth (from `.symlinks/plugins/flutter_facebook_auth/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
@@ -1160,6 +1166,8 @@ SPEC REPOS:
     - Toast
 
 EXTERNAL SOURCES:
+  audioplayers_darwin:
+    :path: ".symlinks/plugins/audioplayers_darwin/ios"
   background_fetch:
     :path: ".symlinks/plugins/background_fetch/ios"
   background_locator_2:
@@ -1178,6 +1186,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
     :path: Flutter
+  flutter_barcode_scanner:
+    :path: ".symlinks/plugins/flutter_barcode_scanner/ios"
   flutter_compass:
     :path: ".symlinks/plugins/flutter_compass/ios"
   flutter_facebook_auth:
@@ -1214,6 +1224,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   abseil: ebec4f56469dd7ce9ab08683c0319a68aa0ad86e
   AppAuth: 182c5b88630569df5acb672720534756c29b3358
+  audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
   background_fetch: 2319bf7e18237b4b269430b7f14d177c0df09c5a
   background_locator_2: bc8a422343ab656d5bd98e08694c6f89fef20418
   BoringSSL-GRPC: 1e2348957acdbcad360b80a264a90799984b2ba6
@@ -1241,6 +1252,7 @@ SPEC CHECKSUMS:
   FirebaseSharedSwift: 76e1529c32101d80e4f1ca2fba7c39d59f0a390a
   FirebaseStorage: bc7bddc743548a89cfb896843a77cf4bdde2c231
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_barcode_scanner: 7a1144744c28dc0c57a8de7218ffe5ec59a9e4bf
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
   flutter_facebook_auth: 66188df7905bfcaf3d6d2bd6527302c56448f04d
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
@@ -1252,8 +1264,8 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
   GoogleSignIn: b232380cf495a429b8095d3178a8d5855b42e842
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
-  "gRPC-C++": 12f33a422dcab88dcd0c53e52cd549a929f0f244
-  gRPC-Core: 6ec9002832e1e22c5bb8c54994b050b0ee4205c6
+  "gRPC-C++": 5e63d6ceeaf267ad146ee122cf53be8dec480044
+  gRPC-Core: 84db85fef75956d15b1f0ec289d4e41ac1604174
   GTMAppAuth: 99fb010047ba3973b7026e45393f51f27ab965ae
   GTMSessionFetcher: 0e876eea9782ec6462e91ab872711c357322c94f
   health: 5a380c0f6c4f619535845992993964293962e99e

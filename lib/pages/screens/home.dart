@@ -113,16 +113,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  @override
-  void initState() {
-    getLastLocationTime();
-    getLastLocationTime1();
-    fetchUsers();
-    fetchUsers4();
-    updatePieChartSections();
-    super.initState();
-  }
-
+ 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -321,14 +312,7 @@ class _HomeState extends State<Home> {
           height: 100.h,
           decoration: ShapeDecoration(
             color: AppColors.widgetColorR,
-            // gradient: LinearGradient(
-            //   begin: Alignment.bottomRight,
-            //    end: Alignment.topLeft,
-            //   colors: [
-            //     Color(0xFF0F32ED),
-            //     Color(0xFF5FDCCC),
-            //   ],
-            // ),
+           
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.r),
             ),
@@ -359,18 +343,32 @@ class _HomeState extends State<Home> {
                             return Text("Error".tr());
                           }
 
-                          var duration = snapshot.data!["usage"] as Duration;
+                         var duration = snapshot.data!["usage"];
+                         var hours = duration.inHours % 60 ;
+                          var minutes = duration.inMinutes % 60 ;
+if (duration != null && duration is Duration) {
+  
 
-                          var hours = duration.inHours % 60;
-                          var minutes = duration.inMinutes % 60;
+  // Check if it's a new day before adding new screen time
+  addEntryAndCheckScreenTime(hours, minutes);
+} else {
+  // Handle the case where duration is null or not a Duration
+  print('Invalid duration data retrieved from snapshot');
+}
 
-                          // Check if it's a new day before adding new screen time
 
-                          addEntryAndCheckScreenTime(
-                            hours,
-                            minutes,
+if(hours == null || minutes == null)
+                          return Text(
+                            '0:0 h',
+                            style: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 24.sp,
+                              fontFamily: 'SFProText',
+                              fontWeight: FontWeight.w800,
+                              height: 0,
+                            ),
                           );
-
+                          else 
                           return Text(
                             '$hours:$minutes h',
                             style: TextStyle(
@@ -391,11 +389,21 @@ class _HomeState extends State<Home> {
       ],
     );
   }
+ @override
+  void initState() {
+    getLastLocationTime();
+    getLastLocationTime1();
+    fetchUsers();
+    fetchUsers4();
+    updatePieChartSections();
+    super.initState();
+  }
 
   // workout time
   String? dateString;
   String timeString = "00:00:00";
   String? dateString1;
+
   String timeString1 = "00:00:00";
   Future<DateTime?> getLastLocationTime() async {
     try {
@@ -410,13 +418,15 @@ class _HomeState extends State<Home> {
 
       // Extract the date and time from the lastDataModel instance
       if (lastDataModel != null) {
+         var  dateTimeString;
         setState(() {
           dateString = lastDataModel.date;
           timeString = lastDataModel.time!;
+            dateTimeString = '$dateString $timeString';
+        logger.d('DataModel1: $dateTimeString');
         });
 
-        var dateTimeString = '$dateString $timeString';
-        log('DataModel1: $dateTimeString');
+        
         return DateTime.parse(dateTimeString);
       }
       // Close the Hive box
@@ -440,13 +450,14 @@ class _HomeState extends State<Home> {
 
       // Extract the date and time from the lastDataModel instance
       if (lastDataModel != null) {
+          var  dateTimeString;
         setState(() {
           dateString1 = lastDataModel.date;
           timeString1 = lastDataModel.time!;
+            dateTimeString = '$dateString $timeString';
+        logger.d('DataModel2: $dateTimeString');
         });
-
-        var dateTimeString = '$dateString $timeString';
-        log('DataModel2: $dateTimeString');
+       
         return DateTime.parse(dateTimeString);
       }
       // Close the Hive box
@@ -833,12 +844,12 @@ class _HomeState extends State<Home> {
               ),
             ],
           ),
-          TextButton(
+         /* TextButton(
             onPressed: () async {
               await FirebaseAuth.instance.currentUser!.sendEmailVerification();
             },
             child: Text("Usage".tr()),
-          ),
+          ),*/
           Container(
             margin: const EdgeInsets.only(top: 10),
             child: Stack(

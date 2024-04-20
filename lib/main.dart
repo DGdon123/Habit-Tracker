@@ -55,8 +55,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await EasyLocalization.ensureInitialized();
-  await pre.Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
+  
+  await pre.Firebase.initializeApp( name: "habittracker-51e7f",options: DefaultFirebaseOptions.currentPlatform
   );
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   Directory directory = await getApplicationDocumentsDirectory();
@@ -65,7 +65,6 @@ Future<void> main() async {
   Hive.registerAdapter(DataModel1Adapter());
   await Hive.openBox<DataModel>('hive_box');
   await Hive.openBox<DataModel1>('hive_box1');
-
   await HealthAppServices().connect(); 
   runApp(MultiProvider(
     providers: [
@@ -279,6 +278,7 @@ class _OnBoardingScreenState extends State<HomePage1> {
     super.initState();
 
     notificationServices.requestNotificationPermission();
+    notificationServices.foregroundMessage();
     notificationServices.firebaseinit(context);
     // notificationServices.setupInteractMeassage(context);
     // notificationServices.isTokenRefresh();

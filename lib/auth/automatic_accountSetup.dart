@@ -36,6 +36,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 
 class AccountSetup extends StatefulWidget {
@@ -163,6 +164,26 @@ class _AccountSetupState extends State<AccountSetup> {
                         curve: Curves.easeInOut,
                       );
                     } else {
+                      if(currentPage ==1){
+                        final locProvider = Provider.of<LocationProvider>(
+          context,
+          listen: false,
+        );
+        var lat = locProvider.latitude;
+        var longi = locProvider.longitude;
+        print(lat);
+        print(longi);
+        if (lat == null && longi == null) {
+          QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Error!!!',
+            confirmBtnColor: AppColors.mainBlue,
+            text: 'Please, select your gym location.',
+          );
+          return; // Prevent moving to the next page if location is not selected
+        }
+                      }
                       // You are going forward to the next page
                       if (currentPage < 2) {
                         _pageController.nextPage(
@@ -296,7 +317,7 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
     } catch (e) {
       print('Failed to get search results from Mapbox: $e');
     }
-  }
+  }bool hello = false;
 
   @override
   Widget build(BuildContext context) {
@@ -312,8 +333,8 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
     return Scaffold(
         body: Stack(
       children: [
-        FlutterLocationPicker(
-            selectLocationButtonText: "Confirm Destination".tr(),
+         FlutterLocationPicker(
+            selectLocationButtonText: hello?  "Location Selected".tr() : "Set Gym Location".tr(),
             searchbarInputFocusBorderp: OutlineInputBorder(
               borderSide: BorderSide(color: AppColors.mainBlue, width: 0.164.w),
             ),
@@ -329,10 +350,10 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
               ),
             ),
             selectLocationButtonStyle: ButtonStyle(
-              overlayColor: MaterialStateProperty.all(Colors.white),
-              backgroundColor: MaterialStateProperty.all(Colors.white),
+              overlayColor: MaterialStateProperty.all(hello ? CupertinoColors.systemGreen: AppColors.primaryColor),
+              backgroundColor: MaterialStateProperty.all(hello ? CupertinoColors.systemGreen: AppColors.primaryColor),
             ),
-            locationButtonBackgroundColor: AppColors.primaryColor,
+            locationButtonBackgroundColor:AppColors.primaryColor,
             zoomButtonsBackgroundColor: AppColors.primaryColor,
             zoomButtonsColor: AppColors.mainBlue,
             locationButtonsColor: AppColors.mainBlue,
@@ -344,18 +365,22 @@ class _AccountSetupSetNameState extends State<AccountSetupSetName> {
             trackMyPosition: true,
             urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             searchBarBackgroundColor: Colors.white,
-            selectedLocationButtonTextstyle: const TextStyle(
+            selectedLocationButtonTextstyle:  TextStyle(
               fontSize: 18,
-              color: AppColors.mainBlue,
+              color:hello? CupertinoColors.white:AppColors.mainBlue,
               letterSpacing: 0.25,
             ),
             mapLanguage: 'en',
             onError: (e) => print(e),
-            selectLocationButtonLeadingIcon: const Icon(
+            selectLocationButtonLeadingIcon: hello? Container():
+            const Icon(
               Icons.check,
               color: AppColors.mainBlue,
             ),
             onPicked: (pickedData) async {
+              setState(() {
+                hello =true;
+              });
               if (_textEditingController.text != '') {
                 try {
                   final latitude = double.parse(_textEditingController2.text);

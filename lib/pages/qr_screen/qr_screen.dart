@@ -37,6 +37,11 @@ class _WorkoutTrackTypeState extends State<QRscreen> {
           FriendFirestoreServices()
               .qracceptFriendRequest(senderID: _scanResult);
         });
+             var snackBar = SnackBar(
+  content: Text('Added Successfully!'.tr()),
+);
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
       } else {
         print('User canceled the scan');
       }
@@ -95,11 +100,7 @@ class _WorkoutTrackTypeState extends State<QRscreen> {
               text: 'Scan QR Code'.tr(),
               onPressed: () async {
                 _scanQRCode();
-                const snackBar = SnackBar(
-  content: Text('Added Successfully!'),
-);
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
+           
                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=>HomePage()), (route) => false);
                  context.read<IndexProvider>().setSelectedIndex(4);
               },

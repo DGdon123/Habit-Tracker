@@ -11,14 +11,14 @@ import 'package:habit_tracker/main.dart';
 import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/utils/colors.dart';
 
-class GoalCompletionScreen extends StatefulWidget {
-  const GoalCompletionScreen({super.key});
+class GoalCompletionSettingsScreen extends StatefulWidget {
+  const GoalCompletionSettingsScreen({super.key});
 
   @override
-  State<GoalCompletionScreen> createState() => _GoalCompletionScreenState();
+  State<GoalCompletionSettingsScreen> createState() => _GoalCompletionScreenState();
 }
 
-class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
+class _GoalCompletionScreenState extends State<GoalCompletionSettingsScreen> {
   String added = "";
   String day = "";
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -505,64 +505,7 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
             return IconButton(
               icon: const Icon(Icons.arrow_back_rounded),
               onPressed: () async {
-                // Show loading indicator
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) =>  AlertDialog(
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        CircularProgressIndicator(
-                          color: AppColors.mainBlue,
-                        ),
-                        SizedBox(height: 16),
-                        Text('Please wait, your goals data is clearing...'.tr()),
-                      ],
-                    ),
-                  ),
-                );
-                // Delete the entire collection
-                await goals
-                    .doc(getUserID())
-                    .collection('workout')
-                    .get()
-                    .then((snapshot) {
-                  for (DocumentSnapshot ds in snapshot.docs) {
-                    ds.reference.delete();
-                  }
-                }).catchError(
-                        (error) => log("Failed to delete collection: $error"));
-                await goals
-                    .doc(getUserID())
-                    .collection('focustimer')
-                    .get()
-                    .then((snapshot) {
-                  for (DocumentSnapshot ds in snapshot.docs) {
-                    ds.reference.delete();
-                  }
-                }).catchError(
-                        (error) => log("Failed to delete collection: $error"));
-                await goals
-                    .doc(getUserID())
-                    .collection('screen')
-                    .get()
-                    .then((snapshot) {
-                  for (DocumentSnapshot ds in snapshot.docs) {
-                    ds.reference.delete();
-                  }
-                }).catchError(
-                        (error) => log("Failed to delete collection: $error"));
-                await goals
-                    .doc(getUserID())
-                    .collection('sleep')
-                    .get()
-                    .then((snapshot) {
-                  for (DocumentSnapshot ds in snapshot.docs) {
-                    ds.reference.delete();
-                  }
-                }).catchError(
-                        (error) => log("Failed to delete collection: $error"));
+             
                 // Navigate to the HomePage and remove all routes from the stack
                 Navigator.pushAndRemoveUntil(
                   context,
@@ -573,7 +516,7 @@ class _GoalCompletionScreenState extends State<GoalCompletionScreen> {
             );
           },
         ),
-          title: Text('Your Weekly Goals Summary'.tr(),
+        title: Text('Your Weekly Goals Summary'.tr(),
             style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'SfProText',

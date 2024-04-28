@@ -64,6 +64,7 @@ de.AudioPlayer audioPlayer = de.AudioPlayer();
           if (widget.hour != 0 || widget.minute != 0) {
             var xp = widget.hour * 60 + widget.minute;
             audioPlayer.stop();
+            addUser(widget.hour, widget.minute, widget.second);
             XpFirestoreServices().addXp(
                 xp: xp, reason: "Earned from Focus Timer", increment: true);
             Navigator.push(
@@ -78,6 +79,7 @@ de.AudioPlayer audioPlayer = de.AudioPlayer();
                         )));
           } else {
           audioPlayer.stop();
+           addUser(widget.hour, widget.minute, widget.second);
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -182,6 +184,7 @@ de.AudioPlayer audioPlayer = de.AudioPlayer();
   bool s1 = false;
   bool s2 = false;
   bool s3 = false;
+  String displayTime ="";
   bool s4 = false;
   @override
   Widget build(BuildContext context) {
@@ -205,8 +208,37 @@ de.AudioPlayer audioPlayer = de.AudioPlayer();
                           GestureDetector(
                             onTap: () {
                               if (started == false) {
-                              audioPlayer.stop();
-                                Navigator.pop(context);
+                                 audioPlayer.stop();
+       List<String> timeParts = displayTime.split(':');
+    int displayHours = int.parse(timeParts[0]);
+    int displayMinutes = int.parse(timeParts[1]);
+    int displaySeconds = int.parse(timeParts[2]);
+
+    // Calculate remaining time
+    int remainingHours = widget.hour - displayHours;
+    int remainingMinutes = widget.minute - displayMinutes;
+    int remainingSeconds = widget.second - displaySeconds;
+
+    // Adjust minutes and seconds if negative
+    if (remainingSeconds < 0) {
+      remainingMinutes--;
+      remainingSeconds += 60;
+    }
+    if (remainingMinutes < 0) {
+      remainingHours--;
+      remainingMinutes += 60;
+    }
+
+    // Make sure remaining time doesn't go negative
+    if (remainingHours < 0) remainingHours = 0;
+    if (remainingMinutes < 0) remainingMinutes = 0;
+    if (remainingSeconds < 0) remainingSeconds = 0;
+
+    setState(() {
+      // Call addUser with remaining time in hours, minutes, and seconds
+      addUser(remainingHours, remainingMinutes, remainingSeconds);
+    });
+    Navigator.pop(context);
                               } else {
                                 QuickAlert.show(
                                   context: context,
@@ -268,7 +300,7 @@ de.AudioPlayer audioPlayer = de.AudioPlayer();
                             StopWatchTimer.getDisplayTimeMinute(value));
                         seconds = int.parse(
                             StopWatchTimer.getDisplayTimeSecond(value));
-                        final displayTime = StopWatchTimer.getDisplayTime(value,
+                         displayTime = StopWatchTimer.getDisplayTime(value,
                             hours: _isHours, milliSecond: false);
                         return Column(
                           children: <Widget>[
@@ -403,8 +435,38 @@ de.AudioPlayer audioPlayer = de.AudioPlayer();
                               InkWell(
                                 onTap: () {
                                   if (started == false) {
-                                    audioPlayer.stop();
-                                    Navigator.pop(context);
+                                   
+                                       audioPlayer.stop();
+       List<String> timeParts = displayTime.split(':');
+    int displayHours = int.parse(timeParts[0]);
+    int displayMinutes = int.parse(timeParts[1]);
+    int displaySeconds = int.parse(timeParts[2]);
+
+    // Calculate remaining time
+    int remainingHours = widget.hour - displayHours;
+    int remainingMinutes = widget.minute - displayMinutes;
+    int remainingSeconds = widget.second - displaySeconds;
+
+    // Adjust minutes and seconds if negative
+    if (remainingSeconds < 0) {
+      remainingMinutes--;
+      remainingSeconds += 60;
+    }
+    if (remainingMinutes < 0) {
+      remainingHours--;
+      remainingMinutes += 60;
+    }
+
+    // Make sure remaining time doesn't go negative
+    if (remainingHours < 0) remainingHours = 0;
+    if (remainingMinutes < 0) remainingMinutes = 0;
+    if (remainingSeconds < 0) remainingSeconds = 0;
+
+    setState(() {
+      // Call addUser with remaining time in hours, minutes, and seconds
+      addUser(remainingHours, remainingMinutes, remainingSeconds);
+    });
+    Navigator.pop(context);
                                   } else {
                                     QuickAlert.show(
                                       context: context,
@@ -426,7 +488,6 @@ de.AudioPlayer audioPlayer = de.AudioPlayer();
                                     _stopWatchTimer.onStopTimer();
                                     setState(() {
                                       started = false;
-                                      addUser(hours, minutes, seconds);
                                     });
                                   } else {
                                     if (widget.hour == 0 &&

@@ -18,7 +18,7 @@ class UserFireStoreServices {
       required int screen,
       required int focus,
       required int workout,
-      required double longitude}) async {
+      required double longitude,required bool hello}) async {
     final ifExists =
         await userCollection.where('email', isEqualTo: email).get();
 
@@ -45,7 +45,8 @@ class UserFireStoreServices {
       'workoutFrequency': workout,
       'longitude': longitude,
       "uid": uid,
-      "xp": 0
+      "xp": 0,
+      "isAutomatic":hello
     });
   }
 
@@ -87,7 +88,7 @@ class UserFireStoreServices {
     });
   }
 
-  /// searches by uid
+   /// searches by uid
   Future<QueryDocumentSnapshot> searchUserByUid(String uid) async {
     final response = await userCollection.where('uid', isEqualTo: uid).get();
 

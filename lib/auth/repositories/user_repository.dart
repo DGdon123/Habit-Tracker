@@ -8,6 +8,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:habit_tracker/auth/automatic_accountSetup.dart';
 import 'package:habit_tracker/auth/automaticaccountSetup1.dart';
+import 'package:habit_tracker/auth/repositories/gymtime_model.dart';
 import 'package:habit_tracker/auth/signup_page.dart';
 import 'package:habit_tracker/auth/workout_setup.dart';
 import 'package:habit_tracker/pages/home_page.dart';
@@ -15,12 +16,14 @@ import 'package:habit_tracker/pages/screens/home.dart';
 import 'package:habit_tracker/provider/goals_provider.dart';
 import 'package:habit_tracker/services/user_firestore_services.dart';
 import 'package:habit_tracker/utils/colors.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_apple_sign_in/the_apple_sign_in.dart';
 
 import '../../provider/location_provider.dart';
 import '../login_page.dart';
+import 'new_gymtime_model.dart';
 
 enum Status {
   Uninitialized,
@@ -268,7 +271,7 @@ class UserRepository with ChangeNotifier {
       int sleep,
       int screen,
       int focus,
-      int workout) async {
+      int workout,bool hello) async {
     try {
       _status = Status.Authenticating;
       notifyListeners();
@@ -311,6 +314,7 @@ class UserRepository with ChangeNotifier {
         focus: focus,
         workout: workout,
         photoUrl: "",
+        hello: hello
       )
           .then((_) {
         // Get the current user
@@ -581,6 +585,10 @@ try{
       _user = null; // Clear the user after sign-out
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.clear();
+      var boxDataModel = await Hive.openBox<DataModel>('hive_box');
+       await boxDataModel.clear();
+      var boxDataModel1 = await Hive.openBox<DataModel1>('hive_box1');
+       await boxDataModel1.clear();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

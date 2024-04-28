@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:background_fetch/background_fetch.dart';
-import 'package:carp_background_location/carp_background_location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -119,13 +118,14 @@ void initBackgroundFetch() {
   BackgroundFetch.configure(
     BackgroundFetchConfig(
         minimumFetchInterval: 15,
+         startOnBoot: true,
         stopOnTerminate: false,
         enableHeadless: true,
+        requiresStorageNotLow: false,
         requiresBatteryNotLow: false,
         requiresCharging: false,
-        requiresStorageNotLow: false,
         requiresDeviceIdle: false,
-        requiredNetworkType: NetworkType.ANY),
+        requiredNetworkType: NetworkType.NONE),
     (String taskId) async {
       log(taskId);
       // Perform background task
@@ -285,7 +285,6 @@ class _OnBoardingScreenState extends State<HomePage1> {
   @override
   void initState() {
     super.initState();
-
     notificationServices.requestNotificationPermission();
     notificationServices.foregroundMessage();
     notificationServices.firebaseinit(context);

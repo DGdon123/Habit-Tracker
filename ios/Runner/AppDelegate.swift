@@ -1,14 +1,7 @@
 import UIKit
 import Flutter
 import Firebase
-import background_locator_2
 import flutter_local_notifications
-
-func registerPlugins(registry: FlutterPluginRegistry) -> () {
-    if (!registry.hasPlugin("BackgroundLocatorPlugin")) {
-        GeneratedPluginRegistrant.register(with: registry)
-    } 
-}
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -25,7 +18,6 @@ func registerPlugins(registry: FlutterPluginRegistry) -> () {
     }
     FirebaseApp.configure()
     GeneratedPluginRegistrant.register(with: self)
-    BackgroundLocatorPlugin.setPluginRegistrantCallback(registerPlugins)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

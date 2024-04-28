@@ -17,6 +17,7 @@ import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/screens/language/language.dart';
 import 'package:habit_tracker/pages/screens/notifications/notifications.dart';
 import 'package:habit_tracker/pages/screens/settings/goal_completetion_screen.dart';
+import 'package:habit_tracker/pages/screens/settings/goal_completetion_screen_settings.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
@@ -475,7 +476,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    
+                                    Navigator.push(context, MaterialPageRoute(builder: (_)=> GoalCompletionSettingsScreen()));
                                   },
                                   child: Container(
                                     width: 48.h,

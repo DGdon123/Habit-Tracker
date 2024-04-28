@@ -1,11 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:habit_tracker/pages/home_page.dart';
 import 'package:habit_tracker/pages/qr_screen/qr_view_screen.dart';
 import 'package:habit_tracker/utils/buttons.dart';
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:habit_tracker/services/friend_firestore_services.dart';
+import 'package:provider/provider.dart';
+
+import '../../provider/index_provider.dart';
 
 class QRscreen extends StatefulWidget {
   const QRscreen({
@@ -91,6 +95,13 @@ class _WorkoutTrackTypeState extends State<QRscreen> {
               text: 'Scan QR Code'.tr(),
               onPressed: () async {
                 _scanQRCode();
+                const snackBar = SnackBar(
+  content: Text('Added Successfully!'),
+);
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=>HomePage()), (route) => false);
+                 context.read<IndexProvider>().setSelectedIndex(4);
               },
             ),
           ),

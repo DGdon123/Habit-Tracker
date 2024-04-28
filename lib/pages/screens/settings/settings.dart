@@ -475,11 +475,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (_) =>
-                                                const GoalCompletionScreen()));
+                                    
                                   },
                                   child: Container(
                                     width: 48.h,

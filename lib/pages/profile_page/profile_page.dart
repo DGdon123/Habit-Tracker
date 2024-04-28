@@ -101,11 +101,14 @@ class ProfilePageState extends State<ProfilePage>
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    fetchUsers();
-  }
+
+
+@override
+void initState() {
+  super.initState(); fetchUsers();
+
+  
+}
 
   @override
   Widget build(BuildContext context) {
@@ -513,6 +516,19 @@ class FriendsPageTab extends StatefulWidget {
 
 class _FriendsPageTabState extends State<FriendsPageTab> {
   String searchText = "";
+TextEditingController _searchController = TextEditingController();
+
+@override
+void initState() {
+  super.initState(); 
+
+  _searchController = TextEditingController();
+}
+@override
+void dispose() {
+  _searchController.dispose();
+  super.dispose();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -520,6 +536,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
       backgroundColor: AppColors.primaryColor.withOpacity(0.15),
       body: Column(
         children: [
+          SizedBox(height: 25.h,),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
             child: Row(
@@ -528,6 +545,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                 Expanded(
                     child: TextField(
                   cursorColor: AppColors.mainColor,
+                  controller: _searchController,
                   decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -559,7 +577,7 @@ class _FriendsPageTabState extends State<FriendsPageTab> {
                   width: 16.w,
                 ),
                 GestureDetector(
-                  onTap: searchText.isEmpty
+                  onTap: _searchController.text.isEmpty
                       ? null
                       : () async {
                           final users = await UserFireStoreServices()

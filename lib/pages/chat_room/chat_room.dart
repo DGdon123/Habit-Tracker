@@ -239,7 +239,7 @@ class _ChatRoomState extends State<ChatRoom> {
 
   Widget messages(Size size, Map<String, dynamic> map, BuildContext context) {
     String? senderName =
-        map['sendby'] == _auth.currentUser!.uid ? "You" : widget.name;
+        map['sendby'] == _auth.currentUser!.uid ? "You".tr() : widget.name;
 
     String messageText = map['message'];
 

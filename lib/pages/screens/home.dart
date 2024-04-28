@@ -5,9 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:habit_tracker/auth/repositories/gymtime_model.dart';
 import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
 import 'package:habit_tracker/auth/widgets/gym_in_time.dart';
+import 'package:habit_tracker/config/env.dart';
 import 'package:habit_tracker/location/current_location.dart';
 import 'package:habit_tracker/main.dart';
 import 'package:habit_tracker/pages/screens/customize%20character/pickCharacter.dart';
@@ -15,6 +17,7 @@ import 'package:habit_tracker/pages/screens/friends.dart';
 import 'package:habit_tracker/pages/screens/widgets/workout_data.dart';
 import 'package:habit_tracker/pages/usage_page/usage_page.dart';
 import 'package:habit_tracker/provider/index_provider.dart';
+import 'package:habit_tracker/provider/location_provider.dart';
 import 'package:habit_tracker/services/device_screen_time_services.dart';
 import 'package:habit_tracker/services/goals_services.dart';
 import 'package:habit_tracker/services/gym_firestore_services.dart';
@@ -26,7 +29,7 @@ import 'package:habit_tracker/utils/images.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -51,6 +54,8 @@ class _HomeState extends State<Home> {
     User? user = _auth.currentUser;
     return user?.uid;
   }
+  double lat=0;
+  double longii=0;
 
   Future<void> fetchUsers() async {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
@@ -68,6 +73,8 @@ class _HomeState extends State<Home> {
           // You can access the user data and do something with it
           setState(() {
             xp = userData['xp'] ?? 0;
+            lat = userData['latitude'] ?? 0;
+            longii = userData['longitude'] ?? 0;
           });
 
           // Example: Use the latitude and longitude data
@@ -330,58 +337,55 @@ class _HomeState extends State<Home> {
                   width: 10,
                 ),
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    FutureBuilder<Map<String, dynamic>>(
-                        future: DeviceScreenTimeServices().getUsageStats(),
-                        builder: (_, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const SizedBox();
-                          } else if (snapshot.hasError) {
-                            return Text("Error".tr());
-                          }
+  mainAxisAlignment: MainAxisAlignment.center,
+  crossAxisAlignment: CrossAxisAlignment.end,
+  children: [
+    FutureBuilder<Map<String, dynamic>>(
+      future: DeviceScreenTimeServices().getUsageStats(),
+      builder: (_, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox();
+        } else if (snapshot.hasError) {
+          return Text("Error".tr());
+        }
 
-                         var duration = snapshot.data!["usage"];
-                         var hours = duration.inHours % 60 ;
-                          var minutes = duration.inMinutes % 60 ;
-if (duration != null && duration is Duration) {
-  
+        var duration = snapshot.data!["usage"];
+        if (duration != null && duration is Duration) {
+          var hours = duration.inHours % 60;
+          var minutes = duration.inMinutes % 60;
 
-  // Check if it's a new day before adding new screen time
-  addEntryAndCheckScreenTime(hours, minutes);
-} else {
-  // Handle the case where duration is null or not a Duration
-  print('Invalid duration data retrieved from snapshot');
-}
+          // Check if it's a new day before adding new screen time
+          addEntryAndCheckScreenTime(hours, minutes);
 
+          return Text(
+            '$hours:$minutes h',
+            style: TextStyle(
+              color: AppColors.black,
+              fontSize: 24.sp,
+              fontFamily: 'SFProText',
+              fontWeight: FontWeight.w800,
+              height: 0,
+            ),
+          );
+        } else {
+          // Handle the case where duration is null or not a Duration
+          print('Invalid duration data retrieved from snapshot');
+          return Text(
+            '0:0 h',
+            style: TextStyle(
+              color: AppColors.black,
+              fontSize: 24.sp,
+              fontFamily: 'SFProText',
+              fontWeight: FontWeight.w800,
+              height: 0,
+            ),
+          );
+        }
+      },
+    ),
+  ],
+),
 
-if(hours == null || minutes == null)
-                          return Text(
-                            '0:0 h',
-                            style: TextStyle(
-                              color: AppColors.black,
-                              fontSize: 24.sp,
-                              fontFamily: 'SFProText',
-                              fontWeight: FontWeight.w800,
-                              height: 0,
-                            ),
-                          );
-                          else 
-                          return Text(
-                            '$hours:$minutes h',
-                            style: TextStyle(
-                              color: AppColors.black,
-                              fontSize: 24.sp,
-                              fontFamily: 'SFProText',
-                              fontWeight: FontWeight.w800,
-                              height: 0,
-                            ),
-                          );
-                        }),
-                  ],
-                ),
               ],
             ),
           ),
@@ -395,10 +399,201 @@ if(hours == null || minutes == null)
     getLastLocationTime1();
     fetchUsers();
     fetchUsers4();
+    fetchUsers7();
+  fetchUsers2();
+  fetchUsers3();
     updatePieChartSections();
     super.initState();
   }
+  String _location='Obtaining Address';
+  
 
+Future<void> _onLocation(bg.Location location) async {
+
+    
+    
+       if (lat != null && longii != null) {
+        distance = calculateDistance(
+          lat,
+          longii,
+          location.coords.latitude,
+          location.coords.longitude,
+        );
+      }
+
+      logger.d("adsasd" + distance.toString());
+       if (distance <= 300) {
+  // Open the Hive box where user location times are stored
+  var box = await Hive.openBox<DataModel>('hive_box');
+
+   // Create a DataModel instance with current date and time
+  var currentDate = DateTime.now().toString().split(' ')[0];
+  var currentTime = DateTime.now(); // Get the current date and time // Parse the timestamp string to DateTime
+
+   String formattedTime = DateFormat('HH:mm:ss').format(currentTime);
+  DataModel dataModel = DataModel(date: currentDate, time: formattedTime);
+
+  // Add the dataModel instance to the Hive box
+  await box.add(dataModel);
+
+  // Close the Hive box
+  await box.close();
+}
+
+      if (distance > 300) {
+        // Open the Hive box where user location times are stored
+        var box = await Hive.openBox<DataModel1>('hive_box1');
+
+          // Create a DataModel instance with current date and time
+  var currentDate = DateTime.now().toString().split(' ')[0];
+  var currentTime = DateTime.now(); // Get the current date and time // Parse the timestamp string to DateTime
+
+   String formattedTime = DateFormat('HH:mm:ss').format(currentTime);
+  DataModel1 dataModel1 = DataModel1(date: currentDate, time: formattedTime); // Parse the timestamp string to DateTime
+
+  
+
+        // Add the dataModel instance to the Hive box
+        await box.add(dataModel1);
+
+        await box.close();
+      }
+    log('[${bg.Event.LOCATION}] - $location');
+
+    setState(() {
+      _location = location.coords.latitude.toString() + location.coords.longitude.toString();
+    });
+  }
+
+double latitude = 0;
+  double longitude = 0;
+  double distance = 0;
+  // Function to calculate distance between two sets of latitude and longitude
+  double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    return Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
+  }
+
+Future<void> setupBackgroundGeolocation() async {
+// Fired whenever a location is recorded
+     bg.BackgroundGeolocation.onLocation(_onLocation,);
+    bg.BackgroundGeolocation.onMotionChange(_onMotionChange);
+  
+    bg.BackgroundGeolocation.onProviderChange(_onProviderChange);
+
+    ////
+    // 2.  Configure the plugin
+    //
+     bg.TransistorAuthorizationToken token = await bg.TransistorAuthorizationToken.findOrCreate("orgname", "username", ENV.TRACKER_HOST);
+    bg.BackgroundGeolocation.ready(bg.Config(
+      transistorAuthorizationToken: token,
+      notification: bg.Notification(title: "Tracking Your Location",text: 'Habit Tracker is tracking your location.'),
+        reset: false,  stopTimeout: 5,
+        // Geolocation options
+        desiredAccuracy: bg.Config.DESIRED_ACCURACY_NAVIGATION,
+        distanceFilter: 10.0,
+        stopOnTerminate: false,
+        startOnBoot: true,
+        debug: true, // HTTP & Persistence
+        autoSync: true,
+        logLevel: bg.Config.LOG_LEVEL_VERBOSE
+    )).then((bg.State state) async {
+     if (!state.enabled) {
+        ////
+        // 3.  Start the plugin.
+        //
+        setState(() {
+          
+        });
+        bg.BackgroundGeolocation.start();
+
+  
+        }
+    });
+}
+
+ void stop() async {
+ 
+
+    await LocalStorageServices().setAutomatic(false);
+
+    log("setting automatic to false Home.dart");
+
+    bg.BackgroundGeolocation.stop();
+  }
+
+
+  Future<void> _onMotionChange(bg.Location location) async {
+     if (lat != null && longii != null) {
+        distance = calculateDistance(
+          lat,
+          longii,
+          location.coords.latitude,
+          location.coords.longitude,
+        );
+      }
+
+      log(distance.toString());
+       if (distance <= 300) {
+  // Open the Hive box where user location times are stored
+  var box = await Hive.openBox<DataModel>('hive_box');
+
+   // Create a DataModel instance with current date and time
+  var currentDate = DateTime.now().toString().split(' ')[0];
+  var currentTime = DateTime.now(); // Get the current date and time // Parse the timestamp string to DateTime
+
+   String formattedTime = DateFormat('HH:mm:ss').format(currentTime);
+  DataModel dataModel = DataModel(date: currentDate, time: formattedTime);
+
+  // Add the dataModel instance to the Hive box
+  await box.add(dataModel);
+
+  // Close the Hive box
+  await box.close();
+}
+
+      if (distance > 300) {
+        // Open the Hive box where user location times are stored
+        var box = await Hive.openBox<DataModel1>('hive_box1');
+
+          // Create a DataModel instance with current date and time
+  var currentDate = DateTime.now().toString().split(' ')[0];
+  var currentTime = DateTime.now(); // Get the current date and time // Parse the timestamp string to DateTime
+
+   String formattedTime = DateFormat('HH:mm:ss').format(currentTime);
+  DataModel1 dataModel1 = DataModel1(date: currentDate, time: formattedTime); // Parse the timestamp string to DateTime
+
+  
+
+        // Add the dataModel instance to the Hive box
+        await box.add(dataModel1);
+
+        await box.close();
+      }
+    log('[${bg.Event.MOTIONCHANGE}] - $location');
+
+     setState(() {
+      _location = location.coords.latitude.toString() + location.coords.longitude.toString();
+    });
+  }
+
+  
+  void _onProviderChange(bg.ProviderChangeEvent event) async {
+    log('[${bg.Event.PROVIDERCHANGE}] - $event');
+
+
+    if ((event.status == bg.ProviderChangeEvent.AUTHORIZATION_STATUS_ALWAYS) && (event.accuracyAuthorization == bg.ProviderChangeEvent.ACCURACY_AUTHORIZATION_REDUCED)) {
+      // Supply "Purpose" key from Info.plist as 1st argument.
+      bg.BackgroundGeolocation.requestTemporaryFullAccuracy("DemoPurpose").then((int accuracyAuthorization) {
+        if (accuracyAuthorization == bg.ProviderChangeEvent.ACCURACY_AUTHORIZATION_FULL) {
+          print("[requestTemporaryFullAccuracy] GRANTED:  $accuracyAuthorization");
+        } else {
+          print("[requestTemporaryFullAccuracy] DENIED:  $accuracyAuthorization");
+        }
+      }).catchError((error) {
+        print("[requestTemporaryFullAccuracy] FAILED TO SHOW DIALOG: $error");
+      });
+    }
+  }
   // workout time
   String? dateString;
   String timeString = "00:00:00";
@@ -468,6 +663,34 @@ if(hours == null || minutes == null)
     return null;
   }
 
+ bool hello = false;
+
+  Future<void> fetchUsers7() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    String? currentUserUid = getUserID();
+
+    try {
+      QuerySnapshot snapshot = await users.get();
+
+      for (var doc in snapshot.docs) {
+        String uid = doc.id;
+        Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
+
+        if (uid == currentUserUid) {
+          // This user document matches the current user
+          // You can access the user data and do something with it
+          setState(() {
+            hello = userData['isAutomatic'] ?? false;
+          });
+
+          // Example: Use the latitude and longitude data
+          // SomeFunctionToUseLocation(latitude, longitude);
+        }
+      }
+    } catch (error) {
+      print("Failed to fetch users: $error");
+    }
+  }
   Column workoutTime() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -479,7 +702,80 @@ if(hours == null || minutes == null)
         SizedBox(
           height: 5.h,
         ),
-        Container(
+           hello == false ?
+                  Column(
+                    children: [FutureBuilder<void>(
+      future: setupBackgroundGeolocation(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // You can return a loading indicator or placeholder here
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          // Handle error case
+          return Text('Error: ${snapshot.error}');
+        } else {
+          // Future completed successfully, you can proceed with your UI
+          return Container(
+            
+            // Add other widgets inside the Container if needed
+          );
+        }
+      },
+    ),
+                      Container(
+                                width: 180.w,
+                                height: 100.h,
+                                decoration: ShapeDecoration(
+                                  color: AppColors.widgetColorB,
+                                  // gradient: LinearGradient(
+                                  //   begin: Alignment.bottomLeft,
+                                  //   end: Alignment.topRight,
+                                  //   colors: [
+                                  //     Color.fromARGB(255, 4, 87, 76),
+                                  //     Color(0xFF00D0B5),
+                                  //   ],
+                                  // ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16.r),
+                                  ),
+                                ),
+                                child:  StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                          stream: GymFirestoreServices().listenToTodayGymTime,
+                          builder: (_, snapshot) {
+                            if (snapshot.hasData &&
+                                snapshot.data!.docs.isNotEmpty) {
+                              var doc = snapshot.data!.docs[0];
+                              return WorkoutData(
+                                inTime: doc.get("InTime"),
+                                outTime: doc.get("OutTime"),
+                              );
+                            } else if (snapshot.hasData &&
+                                snapshot.data!.docs.isEmpty) {
+                              return GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) {
+                                        return GymInTime();
+                                      });
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                                  child: Center(
+                                    child:
+                                        Text("Click to add today's workout.".tr()),
+                                  ),
+                                ),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text("Error".tr());
+                            }
+                            return const SizedBox();
+                          })),
+                    ],
+                  ):
+                
+                 Container(
           width: 180.w,
           height: 100.h,
           decoration: ShapeDecoration(
@@ -496,47 +792,7 @@ if(hours == null || minutes == null)
               borderRadius: BorderRadius.circular(16.r),
             ),
           ),
-          child: FutureBuilder<bool>(
-              future: LocalStorageServices().isAutomaticSelected(),
-              builder: (_, data) {
-                debugPrint("Data Home.dart: ${data.data}");
-
-                if (data.hasData && data.data == false) {
-                  return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                      stream: GymFirestoreServices().listenToTodayGymTime,
-                      builder: (_, snapshot) {
-                        if (snapshot.hasData &&
-                            snapshot.data!.docs.isNotEmpty) {
-                          var doc = snapshot.data!.docs[0];
-                          return WorkoutData(
-                            inTime: doc.get("InTime"),
-                            outTime: doc.get("OutTime"),
-                          );
-                        } else if (snapshot.hasData &&
-                            snapshot.data!.docs.isEmpty) {
-                          return GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (_) {
-                                    return GymInTime();
-                                  });
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.w),
-                              child: Center(
-                                child:
-                                    Text("Click to add today's workout.".tr()),
-                              ),
-                            ),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text("Error".tr());
-                        }
-                        return const SizedBox();
-                      });
-                } else if (data.hasData && data.data == true) {
-                  return Padding(
+          child:   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -594,11 +850,9 @@ if(hours == null || minutes == null)
                         ),
                       ],
                     ),
-                  );
-                }
-                return const SizedBox();
-              }),
-        ),
+                  )),
+                
+       
       ],
     );
   }

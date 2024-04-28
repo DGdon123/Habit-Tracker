@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'package:carp_background_location/carp_background_location.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart' as img;
@@ -181,9 +180,9 @@ class _AccountSetupState extends State<AutomaticAccountSetup1> {
           QuickAlert.show(
             context: context,
             type: QuickAlertType.error,
-            title: 'Error!!!',
+            title: 'Error!!!'.tr(),
             confirmBtnColor: AppColors.mainBlue,
-            text: 'Please, select your gym location.',
+            text: 'Please, select your gym location.'.tr(),
           );
           return; // Prevent moving to the next page if location is not selected
         }
@@ -199,7 +198,7 @@ class _AccountSetupState extends State<AutomaticAccountSetup1> {
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
                           String token =
-                              prefs.getString('device_token').toString();
+                              prefs.getString('device_token').toString();   bool? hello = prefs.getBool('isAutomaticSelected');
                           final locProvider = Provider.of<LocationProvider>(
                               context,
                               listen: false);
@@ -250,6 +249,7 @@ class _AccountSetupState extends State<AutomaticAccountSetup1> {
                                   "", // Check for null and provide a default value
                               photoUrl: widget.photoURL?.toString() ??
                                   "", // Check for null and provide a default value
+                                  hello: hello!
                             );
                             Navigator.pushReplacement(
                               context,
@@ -376,7 +376,7 @@ bool hello = false;
         body: Stack(
       children: [
         FlutterLocationPicker(
-            selectLocationButtonText: hello?  "Location Selected".tr() : "Set Gym Location".tr(),
+            selectLocationButtonText: hello || _textEditingController.text.isEmpty?   "Location Selected".tr() : "Set Gym Location".tr(),
             searchbarInputFocusBorderp: OutlineInputBorder(
               borderSide: BorderSide(color: AppColors.mainBlue, width: 0.164.w),
             ),
@@ -392,8 +392,8 @@ bool hello = false;
               ),
             ),
             selectLocationButtonStyle: ButtonStyle(
-              overlayColor: MaterialStateProperty.all(hello ? CupertinoColors.systemGreen: AppColors.primaryColor),
-              backgroundColor: MaterialStateProperty.all(hello ? CupertinoColors.systemGreen: AppColors.primaryColor),
+              overlayColor: MaterialStateProperty.all(hello || _textEditingController.text.isEmpty? CupertinoColors.systemGreen: AppColors.primaryColor),
+              backgroundColor: MaterialStateProperty.all(hello || _textEditingController.text.isEmpty? CupertinoColors.systemGreen: AppColors.primaryColor),
             ),
             locationButtonBackgroundColor:AppColors.primaryColor,
             zoomButtonsBackgroundColor: AppColors.primaryColor,
@@ -409,12 +409,12 @@ bool hello = false;
             searchBarBackgroundColor: Colors.white,
             selectedLocationButtonTextstyle:  TextStyle(
               fontSize: 18,
-              color:hello? CupertinoColors.white:AppColors.mainBlue,
+              color:hello || _textEditingController.text.isEmpty? CupertinoColors.white:AppColors.mainBlue,
               letterSpacing: 0.25,
             ),
             mapLanguage: 'en',
             onError: (e) => print(e),
-            selectLocationButtonLeadingIcon: hello? Container():
+            selectLocationButtonLeadingIcon: hello || _textEditingController.text.isEmpty ? Container():
             const Icon(
               Icons.check,
               color: AppColors.mainBlue,
@@ -560,11 +560,12 @@ bool hello = false;
                               _textEditingController.text = placeName;
                               _textEditingController2.text = latitude;
                               _textEditingController3.text = longitude;
-                              locProvider.setLatitude(double.parse(latitude));
-                              locProvider.setLongitude(double.parse(longitude));
+                              
 
                               setState(() {
                                 _places = []; // Clear search results
+                                  locProvider.setLatitude(double.parse(latitude));
+                              locProvider.setLongitude(double.parse(longitude));
                               });
                             },
                           );

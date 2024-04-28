@@ -81,7 +81,7 @@ class StatsPageState extends State<StatsPage> {
   }
 
   double? maxY;
-  int? maxValue;
+  double? maxValue;
   List<BarChartGroupData> barChartGroups = [];
   List<PieChartSectionData> pieChartSections = [];
   List<Map<String, dynamic>> labelDataList =
@@ -154,28 +154,7 @@ class StatsPageState extends State<StatsPage> {
           });
         }
       });
-    }
-
-    // Create PieChartSectionData objects based on the aggregated values
-    labelValues.forEach((label, value) {
-      PieChartSectionData section = PieChartSectionData(
-        color: getColorForLabel(label),
-        value: value.toDouble(), // Set the aggregated value
-        title: label,
-        radius: 150,
-        titleStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 13.sp,
-          fontFamily: 'SFProText',
-          fontWeight: FontWeight.w600,
-        ),
-      );
-      setState(() {
-        pieChartSections.add(section);
-      });
-    });
-
-// Create BarChartGroupData objects based on the aggregated values
+    } 
     barChartGroups = labelValues1.entries.map((entry) {
       String label = entry.key;
       double value = entry.value;
@@ -190,13 +169,78 @@ class StatsPageState extends State<StatsPage> {
         ),
       ]);
     }).toList();
-    maxValue = labelValues1.values
-        .fold<int?>(0, (prev, value) => value > (prev)! ? value as int? : prev);
+ maxValue = labelValues1.values
+        .fold<double>(0, (prev, value) => value > (prev)! ? value  : prev);
 
 // Calculate maxY by adding a constant offset to the maximum value
     maxY = maxValue!.toDouble() + 4;
-  }
+   // Aggregate label data from both sources
+  aggregateLabelData(labels1, startDate, endDate);
+  aggregateLabelData(labels2, startDate, endDate);
 
+  // Calculate total time duration for each label
+  Map<String, double> labelDurations = calculateLabelDurations();
+
+  // Calculate total time duration across all labels
+  double totalDuration = labelDurations.values.reduce((value, sum) => value + sum);
+
+  // Create PieChartSectionData objects based on the calculated percentages
+  labelDurations.forEach((label, duration) {
+    double percentage = (duration / totalDuration) * 100;
+    PieChartSectionData section = PieChartSectionData(
+      color: getColorForLabel(label),
+      value: percentage, // Set the percentage value
+      title: label,
+      radius: 150,
+      titleStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 13.sp,
+        fontFamily: 'SFProText',
+        fontWeight: FontWeight.w600,
+      ),
+    );
+    setState(() {
+      pieChartSections.add(section);
+    });
+  });
+
+// Create BarChartGroupData objects based on the aggregated values
+   
+   
+  }
+void aggregateLabelData(
+    Map<String, dynamic> labels, DateTime? startDate, DateTime? endDate) {
+  if (labels.isNotEmpty) {
+    labels['data'].forEach((labelData) {
+      DateTime timestamp = DateTime.parse(labelData['addedAt']); // Parse timestamp
+      if (startDate == null ||
+          endDate == null ||
+          (timestamp.isAfter(startDate) && timestamp.isBefore(endDate))) {
+        String label = labelData['Label'].toString();
+        int hours = labelData['Hours'];
+        int minutes = labelData['Minutes'];
+        int seconds = labelData['Seconds'];
+        int totalSeconds = hours * 3600 + minutes * 60 + seconds;
+        labelValues1[label] =
+            (labelValues1[label] ?? 0) + totalSeconds.toInt();
+        labelDataList.add({
+          'Label': label,
+          'Hours': hours,
+          'Minutes': minutes,
+          'Seconds': seconds,
+        });
+      }
+    });
+  }
+}
+
+Map<String, double> calculateLabelDurations() {
+  Map<String, double> labelDurations = {};
+  labelValues1.forEach((label, totalSeconds) {
+    labelDurations[label] = ((labelDurations[label] ?? 0) + totalSeconds);
+  });
+  return labelDurations;
+}
   Future<Map<String, dynamic>> fetchUsers() async {
     CollectionReference users =
         FirebaseFirestore.instance.collection('stopwatch');

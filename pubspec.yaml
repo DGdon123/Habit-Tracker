@@ -59,7 +59,6 @@ dependencies:
   flutter_facebook_auth: ^6.1.1
   
   quickalert: ^1.1.0
-  carp_background_location: ^4.0.0
   permission_handler: ^11.3.1
   location_picker_flutter_map: ^1.2.2
   firebase_auth: ^4.18.0
@@ -83,6 +82,7 @@ dependencies:
   health: ^10.2.0
   the_apple_sign_in: ^1.1.1
   audioplayers: ^6.0.0
+  flutter_background_geolocation: ^4.15.2
 
 
 dev_dependencies:

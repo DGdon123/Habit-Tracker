@@ -105,7 +105,8 @@ class ProfilePageState extends State<ProfilePage>
 
 @override
 void initState() {
-  super.initState(); fetchUsers();
+  super.initState(); 
+  fetchUsers();
 
   
 }

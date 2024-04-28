@@ -12,8 +12,6 @@ import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart' as pre;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:habit_tracker/auth/login_page.dart';
 import 'package:habit_tracker/auth/repositories/new_gymtime_model.dart';
 import 'package:habit_tracker/firebase_options.dart';
@@ -59,8 +57,9 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await EasyLocalization.ensureInitialized();
 
-  await pre.Firebase.initializeApp( name: "habittracker-51e7f",options: DefaultFirebaseOptions.currentPlatform
-  );
+  await pre.Firebase.initializeApp(
+      name: "habittracker-51e7f",
+      options: DefaultFirebaseOptions.currentPlatform);
 
   await pre.Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform);
@@ -73,7 +72,7 @@ Future<void> main() async {
   await Hive.openBox<DataModel>('hive_box');
   await Hive.openBox<DataModel1>('hive_box1');
 
-  await HealthAppServices().connect(); 
+  await HealthAppServices().connect();
 
   runApp(MultiProvider(
     providers: [

@@ -9,6 +9,7 @@ import 'package:habit_tracker/pages/screens/customize%20character/customizeChara
 import 'package:habit_tracker/utils/colors.dart';
 import 'package:habit_tracker/utils/icons.dart';
 import 'package:habit_tracker/utils/images.dart';
+import 'package:rive/rive.dart';
 
 class PickCharacterPage extends StatefulWidget {
   const PickCharacterPage({super.key});
@@ -60,10 +61,13 @@ class _PickCharacterPageState extends State<PickCharacterPage> {
                   child: InkWell(
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const CustomizeCharacter()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CustomizeCharacter(
+                            filePath: "assets/character.riv",
+                          ),
+                        ),
+                      );
                     },
                     splashColor: AppColors.primaryColor,
                     focusColor: AppColors.primaryColor,
@@ -78,11 +82,9 @@ class _PickCharacterPageState extends State<PickCharacterPage> {
                           borderRadius: BorderRadius.circular(10.r),
                         ),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(AppImages.characterFull),
-                        ],
+                      child: const RiveAnimation.asset(
+                        "assets/character.riv",
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ),
@@ -95,10 +97,13 @@ class _PickCharacterPageState extends State<PickCharacterPage> {
                   child: InkWell(
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const CustomizeCharacter()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CustomizeCharacter(
+                            filePath: "assets/female.riv",
+                          ),
+                        ),
+                      );
                     },
                     splashColor: AppColors.primaryColor,
                     focusColor: AppColors.primaryColor,
@@ -113,11 +118,9 @@ class _PickCharacterPageState extends State<PickCharacterPage> {
                           borderRadius: BorderRadius.circular(10.r),
                         ),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(AppImages.characterFull),
-                        ],
+                      child: const RiveAnimation.asset(
+                        "assets/female.riv",
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ),
